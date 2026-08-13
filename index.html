@@ -4,6 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>VC Now Canada</title>
+  
+  <!-- FAVICON TAB TRÌNH DUYỆT (LÁ PHONG CANADA) -->
+  <link rel="icon" type="image/png" href="https://img.icons8.com/color/48/maple-leaf.png">
+
   <!-- Google Fonts & FontAwesome & jQuery -->
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -936,7 +940,6 @@
       </div>
 
       <div class="header-actions">
-        <!-- NÚT BẬT TẮT DARK MODE -->
         <button class="dark-mode-toggle" onclick="toggleDarkMode()" aria-label="Toggle Dark Mode" title="Chuyển chế độ Sáng/Tối">
           <i class="fa-solid fa-moon" id="dark-icon"></i>
         </button>
@@ -1225,7 +1228,7 @@
     </div>
 
     <div class="footer-bottom">
-      &copy; 2026 VC NOW CANADA. All rights reserved.
+      &copy; 2026 VC NOW CANADA. All rights reserved. 
     </div>
   </footer>
 
@@ -1507,7 +1510,7 @@
       return text.length > 0 ? text : 'Click button below to read full article at official source...';
     }
 
-    // ⚡ HÀM TẢI TIN TỨC SIÊU NHANH VÀ DỊCH TIẾNG VIỆT TỰ ĐỘNG
+    // ⚡ HÀM TẢI TIN TỨC VÀ TỰ ĐỘNG DỊCH TIẾNG VIỆT
     async function fetchNews() {
       const container = document.getElementById('news-container');
       try {
@@ -1555,10 +1558,7 @@
 
         articlesData = uniqueArticles;
         
-        // Hiển thị ngay tức thì
         filterNews();
-
-        // Kích hoạt dịch ngay lập tức cho các bài viết trên màn hình
         translateVisibleArticles();
 
       } catch (error) {
@@ -1567,18 +1567,36 @@
       }
     }
 
-    // HÀM DỊCH TIẾNG VIỆT VÀ CẬP NHẬT GIAO DIỆN
+    // API DỊCH CHỐNG BLOCK LOGIC
+    async function translateText(text, targetLang) {
+      if (targetLang === 'en' || !text) return text;
+      try {
+        const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=${targetLang}&dt=t&q=${encodeURIComponent(text)}`;
+        const res = await fetch(url);
+        const data = await res.json();
+        if (data && data[0]) {
+          return data[0].map(x => x[0]).join('');
+        }
+        return text;
+      } catch (e) {
+        return text;
+      }
+    }
+
+    // HÀM DỊCH BÀI VIẾT ĐANG HIỆN
     async function translateVisibleArticles() {
       if (currentLang !== 'vi') return;
 
-      const targetArticles = articlesData.slice(0, 8);
+      const targetArticles = currentFilteredArticles.slice(0, 10);
 
-      await Promise.all(targetArticles.map(async (item) => {
+      for (let item of targetArticles) {
         if (!item.title_vi) {
           item.title_vi = await translateText(item.title, 'vi');
+        }
+        if (!item.desc_vi) {
           item.desc_vi = await translateText(item.description, 'vi');
         }
-      }));
+      }
 
       renderNews();
       if (!document.getElementById('search-input').value) {
@@ -1675,7 +1693,7 @@
       
       const filtered = articlesData.filter(item => {
         const matchesCategory = (currentCategory === 'all') ? (item.category === 'canada') : (item.category === currentCategory);
-        const title = (currentLang === 'vi' ? (item.title_vi || item.title) : item.title).toLowerCase();
+        const title = ((currentLang === 'vi' && item.title_vi) ? item.title_vi : item.title).toLowerCase();
         const matchesSearch = title.includes(query);
         return matchesCategory && matchesSearch;
       });
@@ -1691,12 +1709,13 @@
       renderNews();
     }
 
+    // HÀM VẼ BÀI VIẾT TỰ ĐỘNG CHỌN TIẾNG VIỆT
     function renderNews() {
       const container = document.getElementById('news-container');
       const loadMoreBox = document.getElementById('load-more-box');
       container.innerHTML = '';
 
-      if(currentFilteredArticles.length === 0) {
+      if (currentFilteredArticles.length === 0) {
         container.innerHTML = `<p style="text-align:center; color:var(--text-muted); padding:2rem;">${currentLang === 'vi' ? 'Không có bài viết phù hợp.' : 'No matching articles found.'}</p>`;
         loadMoreBox.style.display = 'none';
         return;
@@ -1710,8 +1729,8 @@
         card.className = 'news-card';
         card.onclick = () => openModal(index);
         
-        const displayTitle = currentLang === 'vi' ? (item.title_vi || item.title) : item.title;
-        const displayDesc = currentLang === 'vi' ? (item.desc_vi || item.description) : item.description;
+        const displayTitle = (currentLang === 'vi' && item.title_vi) ? item.title_vi : item.title;
+        const displayDesc = (currentLang === 'vi' && item.desc_vi) ? item.desc_vi : item.description;
 
         card.innerHTML = `
           <div class="news-img-wrapper">
@@ -1766,17 +1785,6 @@
 
     function handleModalBgClick(event) {
       if (event.target.id === 'article-modal') closeModal();
-    }
-
-    async function translateText(text, targetLang) {
-      if (targetLang === 'en' || !text) return text;
-      try {
-        const res = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=${targetLang}&dt=t&q=${encodeURIComponent(text)}`);
-        const data = await res.json();
-        return data[0].map(x => x[0]).join('');
-      } catch (e) {
-        return text;
-      }
     }
 
     function changeLanguage(lang) {

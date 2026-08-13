@@ -530,7 +530,7 @@
       top: 0; left: 0; width: 100%; height: 100%; border: 0;
     }
 
-    /* 🔴 STYLES YOUTUBE PLAYLIST NÂNG CẤP GIỐNG 100% ẢNH MẪU */
+    /* STYLES YOUTUBE PLAYLIST CHUẨN GIAO DIỆN MẪU */
     .yt-playlist-wrapper {
       background: #181818;
       border-radius: 10px;
@@ -540,7 +540,7 @@
     }
 
     .yt-active-bar {
-      background: #4c1d95; /* Tông màu tím đậm sang trọng như ảnh mẫu */
+      background: #4c1d95;
       padding: 10px 14px;
       display: flex;
       align-items: center;
@@ -580,7 +580,6 @@
       background: #212121;
     }
 
-    /* Tùy chỉnh thanh cuộn Scrollbar đẹp mắt */
     .yt-scroll-list::-webkit-scrollbar {
       width: 6px;
     }
@@ -1018,7 +1017,7 @@
         </div>
       </div>
 
-      <!-- 🔴 KHỐI YOUTUBE PLAYLIST TỰ ĐỘNG GIỐNG 100% ẢNH MẪU CỦA BẠN -->
+      <!-- KHỐI YOUTUBE PLAYLIST TỰ ĐỘNG CHUẨN MẪU -->
       <div class="widget">
         <h3 class="widget-title">
           <i class="fa-brands fa-youtube"></i>
@@ -1026,19 +1025,16 @@
         </h3>
         
         <div class="yt-playlist-wrapper">
-          <!-- Player xem video chính ở trên -->
           <div class="video-container">
             <iframe id="yt-main-player" src="" title="YouTube Video Player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
           </div>
 
-          <!-- Thanh tiêu đề video đang chọn (màu tím) -->
           <div class="yt-active-bar">
             <i class="fa-solid fa-caret-right"></i>
             <span class="yt-red-dot"></span>
             <div class="yt-active-title" id="yt-active-title">Đang tải danh sách video...</div>
           </div>
 
-          <!-- Danh sách phát cuộn bên dưới -->
           <div class="yt-scroll-list" id="yt-playlist-container">
             <div style="padding:15px; text-align:center; color:#9ca3af; font-size:0.8rem;">Đang tải danh sách bài phát...</div>
           </div>
@@ -1237,7 +1233,7 @@
   <script>
     document.getElementById('current-date').innerText = new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
 
-    // URL GOOGLE APPS SCRIPT LƯU EMAIL
+    // URL GOOGLE APPS SCRIPT LƯU EMAIL KHÁCH HÀNG
     const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbxaghQfZ_HnZzF-DY6lYQGIhwdDRJ_KllO5tx4G4_HnXwuiP8yWLj3eSGJzATWvNEPRDg/exec";
 
     function handleNewsletterSubmit(e) {
@@ -1272,7 +1268,7 @@
       });
     }
 
-    // 🔴 LOGIC TẢI PLAYLIST VÀ RENDER GIAO DIỆN GIỐNG ẢNH MẪU 100%
+    // LOGIC TẢI PLAYLIST VÀ RENDER GIAO DIỆN CHUẨN
     const PLAYLIST_ID = "PLDdOhIx3i1Q4";
     let playlistVideos = [];
 
@@ -1301,7 +1297,7 @@
           });
 
           renderPlaylistUI();
-          selectVideo(0); // Phát video đầu tiên (mới nhất) mặc định
+          selectVideo(0);
         } else {
           document.getElementById('yt-active-title').innerText = "Không thể tải danh sách bài phát";
         }
@@ -1346,13 +1342,9 @@
 
       const video = playlistVideos[index];
 
-      // Đổi nguồn Iframe chính
       document.getElementById('yt-main-player').src = `https://www.youtube-nocookie.com/embed/${video.id}?autoplay=1`;
-
-      // Đổi tiêu đề trên thanh tím
       document.getElementById('yt-active-title').innerText = video.title;
 
-      // Active item được chọn trong danh sách cuộn
       document.querySelectorAll('.yt-list-item').forEach(el => el.classList.remove('active'));
       const activeEl = document.getElementById(`yt-item-${index}`);
       if (activeEl) {
@@ -1515,6 +1507,7 @@
       return text.length > 0 ? text : 'Click button below to read full article at official source...';
     }
 
+    // ⚡ HÀM TẢI TIN TỨC SIÊU NHANH VÀ DỊCH TIẾNG VIỆT TỰ ĐỘNG
     async function fetchNews() {
       const container = document.getElementById('news-container');
       try {
@@ -1561,9 +1554,12 @@
         uniqueArticles.sort((a, b) => b.rawDate - a.rawDate);
 
         articlesData = uniqueArticles;
+        
+        // Hiển thị ngay tức thì
         filterNews();
 
-        translateArticlesInBackground();
+        // Kích hoạt dịch ngay lập tức cho các bài viết trên màn hình
+        translateVisibleArticles();
 
       } catch (error) {
         container.innerHTML = '<p style="text-align:center; padding:2rem;">Lỗi tải nguồn tin tức.</p>';
@@ -1571,15 +1567,23 @@
       }
     }
 
-    async function translateArticlesInBackground() {
-      const topArticles = articlesData.slice(0, 10);
-      for (let item of topArticles) {
+    // HÀM DỊCH TIẾNG VIỆT VÀ CẬP NHẬT GIAO DIỆN
+    async function translateVisibleArticles() {
+      if (currentLang !== 'vi') return;
+
+      const targetArticles = articlesData.slice(0, 8);
+
+      await Promise.all(targetArticles.map(async (item) => {
         if (!item.title_vi) {
           item.title_vi = await translateText(item.title, 'vi');
           item.desc_vi = await translateText(item.description, 'vi');
         }
-      }
+      }));
+
       renderNews();
+      if (!document.getElementById('search-input').value) {
+        renderHeroSection(articlesData.slice(0, 3));
+      }
     }
 
     function renderHeroSection(articles) {
@@ -1738,6 +1742,7 @@
     function loadMoreNews() {
       visibleCount += 5;
       renderNews();
+      translateVisibleArticles();
     }
 
     function openModal(index) {
@@ -1827,6 +1832,7 @@
 
       filterCategory(currentCategory, document.querySelector(`.nav-link.active`));
       fetchCanadaWeather();
+      translateVisibleArticles();
     }
 
     // TẢI DỮ LIỆU KHI TRANG KHỞI CHẠY

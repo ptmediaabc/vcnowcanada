@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>VC Now Canada</title>
-  <!-- Google Fonts & FontAwesome -->
+  <title>VC NOW CANADA | Mobile Responsive News & Weather Hub</title>
+  <!-- Google Fonts & FontAwesome & jQuery -->
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -521,7 +521,7 @@
       padding-bottom: 56.25%;
       height: 0;
       overflow: hidden;
-      border-radius: 8px;
+      border-radius: 8px 8px 0 0;
       background: #000;
     }
 
@@ -530,58 +530,124 @@
       top: 0; left: 0; width: 100%; height: 100%; border: 0;
     }
 
-    /* 🔴 STYLES CHO YOUTUBE CAROUSEL SIDEBAR */
-    .yt-carousel-box {
-      position: relative;
-      margin-top: 10px;
+    /* 🔴 STYLES YOUTUBE PLAYLIST NÂNG CẤP GIỐNG 100% ẢNH MẪU */
+    .yt-playlist-wrapper {
+      background: #181818;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+      color: #ffffff;
     }
 
-    .yt-title-single {
+    .yt-active-bar {
+      background: #4c1d95; /* Tông màu tím đậm sang trọng như ảnh mẫu */
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .yt-active-bar i {
+      font-size: 1.2rem;
+      color: #ffffff;
+    }
+
+    .yt-active-title {
       font-size: 0.88rem;
       font-weight: 700;
       line-height: 1.3;
-      margin-top: 8px;
-      color: var(--text-main);
+      color: #ffffff;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      flex: 1;
+    }
+
+    .yt-red-dot {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      background-color: #ef4444;
+      border-radius: 50%;
+      margin-right: 4px;
+      flex-shrink: 0;
+    }
+
+    .yt-scroll-list {
+      max-height: 320px;
+      overflow-y: auto;
+      background: #212121;
+    }
+
+    /* Tùy chỉnh thanh cuộn Scrollbar đẹp mắt */
+    .yt-scroll-list::-webkit-scrollbar {
+      width: 6px;
+    }
+    .yt-scroll-list::-webkit-scrollbar-track {
+      background: #181818;
+    }
+    .yt-scroll-list::-webkit-scrollbar-thumb {
+      background: #4b5563;
+      border-radius: 3px;
+    }
+
+    .yt-list-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      border-bottom: 1px solid #2e2e2e;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    .yt-list-item:hover {
+      background: #2f2f2f;
+    }
+
+    .yt-list-item.active {
+      background: #383838;
+      border-left: 4px solid #ef4444;
+    }
+
+    .yt-thumb-box {
+      width: 95px;
+      height: 55px;
+      flex-shrink: 0;
+      border-radius: 4px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .yt-thumb-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .yt-item-info {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .yt-item-title {
+      font-size: 0.8rem;
+      font-weight: 600;
+      line-height: 1.25;
+      color: #e5e7eb;
       display: -webkit-box;
       -webkit-line-clamp: 2;
       -webkit-box-orient: vertical;
       overflow: hidden;
     }
 
-    .yt-controls {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-top: 10px;
-      padding-top: 8px;
-      border-top: 1px dashed var(--border-color);
-    }
-
-    .yt-nav-btn {
-      background: var(--bg-main);
-      border: 1px solid var(--border-color);
-      color: var(--text-main);
-      padding: 4px 12px;
-      border-radius: 15px;
-      font-size: 0.75rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: var(--transition);
-      display: flex;
-      align-items: center;
-      gap: 5px;
-    }
-
-    .yt-nav-btn:hover {
-      background: var(--primary-red);
-      color: white;
-      border-color: var(--primary-red);
-    }
-
-    .yt-counter {
-      font-size: 0.75rem;
-      color: var(--text-muted);
-      font-weight: 700;
+    .yt-item-meta {
+      font-size: 0.7rem;
+      color: #9ca3af;
+      font-style: italic;
     }
 
     .weather-grid {
@@ -952,23 +1018,29 @@
         </div>
       </div>
 
-      <!-- 🔴 KHỐI YOUTUBE CAROUSEL AUTO-FETCH MỚI NHẤT TỪ PLAYLIST PLDdOhIx3i1Q4 -->
+      <!-- 🔴 KHỐI YOUTUBE PLAYLIST TỰ ĐỘNG GIỐNG 100% ẢNH MẪU CỦA BẠN -->
       <div class="widget">
         <h3 class="widget-title">
           <i class="fa-brands fa-youtube"></i>
           <span id="youtube-title">VC NOW CANADA</span>
         </h3>
         
-        <div class="yt-carousel-box">
+        <div class="yt-playlist-wrapper">
+          <!-- Player xem video chính ở trên -->
           <div class="video-container">
-            <iframe id="yt-player-iframe" src="" title="YouTube Video Player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            <iframe id="yt-main-player" src="" title="YouTube Video Player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
           </div>
-          <div id="yt-video-title" class="yt-title-single">Đang tải danh sách video...</div>
-          
-          <div class="yt-controls">
-            <button class="yt-nav-btn" onclick="prevYtVideo()"><i class="fa-solid fa-chevron-left"></i> <span id="yt-prev-label">Trước</span></button>
-            <span class="yt-counter" id="yt-counter-text">1 / --</span>
-            <button class="yt-nav-btn" onclick="nextYtVideo()"><span id="yt-next-label">Sau</span> <i class="fa-solid fa-chevron-right"></i></button>
+
+          <!-- Thanh tiêu đề video đang chọn (màu tím) -->
+          <div class="yt-active-bar">
+            <i class="fa-solid fa-caret-right"></i>
+            <span class="yt-red-dot"></span>
+            <div class="yt-active-title" id="yt-active-title">Đang tải danh sách video...</div>
+          </div>
+
+          <!-- Danh sách phát cuộn bên dưới -->
+          <div class="yt-scroll-list" id="yt-playlist-container">
+            <div style="padding:15px; text-align:center; color:#9ca3af; font-size:0.8rem;">Đang tải danh sách bài phát...</div>
           </div>
         </div>
       </div>
@@ -1157,7 +1229,7 @@
     </div>
 
     <div class="footer-bottom">
-      &copy; 2026 VC Now Canada. All rights reserved.
+      &copy; 2026 VC NOW CANADA. All rights reserved. Content aggregated via RSS APIs.
     </div>
   </footer>
 
@@ -1165,7 +1237,7 @@
   <script>
     document.getElementById('current-date').innerText = new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
 
-    // URL GOOGLE APPS SCRIPT
+    // URL GOOGLE APPS SCRIPT LƯU EMAIL
     const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbxaghQfZ_HnZzF-DY6lYQGIhwdDRJ_KllO5tx4G4_HnXwuiP8yWLj3eSGJzATWvNEPRDg/exec";
 
     function handleNewsletterSubmit(e) {
@@ -1200,10 +1272,9 @@
       });
     }
 
-    // 🔴 LOGIC TỰ ĐỘNG LẤY PLAYLIST YOUTUBE & CAROUSEL SLIDER
+    // 🔴 LOGIC TẢI PLAYLIST VÀ RENDER GIAO DIỆN GIỐNG ẢNH MẪU 100%
     const PLAYLIST_ID = "PLDdOhIx3i1Q4";
     let playlistVideos = [];
-    let currentYtIndex = 0;
 
     async function fetchYoutubePlaylist() {
       const rssUrl = `https://www.youtube.com/feeds/videos.xml?playlist_id=${PLAYLIST_ID}`;
@@ -1215,7 +1286,6 @@
 
         if (data.status === 'ok' && data.items.length > 0) {
           playlistVideos = data.items.map(item => {
-            // Lấy Video ID từ link (ví dụ: https://www.youtube.com/watch?v=VIDEO_ID)
             let videoId = "";
             if (item.link.includes('v=')) {
               videoId = item.link.split('v=')[1].split('&')[0];
@@ -1225,43 +1295,69 @@
             return {
               id: videoId,
               title: item.title,
-              pubDate: item.pubDate
+              pubDate: new Date(item.pubDate).toLocaleDateString('vi-VN'),
+              thumbnail: `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`
             };
           });
 
-          renderYtSlide(0);
+          renderPlaylistUI();
+          selectVideo(0); // Phát video đầu tiên (mới nhất) mặc định
         } else {
-          // Fallback nếu playlist trống
-          document.getElementById('yt-video-title').innerText = "Không thể tải playlist";
+          document.getElementById('yt-active-title').innerText = "Không thể tải danh sách bài phát";
         }
       } catch (e) {
         console.error("YouTube Playlist Fetch Error:", e);
-        // Video mặc định trong trường hợp lỗi
-        playlistVideos = [{ id: "K5KG-YvcV28", title: "TT Carney Trả Đũa Sau Khi Trump Bạc Nhược Miễn Trừ Năng Lượng" }];
-        renderYtSlide(0);
+        playlistVideos = [
+          { id: "K5KG-YvcV28", title: "TT Carney Trả Đũa Sau Khi Trump Bạc Nhược Miễn Trừ Năng Lượng", pubDate: "13/08/2026", thumbnail: "https://img.youtube.com/vi/K5KG-YvcV28/hqdefault.jpg" }
+        ];
+        renderPlaylistUI();
+        selectVideo(0);
       }
     }
 
-    function renderYtSlide(index) {
-      if (playlistVideos.length === 0) return;
-      currentYtIndex = index;
+    function renderPlaylistUI() {
+      const listContainer = document.getElementById('yt-playlist-container');
+      listContainer.innerHTML = '';
 
-      const video = playlistVideos[currentYtIndex];
-      document.getElementById('yt-player-iframe').src = `https://www.youtube-nocookie.com/embed/${video.id}?autoplay=0`;
-      document.getElementById('yt-video-title').innerText = video.title;
-      document.getElementById('yt-counter-text').innerText = `${currentYtIndex + 1} / ${playlistVideos.length}`;
+      playlistVideos.forEach((video, idx) => {
+        const itemEl = document.createElement('div');
+        itemEl.className = `yt-list-item ${idx === 0 ? 'active' : ''}`;
+        itemEl.id = `yt-item-${idx}`;
+        itemEl.onclick = () => selectVideo(idx);
+
+        itemEl.innerHTML = `
+          <div class="yt-thumb-box">
+            <img src="${video.thumbnail}" alt="thumbnail">
+          </div>
+          <div class="yt-item-info">
+            <div class="yt-item-title">
+              <span class="yt-red-dot"></span>${video.title}
+            </div>
+            <div class="yt-item-meta">${video.pubDate}</div>
+          </div>
+        `;
+
+        listContainer.appendChild(itemEl);
+      });
     }
 
-    function nextYtVideo() {
-      if (playlistVideos.length === 0) return;
-      let newIndex = (currentYtIndex + 1) % playlistVideos.length;
-      renderYtSlide(newIndex);
-    }
+    function selectVideo(index) {
+      if (!playlistVideos[index]) return;
 
-    function prevYtVideo() {
-      if (playlistVideos.length === 0) return;
-      let newIndex = (currentYtIndex - 1 + playlistVideos.length) % playlistVideos.length;
-      renderYtSlide(newIndex);
+      const video = playlistVideos[index];
+
+      // Đổi nguồn Iframe chính
+      document.getElementById('yt-main-player').src = `https://www.youtube-nocookie.com/embed/${video.id}?autoplay=1`;
+
+      // Đổi tiêu đề trên thanh tím
+      document.getElementById('yt-active-title').innerText = video.title;
+
+      // Active item được chọn trong danh sách cuộn
+      document.querySelectorAll('.yt-list-item').forEach(el => el.classList.remove('active'));
+      const activeEl = document.getElementById(`yt-item-${index}`);
+      if (activeEl) {
+        activeEl.classList.add('active');
+      }
     }
 
     // DARK MODE MANAGEMENT
@@ -1424,25 +1520,32 @@
       try {
         let rawArticles = [];
 
-        for (const feed of RSS_FEEDS) {
-          const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(feed.url)}&_t=${Date.now()}`;
-          const response = await fetch(apiUrl);
-          const data = await response.json();
+        const feedPromises = RSS_FEEDS.map(async (feed) => {
+          try {
+            const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(feed.url)}&_t=${Date.now()}`;
+            const response = await fetch(apiUrl);
+            const data = await response.json();
 
-          if (data.status === 'ok') {
-            const items = data.items.map(item => ({
-              source: feed.name,
-              category: feed.category,
-              title: item.title,
-              description: cleanFullDescription(item),
-              image: extractImageUrl(item),
-              link: item.link,
-              rawDate: new Date(item.pubDate),
-              pubDate: new Date(item.pubDate).toLocaleDateString('vi-VN')
-            }));
-            rawArticles = rawArticles.concat(items);
+            if (data.status === 'ok') {
+              return data.items.map(item => ({
+                source: feed.name,
+                category: feed.category,
+                title: item.title,
+                description: cleanFullDescription(item),
+                image: extractImageUrl(item),
+                link: item.link,
+                rawDate: new Date(item.pubDate),
+                pubDate: new Date(item.pubDate).toLocaleDateString('vi-VN')
+              }));
+            }
+          } catch (err) {
+            return [];
           }
-        }
+          return [];
+        });
+
+        const results = await Promise.all(feedPromises);
+        rawArticles = results.flat();
 
         const uniqueTitles = new Set();
         let uniqueArticles = [];
@@ -1457,18 +1560,26 @@
 
         uniqueArticles.sort((a, b) => b.rawDate - a.rawDate);
 
-        await Promise.all(uniqueArticles.map(async (item) => {
-          item.title_vi = await translateText(item.title, 'vi');
-          item.desc_vi = await translateText(item.description, 'vi');
-        }));
-
         articlesData = uniqueArticles;
         filterNews();
+
+        translateArticlesInBackground();
 
       } catch (error) {
         container.innerHTML = '<p style="text-align:center; padding:2rem;">Lỗi tải nguồn tin tức.</p>';
         console.error(error);
       }
+    }
+
+    async function translateArticlesInBackground() {
+      const topArticles = articlesData.slice(0, 10);
+      for (let item of topArticles) {
+        if (!item.title_vi) {
+          item.title_vi = await translateText(item.title, 'vi');
+          item.desc_vi = await translateText(item.description, 'vi');
+        }
+      }
+      renderNews();
     }
 
     function renderHeroSection(articles) {
@@ -1691,9 +1802,6 @@
         document.getElementById('newsletter-title').innerText = 'Đăng ký nhận bản tin';
         document.getElementById('newsletter-sub').innerText = 'Cập nhật tin tức, ưu đãi và thông báo mới nhất.';
         document.getElementById('social-title').innerText = 'Mạng Xã Hội';
-
-        document.getElementById('yt-prev-label').innerText = 'Trước';
-        document.getElementById('yt-next-label').innerText = 'Sau';
       } else {
         document.getElementById('weather-title').innerText = 'Canada Weather';
         document.getElementById('about-title').innerText = 'About Us';
@@ -1715,16 +1823,13 @@
         document.getElementById('newsletter-title').innerText = 'Subscribe to our newsletter';
         document.getElementById('newsletter-sub').innerText = 'To be updated with all the latest news, offers and special announcements.';
         document.getElementById('social-title').innerText = 'Stay Connected';
-
-        document.getElementById('yt-prev-label').innerText = 'Prev';
-        document.getElementById('yt-next-label').innerText = 'Next';
       }
 
       filterCategory(currentCategory, document.querySelector(`.nav-link.active`));
       fetchCanadaWeather();
     }
 
-    // CHẠY CÁC HÀM TẢI DỮ LIỆU KHI MỞ TRANG
+    // TẢI DỮ LIỆU KHI TRANG KHỞI CHẠY
     fetchNews();
     fetchCanadaWeather();
     fetchYoutubePlaylist();

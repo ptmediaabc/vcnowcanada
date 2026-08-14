@@ -6,7 +6,7 @@
   <title>VC Now Canada</title>
   
   <!-- FAVICON TAB TRÌNH DUYỆT (LÁ PHONG CANADA) -->
-  <link rel="icon" type="image/png" href="https://img.icons8.com/color/48/maple-leaf.png">
+  <link rel="icon" type="image/png" href="https://icons8.com/icon/ZwveJzobmIGz/canada">
 
   <!-- Google Fonts & FontAwesome & jQuery -->
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -1228,7 +1228,7 @@
     </div>
 
     <div class="footer-bottom">
-      &copy; 2026 VC NOW CANADA. All rights reserved. 
+      &copy; 2026 VC NOW CANADA. All rights reserved. Content aggregated via RSS APIs.
     </div>
   </footer>
 
@@ -1510,7 +1510,56 @@
       return text.length > 0 ? text : 'Click button below to read full article at official source...';
     }
 
-    // ⚡ HÀM TẢI TIN TỨC VÀ TỰ ĐỘNG DỊCH TIẾNG VIỆT
+    // API DỊCH CHỐNG BLOCK LOGIC
+    async function translateText(text, targetLang) {
+      if (targetLang === 'en' || !text) return text;
+      try {
+        const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=${targetLang}&dt=t&q=${encodeURIComponent(text)}`;
+        const res = await fetch(url);
+        const data = await res.json();
+        if (data && data[0]) {
+          return data[0].map(x => x[0]).join('');
+        }
+        return text;
+      } catch (e) {
+        return text;
+      }
+    }
+
+    // DỊCH TỪNG BÀI VIẾT
+    async function translateSingleArticle(item) {
+      if (currentLang !== 'vi') return;
+
+      if (!item.title_vi) {
+        item.title_vi = await translateText(item.title, 'vi');
+      }
+      if (!item.desc_vi) {
+        item.desc_vi = await translateText(item.description, 'vi');
+      }
+    }
+
+    // DỊCH TẤT CẢ CÁC BÀI VIẾT ĐANG HIỂN THỊ (CẢ HERO VÀ DANH SÁCH)
+    async function translateVisibleArticles() {
+      if (currentLang !== 'vi') return;
+
+      // 1. Dịch 3 bài khối Hero ở trên cùng
+      const heroArticles = articlesData.slice(0, 3);
+      for (let item of heroArticles) {
+        await translateSingleArticle(item);
+      }
+      if (!document.getElementById('search-input').value) {
+        renderHeroSection(articlesData.slice(0, 3));
+      }
+
+      // 2. Dịch các bài trong Danh sách bên dưới
+      const displayArticles = currentFilteredArticles.slice(0, visibleCount);
+      for (let item of displayArticles) {
+        await translateSingleArticle(item);
+        renderNews();
+      }
+    }
+
+    // ⚡ HÀM TẢI TIN TỨC
     async function fetchNews() {
       const container = document.getElementById('news-container');
       try {
@@ -1567,43 +1616,6 @@
       }
     }
 
-    // API DỊCH CHỐNG BLOCK LOGIC
-    async function translateText(text, targetLang) {
-      if (targetLang === 'en' || !text) return text;
-      try {
-        const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=${targetLang}&dt=t&q=${encodeURIComponent(text)}`;
-        const res = await fetch(url);
-        const data = await res.json();
-        if (data && data[0]) {
-          return data[0].map(x => x[0]).join('');
-        }
-        return text;
-      } catch (e) {
-        return text;
-      }
-    }
-
-    // HÀM DỊCH BÀI VIẾT ĐANG HIỆN
-    async function translateVisibleArticles() {
-      if (currentLang !== 'vi') return;
-
-      const targetArticles = currentFilteredArticles.slice(0, 10);
-
-      for (let item of targetArticles) {
-        if (!item.title_vi) {
-          item.title_vi = await translateText(item.title, 'vi');
-        }
-        if (!item.desc_vi) {
-          item.desc_vi = await translateText(item.description, 'vi');
-        }
-      }
-
-      renderNews();
-      if (!document.getElementById('search-input').value) {
-        renderHeroSection(articlesData.slice(0, 3));
-      }
-    }
-
     function renderHeroSection(articles) {
       const heroContainer = document.getElementById('hero-section');
       if (!articles || articles.length < 3) {
@@ -1616,9 +1628,9 @@
       const sub1 = articles[1];
       const sub2 = articles[2];
 
-      const mainTitle = currentLang === 'vi' ? (main.title_vi || main.title) : main.title;
-      const sub1Title = currentLang === 'vi' ? (sub1.title_vi || sub1.title) : sub1.title;
-      const sub2Title = currentLang === 'vi' ? (sub2.title_vi || sub2.title) : sub2.title;
+      const mainTitle = (currentLang === 'vi' && main.title_vi) ? main.title_vi : main.title;
+      const sub1Title = (currentLang === 'vi' && sub1.title_vi) ? sub1.title_vi : sub1.title;
+      const sub2Title = (currentLang === 'vi' && sub2.title_vi) ? sub2.title_vi : sub2.title;
 
       heroContainer.innerHTML = `
         <div class="hero-main-card" onclick="openModal(${articlesData.indexOf(main)})">
@@ -1664,6 +1676,7 @@
       `;
     }
 
+    // CHUYỂN DANH MỤC CÓ GỌI LẠI HÀM DỊCH
     function filterCategory(cat, element) {
       currentCategory = cat;
       visibleCount = 5;
@@ -1686,6 +1699,7 @@
       document.getElementById('section-title').innerText = catTitles[cat] || 'News';
 
       filterNews();
+      translateVisibleArticles();
     }
 
     function filterNews() {
@@ -1709,7 +1723,6 @@
       renderNews();
     }
 
-    // HÀM VẼ BÀI VIẾT TỰ ĐỘNG CHỌN TIẾNG VIỆT
     function renderNews() {
       const container = document.getElementById('news-container');
       const loadMoreBox = document.getElementById('load-more-box');
@@ -1768,10 +1781,10 @@
       const item = articlesData[index];
 
       document.getElementById('modal-source').innerText = item.source;
-      document.getElementById('modal-title').innerText = currentLang === 'vi' ? (item.title_vi || item.title) : item.title;
+      document.getElementById('modal-title').innerText = (currentLang === 'vi' && item.title_vi) ? item.title_vi : item.title;
       document.getElementById('modal-date').innerText = item.pubDate;
       document.getElementById('modal-img').src = item.image;
-      document.getElementById('modal-desc').innerText = currentLang === 'vi' ? (item.desc_vi || item.description) : item.description;
+      document.getElementById('modal-desc').innerText = (currentLang === 'vi' && item.desc_vi) ? item.desc_vi : item.description;
       document.getElementById('modal-link').href = item.link;
 
       document.getElementById('article-modal').style.display = 'flex';

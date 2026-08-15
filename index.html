@@ -1,1945 +1,2202 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>VC Now Canada</title>
-  
-  <!-- FAVICON TAB TRÌNH DUYỆT (LÁ PHONG CANADA) -->
-  <link rel="icon" type="image/png" href="https://img.icons8.com/officexs/30/canada.png">
-
-  <!-- Google Fonts & FontAwesome & jQuery -->
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  
-  <style>
-    /* BỘ BIẾN MÀU LIGHT MODE (MẶC ĐỊNH) */
-    :root {
-      --primary-red: #b91c1c;
-      --primary-dark: #121212;
-      --card-dark: #1e1e1e;
-      --bg-main: #f8fafc;
-      --card-bg: #ffffff;
-      --text-main: #1e293b;
-      --text-muted: #64748b;
-      --border-color: #e2e8f0;
-      --font-title: 'Playfair Display', Georgia, serif;
-      --font-body: 'Plus Jakarta Sans', sans-serif;
-      --shadow-sm: 0 2px 4px rgba(0,0,0,0.04);
-      --shadow-lg: 0 12px 24px -4px rgba(0,0,0,0.08);
-      --radius: 12px;
-      --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    /* DARK MODE */
-    body.dark-mode {
-      --bg-main: #0f172a;
-      --card-bg: #1e293b;
-      --text-main: #f1f5f9;
-      --text-muted: #94a3b8;
-      --border-color: #334155;
-      --shadow-sm: 0 2px 4px rgba(0,0,0,0.2);
-      --shadow-lg: 0 12px 24px -4px rgba(0,0,0,0.4);
-    }
-
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-
-    body {
-      background-color: var(--bg-main);
-      color: var(--text-main);
-      font-family: var(--font-body);
-      line-height: 1.6;
-      display: flex;
-      flex-direction: column;
-      min-height: 100vh;
-      transition: background-color 0.3s ease, color 0.3s ease;
-    }
-
-    a { text-decoration: none; color: inherit; }
-
-    /* HEADER & TOP BAR */
-    header {
-      background: var(--card-bg);
-      border-bottom: 1px solid var(--border-color);
-      position: sticky;
-      top: 0;
-      z-index: 1000;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.03);
-      transition: background-color 0.3s ease;
-    }
-
-    .top-bar {
-      background: #020617;
-      color: #94a3b8;
-      padding: 0.4rem 1.5rem;
-      font-size: 0.8rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .live-badge {
-      background: var(--primary-red);
-      color: white;
-      padding: 2px 8px;
-      border-radius: 4px;
-      font-weight: 700;
-      font-size: 0.7rem;
-      animation: pulse 2s infinite;
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-    }
-
-    @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
-
-    .brand-header {
-      max-width: 1280px;
-      margin: 0 auto;
-      padding: 1rem 1.5rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 1.5rem;
-    }
-
-    .brand-logo {
-      font-family: var(--font-title);
-      font-size: 2rem;
-      font-weight: 800;
-      letter-spacing: -0.5px;
-      color: var(--text-main);
-      text-transform: uppercase;
-      white-space: nowrap;
-    }
-
-    .brand-logo span { color: var(--primary-red); }
-
-    .search-box {
-      position: relative;
-      flex: 1;
-      max-width: 380px;
-    }
-
-    .search-box input {
-      width: 100%;
-      background: var(--bg-main);
-      border: 1px solid var(--border-color);
-      padding: 0.6rem 1rem 0.6rem 2.4rem;
-      border-radius: 20px;
-      outline: none;
-      transition: var(--transition);
-      font-size: 0.88rem;
-      color: var(--text-main);
-    }
-
-    .search-box input:focus {
-      background: var(--card-bg);
-      border-color: var(--primary-red);
-      box-shadow: 0 0 0 3px rgba(185, 28, 28, 0.1);
-    }
-
-    .search-box i {
-      position: absolute;
-      left: 0.9rem;
-      top: 50%;
-      transform: translateY(-50%);
-      color: var(--text-muted);
-    }
-
-    .header-actions {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .dark-mode-toggle {
-      background: var(--bg-main);
-      border: 1px solid var(--border-color);
-      color: var(--text-main);
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: var(--transition);
-      font-size: 1rem;
-    }
-
-    .dark-mode-toggle:hover {
-      background: var(--primary-red);
-      color: white;
-      border-color: var(--primary-red);
-    }
-
-    .lang-switcher {
-      display: flex;
-      background: var(--bg-main);
-      padding: 3px;
-      border-radius: 20px;
-      border: 1px solid var(--border-color);
-    }
-
-    .lang-btn {
-      background: transparent;
-      color: var(--text-muted);
-      border: none;
-      padding: 5px 12px;
-      border-radius: 16px;
-      cursor: pointer;
-      font-weight: 600;
-      font-size: 0.8rem;
-      transition: var(--transition);
-    }
-
-    .lang-btn.active {
-      background: var(--primary-red);
-      color: white;
-      box-shadow: var(--shadow-sm);
-    }
-
-    .mobile-menu-btn {
-      display: none;
-      background: transparent;
-      border: none;
-      font-size: 1.4rem;
-      color: var(--text-main);
-      cursor: pointer;
-      padding: 5px;
-    }
-
-    /* NAVIGATION */
-    nav {
-      border-top: 1px solid var(--border-color);
-      background: var(--card-bg);
-      transition: background-color 0.3s ease;
-    }
-
-    .nav-container {
-      max-width: 1280px;
-      margin: 0 auto;
-      padding: 0 1.5rem;
-      display: flex;
-      gap: 1.5rem;
-      overflow-x: auto;
-      white-space: nowrap;
-      -webkit-overflow-scrolling: touch;
-    }
-
-    .nav-link {
-      font-family: var(--font-body);
-      color: var(--text-main);
-      padding: 0.8rem 0;
-      font-size: 0.9rem;
-      font-weight: 600;
-      border-bottom: 3px solid transparent;
-      transition: var(--transition);
-      cursor: pointer;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .nav-link:hover, .nav-link.active {
-      color: var(--primary-red);
-      border-bottom-color: var(--primary-red);
-    }
-
-    /* MAIN CONTAINER */
-    .container {
-      max-width: 1280px;
-      margin: 1.5rem auto;
-      padding: 0 1.5rem;
-      display: grid;
-      grid-template-columns: 2.8fr 1.2fr;
-      gap: 2rem;
-      flex: 1;
-    }
-
-    /* HERO FEATURED */
-    .hero-featured {
-      display: grid;
-      grid-template-columns: 1.6fr 1fr;
-      gap: 1.25rem;
-      margin-bottom: 2rem;
-    }
-
-    .hero-main-card {
-      background: var(--card-bg);
-      border-radius: var(--radius);
-      overflow: hidden;
-      border: 1px solid var(--border-color);
-      box-shadow: var(--shadow-sm);
-      cursor: pointer;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .hero-main-card img {
-      width: 100%;
-      height: 260px;
-      object-fit: cover;
-      transition: transform 0.5s ease;
-    }
-
-    .hero-main-card:hover img { transform: scale(1.03); }
-
-    .hero-main-body {
-      padding: 1.2rem;
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-    }
-
-    .hero-main-body h2 {
-      font-family: var(--font-title);
-      font-size: 1.35rem;
-      line-height: 1.35;
-      margin: 0.4rem 0;
-    }
-
-    .hero-sub-grid {
-      display: flex;
-      flex-direction: column;
-      gap: 1.25rem;
-    }
-
-    .hero-sub-card {
-      background: var(--card-bg);
-      border-radius: var(--radius);
-      padding: 0.8rem;
-      border: 1px solid var(--border-color);
-      box-shadow: var(--shadow-sm);
-      display: flex;
-      gap: 0.8rem;
-      cursor: pointer;
-      flex: 1;
-    }
-
-    .hero-sub-card img {
-      width: 100px;
-      height: 90px;
-      object-fit: cover;
-      border-radius: 6px;
-      flex-shrink: 0;
-    }
-
-    .hero-sub-card h3 {
-      font-family: var(--font-title);
-      font-size: 0.95rem;
-      line-height: 1.3;
-      display: -webkit-box;
-      -webkit-line-clamp: 3;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-    }
-
-    .section-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 1.2rem;
-      border-bottom: 2px solid var(--primary-red);
-      padding-bottom: 0.4rem;
-    }
-
-    .section-title {
-      font-family: var(--font-title);
-      font-size: 1.3rem;
-      font-weight: 700;
-      color: var(--text-main);
-      text-transform: uppercase;
-    }
-
-    .news-grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 1.2rem;
-    }
-
-    .news-card {
-      background: var(--card-bg);
-      border-radius: var(--radius);
-      padding: 1.2rem;
-      box-shadow: var(--shadow-sm);
-      border: 1px solid var(--border-color);
-      transition: var(--transition);
-      display: flex;
-      gap: 1.2rem;
-      cursor: pointer;
-    }
-
-    .news-card:hover {
-      transform: translateY(-3px);
-      box-shadow: var(--shadow-lg);
-      border-color: rgba(185, 28, 28, 0.2);
-    }
-
-    .news-img-wrapper {
-      width: 190px;
-      height: 125px;
-      border-radius: 8px;
-      overflow: hidden;
-      flex-shrink: 0;
-      background: #e2e8f0;
-    }
-
-    .news-img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      transition: transform 0.5s ease;
-    }
-
-    .news-card:hover .news-img { transform: scale(1.05); }
-
-    .news-content {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-    }
-
-    .source-tag {
-      align-self: flex-start;
-      font-size: 0.72rem;
-      font-weight: 700;
-      color: var(--primary-red);
-      background: rgba(185, 28, 28, 0.1);
-      padding: 2px 8px;
-      border-radius: 4px;
-      margin-bottom: 0.4rem;
-      text-transform: uppercase;
-    }
-
-    .news-card h3 {
-      font-family: var(--font-title);
-      font-size: 1.05rem;
-      font-weight: 700;
-      margin-bottom: 0.4rem;
-      line-height: 1.35;
-      color: var(--text-main);
-    }
-
-    .news-card p {
-      font-size: 0.88rem;
-      color: var(--text-muted);
-      margin-bottom: 0.6rem;
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-    }
-
-    .news-meta {
-      font-size: 0.78rem;
-      color: var(--text-muted);
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    /* SKELETON LOADING */
-    .skeleton {
-      background: linear-gradient(90deg, var(--bg-main) 25%, var(--border-color) 50%, var(--bg-main) 75%);
-      background-size: 200% 100%;
-      animation: loading 1.5s infinite;
-      border-radius: 6px;
-    }
-
-    @keyframes loading { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
-
-    .skeleton-hero {
-      display: grid;
-      grid-template-columns: 1.6fr 1fr;
-      gap: 1.25rem;
-      margin-bottom: 2rem;
-    }
-
-    .skeleton-card {
-      background: var(--card-bg);
-      border-radius: var(--radius);
-      padding: 1.2rem;
-      display: flex;
-      gap: 1.2rem;
-      border: 1px solid var(--border-color);
-    }
-
-    .load-more-container { text-align: center; margin: 2rem 0; }
-
-    .load-more-btn {
-      background: var(--card-bg);
-      color: var(--primary-red);
-      border: 2px solid var(--primary-red);
-      padding: 0.8rem 2.5rem;
-      border-radius: 30px;
-      font-weight: 700;
-      font-size: 0.9rem;
-      cursor: pointer;
-      transition: var(--transition);
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      box-shadow: var(--shadow-sm);
-    }
-
-    .load-more-btn:hover {
-      background: var(--primary-red);
-      color: #ffffff;
-      transform: translateY(-2px);
-      box-shadow: var(--shadow-lg);
-    }
-
-    /* SIDEBAR & WEATHER WIDGET */
-    .sidebar { display: flex; flex-direction: column; gap: 1.8rem; }
-
-    .widget {
-      background: var(--card-bg);
-      padding: 1.2rem;
-      border-radius: var(--radius);
-      box-shadow: var(--shadow-sm);
-      border: 1px solid var(--border-color);
-    }
-
-    .widget-title {
-      font-family: var(--font-title);
-      font-size: 1.15rem;
-      font-weight: 700;
-      margin-bottom: 1rem;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      border-bottom: 2px solid var(--border-color);
-      padding-bottom: 0.4rem;
-    }
-
-    .widget-title i { color: var(--primary-red); }
-
-    .video-container {
-      position: relative;
-      padding-bottom: 56.25%;
-      height: 0;
-      overflow: hidden;
-      border-radius: 8px 8px 0 0;
-      background: #000;
-    }
-
-    .video-container iframe {
-      position: absolute;
-      top: 0; left: 0; width: 100%; height: 100%; border: 0;
-    }
-
-    /* STYLES YOUTUBE PLAYLIST */
-    .yt-playlist-wrapper {
-      background: #181818;
-      border-radius: 10px;
-      overflow: hidden;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-      color: #ffffff;
-    }
-
-    .yt-active-bar {
-      background: #4c1d95;
-      padding: 10px 14px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .yt-active-bar i { font-size: 1.2rem; color: #ffffff; }
-
-    .yt-active-title {
-      font-size: 0.88rem;
-      font-weight: 700;
-      line-height: 1.3;
-      color: #ffffff;
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-      flex: 1;
-    }
-
-    .yt-red-dot {
-      display: inline-block;
-      width: 10px;
-      height: 10px;
-      background-color: #ef4444;
-      border-radius: 50%;
-      margin-right: 4px;
-      flex-shrink: 0;
-    }
-
-    .yt-scroll-list {
-      max-height: 320px;
-      overflow-y: auto;
-      background: #212121;
-    }
-
-    .yt-scroll-list::-webkit-scrollbar { width: 6px; }
-    .yt-scroll-list::-webkit-scrollbar-track { background: #181818; }
-    .yt-scroll-list::-webkit-scrollbar-thumb { background: #4b5563; border-radius: 3px; }
-
-    .yt-list-item {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 10px 12px;
-      border-bottom: 1px solid #2e2e2e;
-      cursor: pointer;
-      transition: background 0.2s ease;
-    }
-
-    .yt-list-item:hover { background: #2f2f2f; }
-
-    .yt-list-item.active {
-      background: #383838;
-      border-left: 4px solid #ef4444;
-    }
-
-    .yt-thumb-box {
-      width: 95px;
-      height: 55px;
-      flex-shrink: 0;
-      border-radius: 4px;
-      overflow: hidden;
-      position: relative;
-    }
-
-    .yt-thumb-box img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-
-    .yt-item-info {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-
-    .yt-item-title {
-      font-size: 0.8rem;
-      font-weight: 600;
-      line-height: 1.25;
-      color: #e5e7eb;
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
-    }
-
-    .yt-item-meta {
-      font-size: 0.7rem;
-      color: #9ca3af;
-      font-style: italic;
-    }
-
-    .weather-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 0.8rem;
-    }
-
-    .weather-city-card {
-      background: var(--bg-main);
-      border: 1px solid var(--border-color);
-      padding: 0.8rem;
-      border-radius: 8px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-      transition: var(--transition);
-      cursor: pointer;
-    }
-
-    .weather-city-card:hover {
-      background: var(--card-bg);
-      box-shadow: var(--shadow-sm);
-      border-color: var(--primary-red);
-      transform: translateY(-2px);
-    }
-
-    .weather-city-name { font-weight: 700; font-size: 0.85rem; color: var(--text-main); }
-    .weather-icon { font-size: 1.4rem; color: #38bdf8; margin: 4px 0; }
-    .weather-temp { font-size: 1.1rem; font-weight: 800; color: var(--primary-red); }
-    .weather-click-hint { font-size: 0.65rem; color: var(--text-muted); margin-top: 2px; }
-
-    /* MODAL WEATHER DETAILS */
-    .weather-modal-card {
-      background: linear-gradient(135deg, #020617 0%, #0f172a 100%);
-      color: white;
-      border-radius: 12px;
-      padding: 1.5rem;
-      margin: 1rem 0;
-    }
-
-    .weather-detail-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 1rem;
-      margin-top: 1rem;
-    }
-
-    .weather-detail-item {
-      background: rgba(255,255,255,0.08);
-      padding: 0.8rem;
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .weather-detail-item i { font-size: 1.3rem; color: #38bdf8; }
-
-    /* KHỐI DARK WIDGETS BAR */
-    .dark-widgets-bar {
-      background: #020617;
-      color: white;
-      padding: 2rem 0;
-      margin-top: 2rem;
-      border-top: 1px solid var(--border-color);
-    }
-
-    .widgets-wrapper {
-      max-width: 1280px;
-      margin: 0 auto;
-      padding: 0 1.5rem;
-      display: grid;
-      grid-template-columns: 1.2fr 1.5fr 1.3fr;
-      gap: 1.5rem;
-    }
-
-    .widget-box {
-      background: #0f172a;
-      border-radius: 8px;
-      padding: 1.2rem;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-    }
-
-    .widget-box h4 { color: #c084fc; font-size: 0.95rem; margin-bottom: 0.8rem; font-weight: 700; }
-    .podcast-content { display: flex; align-items: center; gap: 1rem; }
-    .podcast-text h5 { font-size: 0.88rem; line-height: 1.3; margin-bottom: 4px; }
-    .podcast-text span { font-size: 0.75rem; color: #94a3b8; }
-    .podcast-img { width: 60px; height: 60px; border-radius: 50%; object-fit: cover; flex-shrink: 0; }
-
-    .newsletter-form { display: flex; gap: 0; margin-top: 0.5rem; }
-    .newsletter-form input {
-      background: #1e293b; border: 1px solid #334155; padding: 0.6rem 0.8rem; color: white; border-radius: 4px 0 0 4px; width: 100%; outline: none; font-size: 0.85rem;
-    }
-    .newsletter-form button {
-      background: #7e22ce; color: white; border: none; padding: 0.6rem 1.2rem; font-weight: 700; font-size: 0.8rem; cursor: pointer; border-radius: 0 4px 4px 0; transition: var(--transition);
-    }
-    .newsletter-form button:hover { background: #6b21a8; }
-
-    .social-counts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-    .social-card { padding: 0.8rem 0.4rem; text-align: center; border-radius: 4px; color: white; }
-    .social-card.facebook { background: #3b5998; }
-    .social-card.instagram { background: #38bdf8; }
-    .social-card.youtube { background: #dc2626; }
-    .social-card i { font-size: 1.1rem; margin-bottom: 4px; }
-    .social-card .count { font-weight: 800; font-size: 0.95rem; display: block; }
-    .social-card .label { font-size: 0.68rem; opacity: 0.8; }
-
-    /* POPUP MODAL READER NÂNG CẤP CAO CẤP */
-    .modal-overlay {
-      display: none;
-      position: fixed;
-      top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(15, 23, 42, 0.85);
-      backdrop-filter: blur(8px);
-      z-index: 9999;
-      justify-content: center;
-      align-items: center;
-      padding: 1.5rem;
-    }
-
-    .modal-box {
-      background: var(--card-bg);
-      max-width: 820px; width: 100%; max-height: 88vh;
-      overflow-y: auto;
-      border-radius: 20px;
-      padding: 2.5rem;
-      position: relative;
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-      border: 1px solid var(--border-color);
-    }
-
-    .modal-box::-webkit-scrollbar { width: 6px; }
-    .modal-box::-webkit-scrollbar-track { background: transparent; }
-    .modal-box::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
-
-    .close-modal-btn {
-      position: absolute; top: 20px; right: 24px;
-      font-size: 1.1rem; cursor: pointer; color: var(--text-muted);
-      width: 38px; height: 38px; border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      background: var(--bg-main);
-      transition: var(--transition);
-      border: 1px solid var(--border-color);
-    }
-
-    .close-modal-btn:hover {
-      background: var(--primary-red);
-      color: white;
-      transform: rotate(90deg);
-    }
-
-    .modal-meta-row {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      font-size: 0.8rem;
-      color: var(--text-muted);
-      margin: 12px 0 18px;
-      padding-bottom: 12px;
-      border-bottom: 1px solid var(--border-color);
-    }
-
-    .modal-img-container {
-      width: 100%;
-      border-radius: 12px;
-      overflow: hidden;
-      margin-bottom: 24px;
-      box-shadow: 0 10px 25px -5px rgba(0,0,0,0.2);
-    }
-
-    .modal-img-container img {
-      width: 100%;
-      height: 380px;
-      object-fit: cover;
-      display: block;
-    }
-
-    .modal-body-content {
-      font-size: 1.05rem;
-      line-height: 1.85;
-      color: var(--text-main);
-    }
-
-    .modal-body-content p {
-      margin-bottom: 1.4rem;
-      text-align: justify;
-    }
-
-    .modal-body-content p:first-of-type::first-letter {
-      font-size: 2.8rem;
-      line-height: 1;
-      float: left;
-      font-weight: 800;
-      margin-right: 8px;
-      color: var(--primary-red);
-      font-family: var(--font-title);
-    }
-
-    /* FOOTER */
-    footer {
-      background: #020617;
-      color: #94a3b8;
-      padding-top: 2.5rem;
-      border-top: 3px solid var(--primary-red);
-    }
-
-    .footer-container {
-      max-width: 1280px; margin: 0 auto; padding: 0 1.5rem;
-      display: grid; grid-template-columns: 2fr 1fr 1fr 1.5fr;
-      gap: 2rem; padding-bottom: 2.5rem;
-    }
-
-    .footer-col h4 { color: white; font-family: var(--font-title); font-size: 1rem; margin-bottom: 1rem; }
-    .footer-links { list-style: none; }
-    .footer-links li { margin-bottom: 0.5rem; }
-    .footer-links a { font-size: 0.85rem; transition: var(--transition); }
-    .footer-links a:hover { color: white; padding-left: 4px; }
-
-    .social-links { display: flex; gap: 10px; margin-top: 1rem; }
-    .social-icon {
-      width: 34px; height: 34px; background: rgba(255,255,255,0.08); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: var(--transition);
-    }
-    .social-icon:hover { background: var(--primary-red); transform: translateY(-2px); }
-
-    .footer-newsletter-form {
-      display: flex;
-      gap: 6px;
-      margin-top: 10px;
-      align-items: center;
-    }
-
-    .footer-newsletter-form input {
-      padding: 10px 14px;
-      border-radius: 6px;
-      border: 1px solid #334155;
-      background: #0f172a;
-      color: white;
-      outline: none;
-      width: 100%;
-      font-size: 0.85rem;
-    }
-
-    .footer-newsletter-form button {
-      background: var(--primary-red);
-      color: white;
-      border: none;
-      padding: 10px 18px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-weight: 700;
-      font-size: 0.85rem;
-      white-space: nowrap;
-      transition: var(--transition);
-    }
-
-    .footer-newsletter-form button:hover { background: #dc2626; }
-
-    .footer-bottom {
-      background: #000000; padding: 1rem; text-align: center; font-size: 0.8rem; border-top: 1px solid rgba(255,255,255,0.05);
-    }
-
-    /* RESPONSIVE */
-    @media (max-width: 1024px) {
-      .container { grid-template-columns: 1fr; }
-      .widgets-wrapper { grid-template-columns: 1fr; }
-      .footer-container { grid-template-columns: 1fr 1fr; }
-    }
-
-    @media (max-width: 768px) {
-      .brand-header { flex-wrap: wrap; gap: 1rem; padding: 0.8rem 1rem; }
-      .search-box { order: 3; max-width: 100%; flex-basis: 100%; }
-      .mobile-menu-btn { display: block; }
-      
-      .nav-container {
-        display: none;
-        flex-direction: column;
-        gap: 0;
-        padding: 0;
-      }
-      .nav-container.open { display: flex; }
-
-      .nav-link {
-        padding: 0.8rem 1.5rem;
-        border-bottom: 1px solid var(--border-color);
-        width: 100%;
-      }
-
-      .hero-featured, .skeleton-hero { grid-template-columns: 1fr; gap: 1rem; }
-      .hero-main-card img { height: 200px; }
-      .modal-box { padding: 1.5rem; }
-      .modal-img-container img { height: 220px; }
-    }
-
-    @media (max-width: 540px) {
-      .top-bar { font-size: 0.72rem; padding: 0.4rem 0.8rem; }
-      .brand-logo { font-size: 1.6rem; }
-      .news-card { flex-direction: column; gap: 0.8rem; padding: 1rem; }
-      .news-img-wrapper { width: 100%; height: 180px; }
-      .hero-sub-card { flex-direction: row; }
-      .hero-sub-card img { width: 85px; height: 80px; }
-      .footer-container { grid-template-columns: 1fr; gap: 1.5rem; }
-      .weather-grid { grid-template-columns: repeat(2, 1fr); }
-      .weather-detail-grid { grid-template-columns: 1fr; }
-    }
-  </style>
-</head>
-<body>
-
-  <!-- HEADER -->
-  <header>
-    <div class="top-bar">
-      <div>
-        <span class="live-badge"><i class="fa-solid fa-circle"></i> LIVE</span>
-        <span style="margin-left: 6px;" id="current-date">Loading date...</span>
-      </div>
-      <div>
-        <i class="fa-solid fa-globe"></i> VC Now Canada
-      </div>
-    </div>
-
-    <div class="brand-header">
-      <div class="brand-logo">
-        VC Now <span>Canada</span>
-      </div>
-
-      <div class="search-box">
-        <i class="fa-solid fa-magnifying-glass"></i>
-        <input type="text" id="search-input" placeholder="Tìm kiếm bài viết..." onkeyup="filterNews()">
-      </div>
-
-      <div class="header-actions">
-        <button class="dark-mode-toggle" onclick="toggleDarkMode()" aria-label="Toggle Dark Mode" title="Chuyển chế độ Sáng/Tối">
-          <i class="fa-solid fa-moon" id="dark-icon"></i>
-        </button>
-
-        <div class="lang-switcher">
-          <button class="lang-btn active" id="btn-vi" onclick="changeLanguage('vi')">VIE</button>
-          <button class="lang-btn" id="btn-en" onclick="changeLanguage('en')">EN</button>
-        </div>
-        
-        <button class="mobile-menu-btn" onclick="toggleMobileMenu()" aria-label="Toggle Navigation">
-          <i class="fa-solid fa-bars" id="menu-icon"></i>
-        </button>
-      </div>
-    </div>
-
-    <nav>
-      <div class="nav-container" id="nav-menu">
-        <span class="nav-link active" id="nav-all" onclick="filterCategory('all', this)">Tin Canada</span>
-        <span class="nav-link" id="nav-world" onclick="filterCategory('world', this)">Thế Giới</span>
-        <span class="nav-link" id="nav-culture" onclick="filterCategory('culture', this)">Văn Hóa</span>
-        <span class="nav-link" id="nav-vietnam" onclick="filterCategory('vietnam', this)">Khám Phá Việt Nam</span>
-        <span class="nav-link" id="nav-business" onclick="filterCategory('business', this)">Kinh Doanh</span>
-        <span class="nav-link" id="nav-tech" onclick="filterCategory('tech', this)">Công Nghệ</span>
-        <span class="nav-link" id="nav-politics" onclick="filterCategory('politics', this)">Chính Trị</span>
-      </div>
-    </nav>
-  </header>
-
-  <!-- MAIN CONTAINER -->
-  <div class="container">
-    
-    <main class="news-section">
-      
-      <div class="hero-featured" id="hero-section">
-        <div class="skeleton-hero" style="grid-column: 1 / -1;">
-          <div class="skeleton" style="height: 260px; border-radius: 12px;"></div>
-          <div style="display:flex; flex-direction:column; gap:1.25rem;">
-            <div class="skeleton" style="height: 120px; border-radius: 12px;"></div>
-            <div class="skeleton" style="height: 120px; border-radius: 12px;"></div>
-          </div>
-        </div>
-      </div>
-
-      <div class="section-header">
-        <h2 class="section-title" id="section-title">Tin Tức Canada Mới Nhất</h2>
-      </div>
-
-      <div id="news-container" class="news-grid">
-        <div class="skeleton-card">
-          <div class="skeleton" style="width: 190px; height: 125px;"></div>
-          <div style="flex:1">
-            <div class="skeleton" style="width: 25%; height: 15px; margin-bottom: 12px;"></div>
-            <div class="skeleton" style="width: 85%; height: 22px; margin-bottom: 12px;"></div>
-            <div class="skeleton" style="width: 100%; height: 40px;"></div>
-          </div>
-        </div>
-      </div>
-
-      <div class="load-more-container" id="load-more-box" style="display: none;">
-        <button class="load-more-btn" onclick="loadMoreNews()">
-          <span id="load-more-text">MỞ RỘNG BÀI VIẾT</span> <i class="fa-solid fa-chevron-down"></i>
-        </button>
-      </div>
-
-    </main>
-
-    <!-- RIGHT SIDEBAR -->
-    <aside class="sidebar">
-      
-      <!-- KHỐI THỜI TIẾT CANADA -->
-      <div class="widget">
-        <h3 class="widget-title">
-          <i class="fa-solid fa-cloud-sun"></i>
-          <span id="weather-title">Thời Tiết Canada</span>
-        </h3>
-        <div class="weather-grid" id="weather-container">
-          <div style="grid-column:1/-1; text-align:center; padding:10px; color:var(--text-muted);">Đang tải dữ liệu...</div>
-        </div>
-      </div>
-
-      <!-- KHỐI YOUTUBE PLAYLIST TỰ ĐỘNG CÓ DỰ PHÒNG & CACHE -->
-      <div class="widget">
-        <h3 class="widget-title">
-          <i class="fa-brands fa-youtube"></i>
-          <span id="youtube-title">VC Now Canada</span>
-        </h3>
-        
-        <div class="yt-playlist-wrapper">
-          <div class="video-container">
-            <iframe id="yt-main-player" src="" title="YouTube Video Player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-          </div>
-
-          <div class="yt-active-bar">
-            <i class="fa-solid fa-caret-right"></i>
-            <span class="yt-red-dot"></span>
-            <div class="yt-active-title" id="yt-active-title">Đang tải danh sách video...</div>
-          </div>
-
-          <div class="yt-scroll-list" id="yt-playlist-container">
-            <div style="padding:15px; text-align:center; color:#9ca3af; font-size:0.8rem;">Đang tải danh sách bài phát...</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="widget">
-        <h3 class="widget-title" style="font-size:1rem;">
-          <i class="fa-solid fa-circle-info"></i>
-          <span id="about-title">Giới Thiệu</span>
-        </h3>
-        <p id="about-text" style="font-size:0.88rem; color:var(--text-muted);">
-          Kênh tin tức & văn hóa VC Now Canada, cập nhật liên tục thông tin Canada, thời sự quốc tế và luồng truyền hình trực tiếp.
-        </p>
-      </div>
-
-    </aside>
-
-  </div>
-
-  <!-- KHỐI DARK WIDGETS BAR -->
-  <div class="dark-widgets-bar">
-    <div class="widgets-wrapper">
-      
-      <div class="widget-box">
-        <h4 id="podcast-title">New Podcast</h4>
-        <div class="podcast-content">
-          <div class="podcast-text">
-            <h5 id="podcast-heading">Billions in EV Investments Face Delays and Uncertainty Across Canada</h5>
-            <span>VC Now Canada - June 5, 2026</span>
-          </div>
-          <img class="podcast-img" src="https://images.unsplash.com/photo-1590602847861-f357a9332bbc?auto=format&fit=crop&w=200&q=80" alt="Podcast">
-        </div>
-      </div>
-
-      <div class="widget-box">
-        <h4 id="newsletter-title">Subscribe to our newsletter</h4>
-        <p style="font-size:0.75rem; color:#94a3b8; margin-bottom: 6px;" id="newsletter-sub">To be updated with all the latest news, offers and special announcements.</p>
-        <form class="newsletter-form" onsubmit="handleNewsletterSubmit(event)">
-          <input type="email" placeholder="Your email address" required>
-          <button type="submit">SUBSCRIBE</button>
-        </form>
-      </div>
-
-      <div class="widget-box">
-        <h4 id="social-title">Stay Connected</h4>
-        <div class="social-counts">
-          <div class="social-card facebook">
-            <i class="fa-brands fa-facebook-f"></i>
-            <span class="count">34,727</span>
-            <span class="label">Fans</span>
-          </div>
-          <div class="social-card instagram">
-            <i class="fa-brands fa-instagram"></i>
-            <span class="count">10,587</span>
-            <span class="label">Followers</span>
-          </div>
-          <div class="social-card youtube">
-            <i class="fa-brands fa-youtube"></i>
-            <span class="count">109,537</span>
-            <span class="label">Subscribers</span>
-          </div>
-        </div>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- POPUP QUICK READ MODAL NÂNG CẤP CAO CẤP -->
-  <div id="article-modal" class="modal-overlay" onclick="handleModalBgClick(event)">
-    <div class="modal-box">
-      <div class="close-modal-btn" onclick="closeModal()"><i class="fa-solid fa-xmark"></i></div>
-      <span id="modal-source" class="source-tag">SOURCE</span>
-      <h1 id="modal-title" style="font-family:var(--font-title); margin: 12px 0 8px; font-size:1.65rem; line-height:1.35;">Title</h1>
-      
-      <div class="modal-meta-row">
-        <span><i class="fa-regular fa-clock" style="margin-right: 4px;"></i> <span id="modal-date">Date</span></span>
-        <span><i class="fa-solid fa-newspaper" style="margin-right: 4px;"></i> VC Now Canada Biên Dịch</span>
-      </div>
-
-      <div class="modal-img-container">
-        <img id="modal-img" src="" alt="Article Image">
-      </div>
-      
-      <div id="modal-desc" class="modal-body-content"></div>
-
-      <hr style="margin:24px 0 16px; border:none; border-top:1px solid var(--border-color);">
-      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
-        <span style="font-size:0.82rem; color:var(--text-muted);" id="modal-footer-note">Nguồn bài viết gốc từ nhà xuất bản:</span>
-        <a id="modal-link" href="#" target="_blank" style="background:var(--primary-red); color:white; padding:10px 18px; border-radius:8px; font-weight:700; font-size:0.85rem; text-decoration:none; display:inline-flex; align-items:center; gap:6px; box-shadow: 0 4px 12px rgba(185, 28, 28, 0.3);">
-          <span>Xem Bài Viết Gốc</span> <i class="fa-solid fa-arrow-up-right-from-square"></i>
-        </a>
-      </div>
-    </div>
-  </div>
-
-  <!-- POPUP MODAL THỜI TIẾT CHI TIẾT -->
-  <div id="weather-modal" class="modal-overlay" onclick="handleWeatherModalBgClick(event)">
-    <div class="modal-box" style="max-width: 550px;">
-      <div class="close-modal-btn" onclick="closeWeatherModal()"><i class="fa-solid fa-xmark"></i></div>
-      <h2 id="w-modal-city" style="font-family:var(--font-title); font-size:1.5rem;">Weather Detail</h2>
-      <span style="font-size:0.82rem; color:var(--text-muted);">Dữ liệu khí tượng cập nhật thời gian thực</span>
-      
-      <div class="weather-modal-card">
-        <div style="display:flex; justify-content:space-between; align-items:center;">
-          <div>
-            <div id="w-modal-temp" style="font-size: 2.5rem; font-weight: 800;">--°C</div>
-            <div id="w-modal-desc" style="font-size:1rem; color:#38bdf8; font-weight:600;">--</div>
-          </div>
-          <i id="w-modal-main-icon" class="fa-solid fa-sun" style="font-size: 3.2rem; color:#f59e0b;"></i>
-        </div>
-
-        <div class="weather-detail-grid">
-          <div class="weather-detail-item">
-            <i class="fa-solid fa-wind"></i>
-            <div>
-              <div style="font-size:0.72rem; opacity:0.8;">Tốc độ gió</div>
-              <div id="w-modal-wind" style="font-weight:700; font-size:0.9rem;">-- km/h</div>
-            </div>
-          </div>
-
-          <div class="weather-detail-item">
-            <i class="fa-solid fa-compass"></i>
-            <div>
-              <div style="font-size:0.72rem; opacity:0.8;">Hướng gió</div>
-              <div id="w-modal-wind-dir" style="font-weight:700; font-size:0.9rem;">--°</div>
-            </div>
-          </div>
-
-          <div class="weather-detail-item">
-            <i class="fa-solid fa-temperature-arrow-up"></i>
-            <div>
-              <div style="font-size:0.72rem; opacity:0.8;">Nhiệt độ Cao/Thấp</div>
-              <div id="w-modal-range" style="font-weight:700; font-size:0.9rem;">--°C / --°C</div>
-            </div>
-          </div>
-
-          <div class="weather-detail-item">
-            <i class="fa-solid fa-clock"></i>
-            <div>
-              <div style="font-size:0.72rem; opacity:0.8;">Giờ cập nhật</div>
-              <div id="w-modal-time" style="font-weight:700; font-size:0.9rem;">--:--</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- FOOTER -->
-  <footer>
-    <div class="footer-container">
-      <div class="footer-col">
-        <div class="brand-logo" style="color:white; margin-bottom:1rem; font-size:1.5rem;">
-          VC Now <span style="color:var(--primary-red)">Canada</span>
-        </div>
-        <p id="footer-desc">Cung cấp thông tin thời sự Canada, văn hóa và nhịp sống minh bạch, nhanh chóng và khách quan từ các đối tác báo chí toàn cầu.</p>
-        <div class="social-links">
-          <a href="#" class="social-icon"><i class="fa-brands fa-facebook-f"></i></a>
-          <a href="#" class="social-icon"><i class="fa-brands fa-twitter"></i></a>
-          <a href="#" class="social-icon"><i class="fa-brands fa-youtube"></i></a>
-          <a href="#" class="social-icon"><i class="fa-solid fa-rss"></i></a>
-        </div>
-      </div>
-
-      <div class="footer-col">
-        <h4 id="f-header-links">Liên Kết Nhanh</h4>
-        <ul class="footer-links">
-          <li><a href="#">Tin Canada</a></li>
-          <li><a href="#">Thời Sự Thế Giới</a></li>
-          <li><a href="#">Văn Hóa & Nghệ Thuật</a></li>
-          <li><a href="#">Khám Phá Việt Nam</a></li>
-        </ul>
-      </div>
-
-      <div class="footer-col">
-        <h4 id="f-header-sources">Nguồn Tin</h4>
-        <ul class="footer-links">
-          <li><a href="https://www.cbc.ca" target="_blank">CBC News Canada</a></li>
-          <li><a href="https://www.bbc.com" target="_blank">BBC World</a></li>
-          <li><a href="https://e.vnexpress.net" target="_blank">VnExpress International</a></li>
-        </ul>
-      </div>
-
-      <div class="footer-col">
-        <h4>Bản Tin</h4>
-        <p style="font-size:0.85rem;">Đăng ký nhận tổng hợp tin tức quan trọng hàng ngày.</p>
-        <form class="footer-newsletter-form" onsubmit="handleNewsletterSubmit(event)">
-          <input type="email" placeholder="Email của bạn..." required>
-          <button type="submit">Đăng Ký</button>
-        </form>
-      </div>
-    </div>
-
-    <div class="footer-bottom">
-      &copy; 2026 VC Now Canada. All rights reserved.
-    </div>
-  </footer>
-
-  <!-- JAVASCRIPT LOGIC -->
-  <script>
-    document.getElementById('current-date').innerText = new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
-
-    // URL GOOGLE APPS SCRIPT LƯU EMAIL KHÁCH HÀNG
-    const GOOGLE_SHEET_URL = "https://script.google.com/macros/s/AKfycbxaghQfZ_HnZzF-DY6lYQGIhwdDRJ_KllO5tx4G4_HnXwuiP8yWLj3eSGJzATWvNEPRDg/exec";
-
-    function handleNewsletterSubmit(e) {
-      e.preventDefault();
-      
-      const form = e.target;
-      const input = form.querySelector('input[type="email"]');
-      const button = form.querySelector('button');
-      const email = input.value.trim();
-
-      if (!email) return;
-
-      const originalBtnText = button.innerText;
-      button.innerText = currentLang === 'vi' ? 'Đang gửi...' : 'Sending...';
-      button.disabled = true;
-
-      $.ajax({
-        url: GOOGLE_SHEET_URL,
-        type: "GET",
-        data: { "email": email },
-        dataType: "jsonp",
-        complete: function () {
-          const successMsg = currentLang === 'vi' 
-            ? 'Cảm ơn bạn đã đăng ký nhận bản tin VC Now Canada!' 
-            : 'Thank you for subscribing to VC Now Canada newsletter!';
-          alert(successMsg);
-          
-          form.reset();
-          button.innerText = originalBtnText;
-          button.disabled = false;
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>VC Now Canada | Canadian Vietnamese Daily News & Lifestyle Hub</title>
+
+    <link rel="icon" type="image/png" href="https://img.icons8.com/officexs/30/canada.png">
+
+    <!-- Google Fonts HỖ TRỢ ĐẦY ĐỦ TIẾNG VIỆT -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300..800;1,300..800&family=Playfair+Display:ital,wght@0,600..900;1,400&display=swap&subset=vietnamese"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <style>
+        /* BỘ BIẾN MÀU LIGHT MODE */
+        :root {
+            --bg-dark: #f1f5f9;
+            --bg-card: #ffffff;
+            --bg-subtle: #e2e8f0;
+            --primary-purple: #7c3aed;
+            --primary-pink: #ec4899;
+            --primary-red: #ef4444;
+            --accent-cyan: #0284c7;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border-color: rgba(0, 0, 0, 0.08);
+            --font-body: 'Plus Jakarta Sans', sans-serif;
+            --font-title: 'Playfair Display', Georgia, serif;
+            --radius-sm: 8px;
+            --radius-md: 14px;
+            --radius-lg: 20px;
+            --shadow-glow: 0 10px 30px -10px rgba(124, 58, 237, 0.2);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
-      });
-    }
 
-    // 🔴 HÀM TẢI YOUTUBE TỐI ƯU SIÊU TỐC (HIỆN NGAY < 0.1s)
-    const PLAYLIST_ID = "PLDdOhIx3i1Q4"; // Thay bằng mã đầy đủ trên link playlist nếu có
+        /* 🌙 DARK MODE */
+        body.dark-mode {
+            --bg-dark: #0b0f19;
+            --bg-card: #131b2e;
+            --bg-subtle: #1c2640;
+            --primary-purple: #8b5cf6;
+            --primary-pink: #ec4899;
+            --primary-red: #ef4444;
+            --accent-cyan: #06b6d4;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: rgba(255, 255, 255, 0.08);
+            --shadow-glow: 0 10px 30px -10px rgba(139, 92, 246, 0.35);
+        }
 
-    let playlistVideos = [
-      { id: "K5KG-YvcV28", title: "TT Carney Trả Đũa Sau Khi Trump Bạc Nhược Miễn Trừ Năng Lượng", pubDate: "Mới nhất", thumbnail: "https://img.youtube.com/vi/K5KG-YvcV28/hqdefault.jpg" },
-      { id: "w74x_9_lTzU", title: "Bản tin thời sự cộng đồng người Việt tại Canada hôm nay", pubDate: "Mới nhất", thumbnail: "https://images.unsplash.com/photo-1517935703635-27190760468e?auto=format&fit=crop&w=400&q=80" },
-      { id: "2g811Eo7K8U", title: "Phân tích kinh tế và chính sách tiền tệ Ngân hàng Trung ương Canada", pubDate: "Mới nhất", thumbnail: "https://images.unsplash.com/photo-1503614472-8c93d56e92ce?auto=format&fit=crop&w=400&q=80" },
-      { id: "V-_O7nl0Ii0", title: "Nhịp sống và thời sự người Việt tại Vancouver & Toronto", pubDate: "Mới nhất", thumbnail: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=400&q=80" }
-    ];
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
 
-    async function fetchYoutubePlaylist() {
-      // 1. Hiển thị ngay tức thì danh sách video mặc định/cache
-      const cached = localStorage.getItem('vc_yt_cache_' + PLAYLIST_ID);
-      if (cached) {
-        try {
-          const parsed = JSON.parse(cached);
-          if (parsed && parsed.length > 0) playlistVideos = parsed;
-        } catch (e) {}
-      }
-      renderPlaylistUI();
-      selectVideo(0);
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: var(--font-body);
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            overflow-x: hidden;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
 
-      // 2. Chạy ngầm đa proxy song song
-      const rssUrl = `https://www.youtube.com/feeds/videos.xml?playlist_id=${PLAYLIST_ID}`;
-      const proxy1 = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}&_t=${Date.now()}`;
-      const proxy2 = `https://api.allorigins.win/get?url=${encodeURIComponent(rssUrl)}`;
+        button,
+        input,
+        select,
+        textarea,
+        .badge-category,
+        .btn-gradient-load,
+        .newsletter-form-inline button,
+        .lang-pill-btn {
+            font-family: var(--font-body) !important;
+        }
 
-      try {
-        const fetchRss2Json = fetch(proxy1).then(r => r.json()).then(data => {
-          if (data.status === 'ok' && data.items && data.items.length > 0) {
-            return data.items.map(item => {
-              let vId = item.link.includes('v=') ? item.link.split('v=')[1].split('&')[0] : item.guid.split(':').pop();
-              return {
-                id: vId,
-                title: item.title,
-                pubDate: new Date(item.pubDate).toLocaleDateString('vi-VN'),
-                thumbnail: `https://img.youtube.com/vi/${vId}/hqdefault.jpg`
-              };
-            });
-          }
-          throw new Error("rss2json empty");
-        });
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
 
-        const fetchAllOrigins = fetch(proxy2).then(r => r.json()).then(data => {
-          if (!data.contents) throw new Error("allorigins empty");
-          const xmlDoc = new DOMParser().parseFromString(data.contents, "text/xml");
-          const entries = xmlDoc.querySelectorAll("entry");
-          if (!entries || entries.length === 0) throw new Error("no entries");
-          
-          let parsed = [];
-          entries.forEach(entry => {
-            const vId = entry.querySelector("videoId") ? entry.querySelector("videoId").textContent : "";
-            const title = entry.querySelector("title") ? entry.querySelector("title").textContent : "";
-            const pubDate = entry.querySelector("published") ? new Date(entry.querySelector("published").textContent).toLocaleDateString('vi-VN') : "";
-            if (vId) {
-              parsed.push({
-                id: vId,
-                title: title,
-                pubDate: pubDate,
-                thumbnail: `https://img.youtube.com/vi/${vId}/hqdefault.jpg`
-              });
+        /* TOP LIVE TICKER */
+        .top-live-bar {
+            background: var(--bg-dark);
+            border-bottom: 1px solid var(--border-color);
+            padding: 0.45rem 1.5rem;
+            font-size: 0.78rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--text-muted);
+        }
+
+        .live-pulse-badge {
+            background: linear-gradient(135deg, var(--primary-pink), var(--primary-purple));
+            color: white;
+            font-weight: 800;
+            padding: 3px 9px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            margin-right: 10px;
+            animation: pulseGlow 2s infinite;
+        }
+
+        @keyframes pulseGlow {
+
+            0%,
+            100% {
+                box-shadow: 0 0 12px rgba(236, 72, 153, 0.6);
             }
-          });
-          return parsed;
-        });
 
-        const fastestResult = await Promise.any([fetchRss2Json, fetchAllOrigins]);
-        if (fastestResult && fastestResult.length > 0) {
-          playlistVideos = fastestResult;
-          localStorage.setItem('vc_yt_cache_' + PLAYLIST_ID, JSON.stringify(playlistVideos));
-          renderPlaylistUI();
-          selectVideo(0);
+            50% {
+                box-shadow: 0 0 4px rgba(236, 72, 153, 0.2);
+            }
         }
-      } catch (err) {
-        console.warn("Dùng danh sách playlist mặc định sẵn có.");
-      }
-    }
 
-    function renderPlaylistUI() {
-      const listContainer = document.getElementById('yt-playlist-container');
-      listContainer.innerHTML = '';
+        /* MAIN HEADER */
+        header {
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            transition: background-color 0.3s ease;
+        }
 
-      playlistVideos.forEach((video, idx) => {
-        const itemEl = document.createElement('div');
-        itemEl.className = `yt-list-item ${idx === 0 ? 'active' : ''}`;
-        itemEl.id = `yt-item-${idx}`;
-        itemEl.onclick = () => selectVideo(idx);
+        .header-inner {
+            max-width: 1360px;
+            margin: 0 auto;
+            padding: 0.9rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1.5rem;
+        }
 
-        itemEl.innerHTML = `
-          <div class="yt-thumb-box">
-            <img src="${video.thumbnail}" alt="thumbnail" onerror="this.src='https://images.unsplash.com/photo-1517935703635-27190760468e?auto=format&fit=crop&w=400&q=80'">
-          </div>
-          <div class="yt-item-info">
-            <div class="yt-item-title">
-              <span class="yt-red-dot"></span>${video.title}
+        .brand-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.75rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            color: var(--text-main);
+        }
+
+        .brand-logo .brand-icon {
+            width: 38px;
+            height: 38px;
+            background: linear-gradient(135deg, var(--primary-purple), var(--primary-pink));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            color: white;
+            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4);
+        }
+
+        .brand-logo span {
+            background: linear-gradient(135deg, #f43f5e, #fb923c);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header-search-wrap {
+            position: relative;
+            flex: 1;
+            max-width: 420px;
+        }
+
+        .header-search-wrap input {
+            width: 100%;
+            background: var(--bg-subtle);
+            border: 1px solid var(--border-color);
+            padding: 0.6rem 1rem 0.6rem 2.4rem;
+            border-radius: 25px;
+            color: var(--text-main);
+            outline: none;
+            font-size: 0.85rem;
+            transition: var(--transition);
+        }
+
+        .header-search-wrap input:focus {
+            border-color: var(--primary-purple);
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
+        }
+
+        .header-search-wrap i {
+            position: absolute;
+            left: 0.95rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .dark-mode-btn {
+            background: var(--bg-subtle);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 0.95rem;
+        }
+
+        .dark-mode-btn:hover {
+            background: linear-gradient(135deg, var(--primary-purple), var(--primary-pink));
+            color: white;
+            border-color: transparent;
+            transform: scale(1.05);
+        }
+
+        .lang-pill {
+            display: flex;
+            background: var(--bg-subtle);
+            padding: 3px;
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+        }
+
+        .lang-pill-btn {
+            background: transparent;
+            color: var(--text-muted);
+            border: none;
+            padding: 5px 12px;
+            border-radius: 16px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 0.75rem;
+            transition: var(--transition);
+        }
+
+        .lang-pill-btn.active {
+            background: linear-gradient(135deg, var(--primary-purple), var(--primary-pink));
+            color: white;
+        }
+
+        .mobile-nav-toggle {
+            display: none;
+            background: transparent;
+            border: none;
+            color: var(--text-main);
+            font-size: 1.3rem;
+            cursor: pointer;
+        }
+
+        /* NAVIGATION */
+        nav {
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .nav-inner {
+            max-width: 1360px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+            display: flex;
+            gap: 2rem;
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+
+        .nav-tab {
+            color: var(--text-muted);
+            padding: 0.8rem 0;
+            font-size: 0.86rem;
+            font-weight: 700;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            text-transform: uppercase;
+        }
+
+        .nav-tab:hover,
+        .nav-tab.active {
+            color: var(--text-main);
+            border-bottom-color: var(--primary-pink);
+        }
+
+        /* TOP STORY CIRCLES */
+        .story-circles-wrap {
+            max-width: 1360px;
+            margin: 1.5rem auto 0.5rem;
+            padding: 0 1.5rem;
+            display: flex;
+            gap: 1.25rem;
+            overflow-x: auto;
+            padding-bottom: 0.5rem;
+        }
+
+        .story-circle-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            flex-shrink: 0;
+            transition: var(--transition);
+        }
+
+        .story-circle-item:hover {
+            transform: translateY(-3px);
+        }
+
+        .story-avatar-ring {
+            width: 66px;
+            height: 66px;
+            border-radius: 50%;
+            padding: 3px;
+            background: linear-gradient(135deg, var(--primary-pink), var(--primary-purple), var(--accent-cyan));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .story-inner-circle {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: var(--bg-card);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-main);
+            font-size: 1.35rem;
+            box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        .story-title-label {
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--text-main);
+            max-width: 75px;
+            text-align: center;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* MAIN CONTAINER */
+        .main-grid-layout {
+            max-width: 1360px;
+            margin: 1.5rem auto 3rem;
+            padding: 0 1.5rem;
+            display: grid;
+            grid-template-columns: 2.8fr 1.2fr;
+            gap: 2rem;
+            flex: 1;
+        }
+
+        /* HERO MAGAZINE 3-TIER GRID */
+        .hero-triple-grid {
+            display: grid;
+            grid-template-columns: 1.7fr 1fr;
+            gap: 1.25rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .hero-main-banner {
+            position: relative;
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            min-height: 420px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 2rem;
+            cursor: pointer;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+        }
+
+        .hero-main-banner img.hero-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s ease;
+            z-index: 1;
+        }
+
+        .hero-main-banner:hover img.hero-bg {
+            transform: scale(1.04);
+        }
+
+        .hero-main-banner .hero-gradient-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(180deg, rgba(11, 15, 25, 0.1) 20%, rgba(11, 15, 25, 0.95) 100%);
+            z-index: 2;
+        }
+
+        .hero-banner-content {
+            position: relative;
+            z-index: 3;
+        }
+
+        .badge-category {
+            background: linear-gradient(135deg, var(--primary-purple), var(--primary-pink));
+            color: white;
+            font-size: 0.72rem;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            display: inline-block;
+            margin-bottom: 8px;
+        }
+
+        .hero-main-heading {
+            font-family: var(--font-title);
+            font-size: 1.65rem;
+            font-weight: 700;
+            line-height: 1.35;
+            color: white;
+            margin-bottom: 8px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.6);
+        }
+
+        .hero-sub-column {
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+
+        .hero-sub-box {
+            background: var(--bg-card);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+            padding: 0.9rem;
+            display: flex;
+            gap: 12px;
+            cursor: pointer;
+            transition: var(--transition);
+            flex: 1;
+        }
+
+        .hero-sub-box:hover {
+            transform: translateY(-3px);
+            border-color: var(--primary-purple);
+            box-shadow: var(--shadow-glow);
+        }
+
+        .hero-sub-box img {
+            width: 105px;
+            height: 90px;
+            border-radius: var(--radius-sm);
+            object-fit: cover;
+            flex-shrink: 0;
+        }
+
+        .hero-sub-body {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            flex: 1;
+        }
+
+        .hero-sub-body h4 {
+            font-size: 0.88rem;
+            font-weight: 700;
+            line-height: 1.3;
+            color: var(--text-main);
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        /* SOCIAL GRADIENT STATS ROW */
+        .social-counters-bar {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 2.5rem;
+        }
+
+        .social-stat-pill {
+            padding: 0.85rem 1rem;
+            border-radius: var(--radius-md);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            white-space: nowrap;
+        }
+
+        .social-stat-pill:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.1);
+        }
+
+        .soc-brand-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 800;
+            font-size: 0.88rem;
+        }
+
+        .soc-brand-group i {
+            font-size: 1.15rem;
+            flex-shrink: 0;
+        }
+
+        .soc-count-tag {
+            font-size: 0.75rem;
+            font-weight: 700;
+            opacity: 0.95;
+            text-align: right;
+            line-height: 1.2;
+        }
+
+        .soc-fb {
+            background: linear-gradient(135deg, #1877f2, #3b82f6);
+        }
+
+        .soc-yt {
+            background: linear-gradient(135deg, #dc2626, #ef4444);
+        }
+
+        .soc-ig {
+            background: linear-gradient(135deg, #ec4899, #8b5cf6);
+        }
+
+        .soc-tt {
+            background: linear-gradient(135deg, #111827, #374151);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* PANORAMA VIDEO FEATURE BANNER */
+        .panorama-video-banner {
+            position: relative;
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            min-height: 320px;
+            margin-bottom: 2.5rem;
+            background: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .panorama-video-banner img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.5;
+        }
+
+        .video-play-pulse-btn {
+            width: 72px;
+            height: 72px;
+            background: linear-gradient(135deg, var(--primary-pink), var(--primary-purple));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.8rem;
+            z-index: 5;
+            cursor: pointer;
+            box-shadow: 0 0 30px rgba(236, 72, 153, 0.8);
+            transition: var(--transition);
+            margin-bottom: 12px;
+        }
+
+        .video-play-pulse-btn:hover {
+            transform: scale(1.15);
+        }
+
+        .panorama-video-caption {
+            position: absolute;
+            bottom: 20px;
+            left: 24px;
+            right: 24px;
+            z-index: 5;
+            color: white;
+            text-align: center;
+        }
+
+        /* SECTION TITLE HEADER */
+        .section-head-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 0.6rem;
+            position: relative;
+        }
+
+        .section-head-bar::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 80px;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary-pink), var(--primary-purple));
+        }
+
+        .section-head-title {
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: var(--text-main);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-head-title i {
+            color: var(--primary-pink);
+        }
+
+        /* NEWS GRID 2 COLUMNS */
+        .news-grid-2col {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.25rem;
+        }
+
+        .magazine-card {
+            background: var(--bg-card);
+            border-radius: var(--radius-md);
+            padding: 1rem;
+            border: 1px solid var(--border-color);
+            display: flex;
+            gap: 1.1rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .magazine-card:hover {
+            transform: translateY(-3px);
+            border-color: var(--primary-purple);
+            box-shadow: var(--shadow-glow);
+        }
+
+        .magazine-card-img-wrap {
+            width: 140px;
+            height: 110px;
+            border-radius: var(--radius-sm);
+            overflow: hidden;
+            flex-shrink: 0;
+            background: var(--bg-subtle);
+        }
+
+        .magazine-card-img-wrap img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .magazine-card:hover .magazine-card-img-wrap img {
+            transform: scale(1.08);
+        }
+
+        .magazine-card-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .magazine-source-tag {
+            font-size: 0.68rem;
+            font-weight: 800;
+            color: var(--primary-pink);
+            text-transform: uppercase;
+        }
+
+        .magazine-card-title {
+            font-size: 0.95rem;
+            font-weight: 700;
+            line-height: 1.35;
+            color: var(--text-main);
+            margin: 4px 0;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .magazine-meta {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* LOAD MORE BUTTON */
+        .load-more-center {
+            text-align: center;
+            margin: 2.5rem 0 1rem;
+        }
+
+        .btn-gradient-load {
+            background: linear-gradient(135deg, var(--primary-purple), var(--primary-pink));
+            color: white;
+            border: none;
+            padding: 0.85rem 2.5rem;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 0.88rem;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: var(--shadow-glow);
+        }
+
+        .btn-gradient-load:hover {
+            transform: translateY(-2px);
+            filter: brightness(1.15);
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 1.8rem;
+        }
+
+        .widget-panel {
+            background: var(--bg-card);
+            border-radius: var(--radius-md);
+            padding: 1.25rem;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .widget-head {
+            font-size: 1.05rem;
+            font-weight: 800;
+            margin-bottom: 1.2rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-main);
+        }
+
+        .widget-head i {
+            color: var(--primary-pink);
+        }
+
+        /* YOUTUBE PLAYLIST WIDGET */
+        .yt-playlist-box {
+            background: #0a0e1a;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+
+        .yt-player-wrap {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+            background: #000;
+        }
+
+        .yt-player-wrap iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+
+        .yt-active-bar {
+            background: linear-gradient(135deg, #311042, #1e1b4b);
+            padding: 10px 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .yt-active-bar i {
+            color: var(--primary-pink);
+        }
+
+        .yt-active-title {
+            font-size: 0.82rem;
+            font-weight: 700;
+            color: white;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .yt-scroll-list {
+            max-height: 280px;
+            overflow-y: auto;
+            background: #111726;
+        }
+
+        .yt-item-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .yt-item-row:hover {
+            background: #1a2238;
+        }
+
+        .yt-item-row.active {
+            background: #1e2742;
+            border-left: 4px solid var(--primary-pink);
+        }
+
+        .yt-item-row img {
+            width: 85px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 4px;
+            flex-shrink: 0;
+        }
+
+        .yt-item-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+
+        .yt-item-title {
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: #e2e8f0;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        /* WEATHER GRID CANADA */
+        .weather-grid-mini {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+
+        .weather-card-pill {
+            background: var(--bg-subtle);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            padding: 0.8rem;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .weather-card-pill:hover {
+            border-color: var(--primary-purple);
+            background: var(--bg-card);
+            transform: translateY(-2px);
+        }
+
+        .weather-city-name {
+            font-size: 0.82rem;
+            font-weight: 800;
+            color: var(--text-main);
+        }
+
+        .weather-icon {
+            font-size: 1.4rem;
+            color: #38bdf8;
+            margin: 4px 0;
+        }
+
+        .weather-temp {
+            font-size: 1.15rem;
+            font-weight: 900;
+            color: var(--primary-pink);
+        }
+
+        .weather-click-hint {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        /* NEWSLETTER WIDGET */
+        .newsletter-box {
+            background: linear-gradient(135deg, #1e1b4b, #311042);
+            border-radius: var(--radius-md);
+            padding: 1.4rem;
+            border: 1px solid rgba(236, 72, 153, 0.2);
+        }
+
+        .newsletter-box h4 {
+            font-size: 1.05rem;
+            font-weight: 800;
+            color: white;
+            margin-bottom: 6px;
+        }
+
+        .newsletter-box p {
+            font-size: 0.78rem;
+            color: #cbd5e1;
+            margin-bottom: 12px;
+        }
+
+        .newsletter-form-inline input {
+            width: 100%;
+            padding: 10px 14px;
+            border-radius: 8px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 0.85rem;
+            outline: none;
+            margin-bottom: 8px;
+        }
+
+        .newsletter-form-inline button {
+            width: 100%;
+            background: linear-gradient(135deg, var(--primary-pink), var(--primary-purple));
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: var(--transition);
+            letter-spacing: 0.3px;
+        }
+
+        .newsletter-form-inline button:hover {
+            filter: brightness(1.15);
+        }
+
+        /* POPUP MODAL QUICK READ & WEATHER */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(2, 6, 23, 0.88);
+            backdrop-filter: blur(8px);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+            padding: 1.5rem;
+        }
+
+        .modal-box {
+            background: var(--bg-card);
+            max-width: 820px;
+            width: 100%;
+            max-height: 88vh;
+            overflow-y: auto;
+            border-radius: 20px;
+            padding: 2.5rem;
+            position: relative;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+            border: 1px solid var(--border-color);
+        }
+
+        .modal-box::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .modal-box::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .modal-box::-webkit-scrollbar-thumb {
+            background: #475569;
+            border-radius: 4px;
+        }
+
+        .close-modal-btn {
+            position: absolute;
+            top: 20px;
+            right: 24px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            color: var(--text-muted);
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg-subtle);
+            transition: var(--transition);
+            border: 1px solid var(--border-color);
+        }
+
+        .close-modal-btn:hover {
+            background: var(--primary-pink);
+            color: white;
+            transform: rotate(90deg);
+        }
+
+        .modal-meta-row {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin: 12px 0 18px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .modal-img-container {
+            width: 100%;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 24px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-img-container img {
+            width: 100%;
+            height: 380px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .modal-body-content {
+            font-size: 1.05rem;
+            line-height: 1.85;
+            color: var(--text-main);
+        }
+
+        .modal-body-content p {
+            margin-bottom: 1.4rem;
+            text-align: justify;
+        }
+
+        .modal-body-content p:first-of-type::first-letter {
+            font-size: 2.8rem;
+            line-height: 1;
+            float: left;
+            font-weight: 800;
+            margin-right: 8px;
+            color: var(--primary-pink);
+            font-family: var(--font-title);
+        }
+
+        /* WEATHER MODAL CARD */
+        .weather-modal-card {
+            background: linear-gradient(135deg, #1e1b4b 0%, #311042 100%);
+            color: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            border: 1px solid rgba(236, 72, 153, 0.3);
+        }
+
+        .weather-detail-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .weather-detail-item {
+            background: rgba(255, 255, 255, 0.08);
+            padding: 0.8rem;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .weather-detail-item i {
+            font-size: 1.3rem;
+            color: #38bdf8;
+        }
+
+        /* FOOTER */
+        footer {
+            background: #060913;
+            color: #94a3b8;
+            padding-top: 3rem;
+            border-top: 2px solid var(--primary-purple);
+        }
+
+        .footer-inner {
+            max-width: 1360px;
+            margin: 0 auto;
+            padding: 0 1.5rem 3rem;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1.4fr;
+            gap: 2.5rem;
+        }
+
+        /* Ép chữ logo footer luôn sáng trắng */
+        footer .brand-logo {
+            color: #ffffff !important;
+        }
+
+        .footer-head {
+            color: white;
+            font-size: 1rem;
+            font-weight: 800;
+            margin-bottom: 1.2rem;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-links a {
+            font-size: 0.85rem;
+            transition: var(--transition);
+        }
+
+        .footer-links a:hover {
+            color: white;
+            padding-left: 4px;
+        }
+
+        .footer-bottom {
+            background: #020408;
+            text-align: center;
+            padding: 1.2rem;
+            font-size: 0.78rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 1024px) {
+            .main-grid-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .social-counters-bar {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .footer-inner {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero-triple-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .news-grid-2col {
+                grid-template-columns: 1fr;
+            }
+
+            .header-search-wrap {
+                display: none;
+            }
+
+            .mobile-nav-toggle {
+                display: block;
+            }
+
+            .nav-inner {
+                display: none;
+                flex-direction: column;
+                gap: 0;
+                padding: 0;
+            }
+
+            .nav-inner.open {
+                display: flex;
+            }
+
+            .nav-tab {
+                width: 100%;
+                padding: 0.8rem 1.5rem;
+                border-bottom: 1px solid var(--border-color);
+            }
+
+            .modal-box {
+                padding: 1.5rem;
+            }
+
+            .modal-img-container img {
+                height: 220px;
+            }
+
+            .weather-detail-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body class="dark-mode">
+
+    <!-- TOP LIVE BAR -->
+    <div class="top-live-bar">
+        <div>
+            <span class="live-pulse-badge"><i class="fa-solid fa-bolt"></i> HOT TRENDING</span>
+            <span id="current-date">Saturday, August 15, 2026</span>
+        </div>
+        <div>
+            <i class="fa-brands fa-canadian-maple-leaf" style="color:var(--primary-red);"></i> VC Now Canada | Tiếng Nói
+            Người Việt Tại Canada
+        </div>
+    </div>
+
+    <!-- HEADER -->
+    <header>
+        <div class="header-inner">
+            <div class="brand-logo">
+                <div class="brand-icon"><i class="fa-brands fa-canadian-maple-leaf"></i></div>
+                VC NOW <span>CANADA</span>
             </div>
-            <div class="yt-item-meta">${video.pubDate}</div>
-          </div>
-        `;
 
-        listContainer.appendChild(itemEl);
-      });
-    }
+            <div class="header-search-wrap">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="search-input" placeholder="Tìm kiếm tin tức, sự kiện..." onkeyup="filterNews()">
+            </div>
 
-    function selectVideo(index) {
-      if (!playlistVideos[index]) return;
+            <div class="header-actions">
+                <button class="dark-mode-btn" onclick="toggleDarkMode()" id="dark-mode-toggle-btn"
+                    title="Chuyển chế độ Sáng/Tối">
+                    <i class="fa-solid fa-sun" id="dark-icon"></i>
+                </button>
 
-      const video = playlistVideos[index];
+                <div class="lang-pill">
+                    <button class="lang-pill-btn active" id="btn-vi" onclick="changeLanguage('vi')">VIE</button>
+                    <button class="lang-pill-btn" id="btn-en" onclick="changeLanguage('en')">EN</button>
+                </div>
 
-      document.getElementById('yt-main-player').src = `https://www.youtube-nocookie.com/embed/${video.id}?autoplay=1`;
-      document.getElementById('yt-active-title').innerText = video.title;
+                <button class="mobile-nav-toggle" onclick="toggleMobileMenu()">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+            </div>
+        </div>
 
-      document.querySelectorAll('.yt-list-item').forEach(el => el.classList.remove('active'));
-      const activeEl = document.getElementById(`yt-item-${index}`);
-      if (activeEl) {
-        activeEl.classList.add('active');
-      }
-    }
+        <!-- NAVIGATION TABS -->
+        <nav>
+            <div class="nav-inner" id="nav-menu">
+                <span class="nav-tab active" id="tab-all" onclick="filterCategory('all', this)"><i
+                        class="fa-solid fa-newspaper"></i> Tin Canada</span>
+                <span class="nav-tab" id="tab-world" onclick="filterCategory('world', this)"><i
+                        class="fa-solid fa-earth-americas"></i> Thế Giới</span>
+                <span class="nav-tab" id="tab-culture" onclick="filterCategory('culture', this)"><i
+                        class="fa-solid fa-masks-theater"></i> Văn Hóa</span>
+                <span class="nav-tab" id="tab-vietnam" onclick="filterCategory('vietnam', this)"><i
+                        class="fa-solid fa-compass"></i> Khám Phá Việt Nam</span>
+                <span class="nav-tab" id="tab-business" onclick="filterCategory('business', this)"><i
+                        class="fa-solid fa-chart-line"></i> Kinh Doanh</span>
+                <span class="nav-tab" id="tab-tech" onclick="filterCategory('tech', this)"><i
+                        class="fa-solid fa-microchip"></i> Công Nghệ</span>
+                <span class="nav-tab" id="tab-politics" onclick="filterCategory('politics', this)"><i
+                        class="fa-solid fa-landmark"></i> Chính Trị</span>
+            </div>
+        </nav>
+    </header>
 
-    // DARK MODE MANAGEMENT
-    function toggleDarkMode() {
-      const isDark = document.body.classList.toggle('dark-mode');
-      const icon = document.getElementById('dark-icon');
-      
-      if (isDark) {
-        icon.className = 'fa-solid fa-sun';
-        localStorage.setItem('theme', 'dark');
-      } else {
-        icon.className = 'fa-solid fa-moon';
-        localStorage.setItem('theme', 'light');
-      }
-    }
+    <!-- TOP STORY CIRCLES (ICON ĐỒNG BỘ ĐẸP MẮT) -->
+    <div class="story-circles-wrap">
+        <div class="story-circle-item" onclick="filterCategory('all')">
+            <div class="story-avatar-ring">
+                <div class="story-inner-circle"><i class="fa-brands fa-canadian-maple-leaf"
+                        style="color:var(--primary-red);"></i></div>
+            </div>
+            <span class="story-title-label">Canada 24h</span>
+        </div>
+        <div class="story-circle-item" onclick="filterCategory('world')">
+            <div class="story-avatar-ring">
+                <div class="story-inner-circle"><i class="fa-solid fa-earth-americas" style="color:#38bdf8;"></i></div>
+            </div>
+            <span class="story-title-label">Thế Giới</span>
+        </div>
+        <div class="story-circle-item" onclick="filterCategory('vietnam')">
+            <div class="story-avatar-ring">
+                <div class="story-inner-circle"><i class="fa-solid fa-star" style="color:#f59e0b;"></i></div>
+            </div>
+            <span class="story-title-label">Việt Nam</span>
+        </div>
+        <div class="story-circle-item" onclick="filterCategory('business')">
+            <div class="story-avatar-ring">
+                <div class="story-inner-circle"><i class="fa-solid fa-chart-line" style="color:#10b981;"></i></div>
+            </div>
+            <span class="story-title-label">Tài Chính</span>
+        </div>
+        <div class="story-circle-item" onclick="filterCategory('tech')">
+            <div class="story-avatar-ring">
+                <div class="story-inner-circle"><i class="fa-solid fa-microchip" style="color:#c084fc;"></i></div>
+            </div>
+            <span class="story-title-label">AI Tech</span>
+        </div>
+        <div class="story-circle-item" onclick="filterCategory('culture')">
+            <div class="story-avatar-ring">
+                <div class="story-inner-circle"><i class="fa-solid fa-masks-theater" style="color:#ec4899;"></i></div>
+            </div>
+            <span class="story-title-label">Đời Sống</span>
+        </div>
+    </div>
 
-    if (localStorage.getItem('theme') === 'dark') {
-      document.body.classList.add('dark-mode');
-      document.getElementById('dark-icon').className = 'fa-solid fa-sun';
-    }
+    <!-- MAIN WRAPPER -->
+    <div class="main-grid-layout">
 
-    function toggleMobileMenu() {
-      const nav = document.getElementById('nav-menu');
-      const icon = document.getElementById('menu-icon');
-      nav.classList.toggle('open');
-      icon.className = nav.classList.contains('open') ? 'fa-solid fa-xmark' : 'fa-solid fa-bars';
-    }
+        <main>
+            <!-- HERO 3-TIER GRID -->
+            <div class="hero-triple-grid" id="hero-triple-container"></div>
 
-    const RSS_FEEDS = [
-      { name: 'CBC Canada', url: 'https://www.cbc.ca/cmlink/rss-topstories', category: 'canada' },
-      { name: 'CBC Politics', url: 'https://www.cbc.ca/cmlink/rss-politics', category: 'canada' },
-      { name: 'CBC Business', url: 'https://www.cbc.ca/cmlink/rss-business', category: 'canada' },
-      { name: 'BBC World', url: 'http://feeds.bbci.co.uk/news/world/rss.xml', category: 'world' },
-      { name: 'BBC Culture', url: 'http://feeds.bbci.co.uk/news/entertainment_and_arts/rss.xml', category: 'culture' },
-      { name: 'VnExpress Travel', url: 'https://e.vnexpress.net/rss/travel.rss', category: 'vietnam' },
-      { name: 'BBC Business', url: 'http://feeds.bbci.co.uk/news/business/rss.xml', category: 'business' },
-      { name: 'BBC Tech', url: 'http://feeds.bbci.co.uk/news/technology/rss.xml', category: 'tech' },
-      { name: 'CNN Politics', url: 'http://rss.cnn.com/rss/edition.rss', category: 'politics' }
-    ];
+            <!-- SOCIAL GRADIENT COUNTERS -->
+            <div class="social-counters-bar">
+                <div class="social-stat-pill soc-fb">
+                    <div class="soc-brand-group">
+                        <i class="fa-brands fa-facebook-f"></i>
+                        <span>Facebook</span>
+                    </div>
+                    <span class="soc-count-tag">48.5K Fans</span>
+                </div>
 
-    let articlesData = [];
-    let currentHeroArticles = [];
-    let currentFilteredArticles = [];
-    let visibleCount = 5;
-    let currentLang = 'vi';
-    let currentCategory = 'all';
+                <div class="social-stat-pill soc-yt">
+                    <div class="soc-brand-group">
+                        <i class="fa-brands fa-youtube"></i>
+                        <span>YouTube</span>
+                    </div>
+                    <span class="soc-count-tag">125K Subs</span>
+                </div>
 
-    const CANADA_CITIES = [
-      { name: 'Toronto', lat: 43.70, lon: -79.42 },
-      { name: 'Vancouver', lat: 49.25, lon: -123.12 },
-      { name: 'Montreal', lat: 45.50, lon: -73.56 },
-      { name: 'Calgary', lat: 51.05, lon: -114.07 }
-    ];
+                <div class="social-stat-pill soc-ig">
+                    <div class="soc-brand-group">
+                        <i class="fa-brands fa-instagram"></i>
+                        <span>Instagram</span>
+                    </div>
+                    <span class="soc-count-tag">28.2K Follow</span>
+                </div>
 
-    let weatherCache = {};
+                <div class="social-stat-pill soc-tt">
+                    <div class="soc-brand-group">
+                        <i class="fa-brands fa-tiktok"></i>
+                        <span>TikTok</span>
+                    </div>
+                    <span class="soc-count-tag">85.1K Likes</span>
+                </div>
+            </div>
 
-    function getWeatherCondition(code) {
-      if (code === 0) return { textVi: 'Trời quang đãng', textEn: 'Clear Sky', icon: 'fa-sun', color: '#f59e0b' };
-      if (code >= 1 && code <= 3) return { textVi: 'Có mây rải rác', textEn: 'Partly Cloudy', icon: 'fa-cloud-sun', color: '#38bdf8' };
-      if (code >= 45) return { textVi: 'Có sương mù', textEn: 'Foggy', icon: 'fa-smog', color: '#94a3b8' };
-      if (code >= 51 && code <= 67) return { textVi: 'Mưa rào nhẹ', textEn: 'Rain Showers', icon: 'fa-cloud-rain', color: '#0284c7' };
-      if (code >= 71) return { textVi: 'Tuyết rơi', textEn: 'Snowing', icon: 'fa-snowflake', color: '#e0f2fe' };
-      return { textVi: 'Nhiều mây', textEn: 'Cloudy', icon: 'fa-cloud', color: '#64748b' };
-    }
+            <!-- PANORAMA VIDEO FEATURE BANNER -->
+            <div class="panorama-video-banner" id="panorama-box" onclick="playMainPanoramaVideo()">
+                <img id="panorama-img"
+                    src="https://images.unsplash.com/photo-1517935703635-27190760468e?auto=format&fit=crop&w=1200&q=80"
+                    alt="Video">
+                <div class="video-play-pulse-btn"><i class="fa-solid fa-play"></i></div>
+                <div class="panorama-video-caption">
+                    <span class="badge-category" style="background:var(--primary-pink);">TRUYỀN HÌNH ĐẶC BIỆT</span>
+                    <h3 id="panorama-title" style="font-size:1.35rem; font-weight:800; margin-top:4px;">Thời Sự VC Now
+                        Canada | Điểm Tin Trực Tuyến Hàng Ngày</h3>
+                </div>
+            </div>
 
-    async function fetchCanadaWeather() {
-      const container = document.getElementById('weather-container');
-      if (!container) return;
+            <!-- SECTION TITLE -->
+            <div class="section-head-bar">
+                <h2 class="section-head-title" id="section-head-text">
+                    <i class="fa-solid fa-fire"></i> TIN TỨC CANADA & THẾ GIỚI MỚI NHẤT
+                </h2>
+            </div>
 
-      try {
-        let htmlContent = '';
+            <!-- NEWS GRID 2 COLUMNS -->
+            <div class="news-grid-2col" id="news-container"></div>
 
-        for (let city of CANADA_CITIES) {
-          const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${city.lat}&longitude=${city.lon}&current_weather=true&daily=temperature_2m_max,temperature_2m_min&timezone=auto`);
-          const data = await res.json();
-          
-          weatherCache[city.name] = data;
+            <div class="load-more-center" id="load-more-box">
+                <button class="btn-gradient-load" onclick="loadMoreNews()">
+                    <span id="load-more-lbl">XEM THÊM BÀI VIẾT</span> <i class="fa-solid fa-angles-down"></i>
+                </button>
+            </div>
 
-          const temp = Math.round(data.current_weather.temperature);
-          const code = data.current_weather.weathercode;
-          const cond = getWeatherCondition(code);
+        </main>
 
-          htmlContent += `
-            <div class="weather-city-card" onclick="openWeatherModal('${city.name}')">
+        <!-- RIGHT SIDEBAR -->
+        <aside class="sidebar">
+
+            <!-- KHỐI YOUTUBE PLAYLIST -->
+            <div class="widget-panel" style="padding: 0.9rem;">
+                <h3 class="widget-head">
+                    <i class="fa-brands fa-youtube"></i>
+                    <span id="yt-widget-heading">VC Now Media Stream</span>
+                </h3>
+
+                <div class="yt-playlist-box">
+                    <div class="yt-player-wrap">
+                        <iframe id="yt-main-player" src="" title="YouTube Player"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowfullscreen></iframe>
+                    </div>
+
+                    <div class="yt-active-bar">
+                        <i class="fa-solid fa-circle-play"></i>
+                        <div class="yt-active-title" id="yt-active-title">Đang phát danh sách video...</div>
+                    </div>
+
+                    <div class="yt-scroll-list" id="yt-playlist-container"></div>
+                </div>
+            </div>
+
+            <!-- THỜI TIẾT CANADA (CLICK XEM CHI TIẾT) -->
+            <div class="widget-panel">
+                <h3 class="widget-head">
+                    <i class="fa-solid fa-cloud-sun-rain"></i>
+                    <span id="weather-widget-heading">Thời Tiết Các Tỉnh Bang</span>
+                </h3>
+                <div class="weather-grid-mini" id="weather-container">
+                    <div style="grid-column: 1/-1; text-align: center; color: var(--text-muted); font-size: 0.8rem;">
+                        Đang tải dữ liệu...</div>
+                </div>
+            </div>
+
+            <!-- NEWSLETTER BOX -->
+            <div class="newsletter-box">
+                <h4 id="news-box-title">Đăng Ký Bản Tin Sáng</h4>
+                <p id="news-box-desc">Cập nhật tin tức quan trọng, cơ hội việc làm và định cư Canada mỗi sáng.</p>
+                <form class="newsletter-form-inline" onsubmit="handleNewsletterSubmit(event)">
+                    <input type="email" placeholder="Email của bạn..." required>
+                    <button type="submit" id="news-btn-lbl">NHẬN BẢN TIN NGAY</button>
+                </form>
+            </div>
+
+        </aside>
+
+    </div>
+
+    <!-- POPUP QUICK READ MODAL -->
+    <div id="article-modal" class="modal-overlay" onclick="handleModalBgClick(event)">
+        <div class="modal-box">
+            <div class="close-modal-btn" onclick="closeModal()"><i class="fa-solid fa-xmark"></i></div>
+            <span id="modal-source" class="badge-category" style="background:var(--primary-pink);">SOURCE</span>
+            <h1 id="modal-title"
+                style="font-family:var(--font-title); margin: 12px 0 8px; font-size:1.65rem; line-height:1.35; color:var(--text-main);">
+                Tiêu đề</h1>
+
+            <div class="modal-meta-row">
+                <span><i class="fa-regular fa-clock" style="margin-right: 4px;"></i> <span
+                        id="modal-date">Date</span></span>
+                <span><i class="fa-solid fa-user-pen" style="margin-right: 4px;"></i> VC Now Canada Editorial</span>
+            </div>
+
+            <div class="modal-img-container">
+                <img id="modal-img" src="" alt="Article Image">
+            </div>
+
+            <div id="modal-desc" class="modal-body-content"></div>
+
+            <hr style="margin:24px 0 16px; border:none; border-top:1px solid var(--border-color);">
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+                <span style="font-size:0.82rem; color:var(--text-muted);" id="modal-footer-note">Nguồn bài viết gốc từ
+                    nhà xuất bản:</span>
+                <a id="modal-link" href="#" target="_blank"
+                    style="background:linear-gradient(135deg, var(--primary-pink), var(--primary-purple)); color:white; padding:10px 18px; border-radius:8px; font-weight:700; font-size:0.85rem; text-decoration:none; display:inline-flex; align-items:center; gap:6px; box-shadow: 0 4px 15px rgba(236,72,153,0.3);">
+                    <span>Xem Toàn Văn Báo Gốc</span> <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- POPUP MODAL THỜI TIẾT CHI TIẾT -->
+    <div id="weather-modal" class="modal-overlay" onclick="handleWeatherModalBgClick(event)">
+        <div class="modal-box" style="max-width: 550px;">
+            <div class="close-modal-btn" onclick="closeWeatherModal()"><i class="fa-solid fa-xmark"></i></div>
+            <h2 id="w-modal-city" style="font-family:var(--font-title); font-size:1.5rem; color:var(--text-main);">
+                Weather Detail</h2>
+            <span style="font-size:0.82rem; color:var(--text-muted);">Dữ liệu khí tượng cập nhật thời gian thực</span>
+
+            <div class="weather-modal-card">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <div>
+                        <div id="w-modal-temp" style="font-size: 2.5rem; font-weight: 800;">--°C</div>
+                        <div id="w-modal-desc" style="font-size:1rem; color:#38bdf8; font-weight:600;">--</div>
+                    </div>
+                    <i id="w-modal-main-icon" class="fa-solid fa-sun" style="font-size: 3.2rem; color:#f59e0b;"></i>
+                </div>
+
+                <div class="weather-detail-grid">
+                    <div class="weather-detail-item">
+                        <i class="fa-solid fa-wind"></i>
+                        <div>
+                            <div style="font-size:0.72rem; opacity:0.8;">Tốc độ gió</div>
+                            <div id="w-modal-wind" style="font-weight:700; font-size:0.9rem;">-- km/h</div>
+                        </div>
+                    </div>
+
+                    <div class="weather-detail-item">
+                        <i class="fa-solid fa-compass"></i>
+                        <div>
+                            <div style="font-size:0.72rem; opacity:0.8;">Hướng gió</div>
+                            <div id="w-modal-wind-dir" style="font-weight:700; font-size:0.9rem;">--°</div>
+                        </div>
+                    </div>
+
+                    <div class="weather-detail-item">
+                        <i class="fa-solid fa-temperature-arrow-up"></i>
+                        <div>
+                            <div style="font-size:0.72rem; opacity:0.8;">Nhiệt độ Cao/Thấp</div>
+                            <div id="w-modal-range" style="font-weight:700; font-size:0.9rem;">--°C / --°C</div>
+                        </div>
+                    </div>
+
+                    <div class="weather-detail-item">
+                        <i class="fa-solid fa-clock"></i>
+                        <div>
+                            <div style="font-size:0.72rem; opacity:0.8;">Giờ cập nhật</div>
+                            <div id="w-modal-time" style="font-weight:700; font-size:0.9rem;">--:--</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="footer-inner">
+            <div>
+                <div class="brand-logo" style="margin-bottom:1rem; font-size:1.5rem;">
+                    <div class="brand-icon"><i class="fa-brands fa-canadian-maple-leaf"></i></div>
+                    VC NOW <span>CANADA</span>
+                </div>
+                <p id="footer-desc" style="font-size:0.82rem; line-height:1.7;">
+                    Kênh tin tức, văn hóa và đời sống cộng đồng người Việt tại Canada. Cập nhật dòng chảy thời sự
+                    Toronto, Vancouver, Montreal và toàn cầu 24/7.
+                </p>
+            </div>
+
+            <div>
+                <h4 class="footer-head" id="f-head-1">Chuyên Mục</h4>
+                <ul class="footer-links">
+                    <li><a href="javascript:void(0)" onclick="filterCategory('all')">Tin Tức Canada</a></li>
+                    <li><a href="javascript:void(0)" onclick="filterCategory('world')">Thời Sự Thế Giới</a></li>
+                    <li><a href="javascript:void(0)" onclick="filterCategory('business')">Kinh Doanh & Bất Động Sản</a>
+                    </li>
+                    <li><a href="javascript:void(0)" onclick="filterCategory('vietnam')">Khám Phá Việt Nam</a></li>
+                </ul>
+            </div>
+
+            <div>
+                <h4 class="footer-head" id="f-head-2">Nguồn Tin</h4>
+                <ul class="footer-links">
+                    <li><a href="https://www.cbc.ca" target="_blank">CBC News Canada</a></li>
+                    <li><a href="https://www.bbc.com" target="_blank">BBC World</a></li>
+                    <li><a href="https://e.vnexpress.net" target="_blank">VnExpress International</a></li>
+                </ul>
+            </div>
+
+            <div>
+                <h4 class="footer-head">VC Now Media</h4>
+                <p style="font-size:0.82rem; margin-bottom:10px;">Kết nối thông tin và lan tỏa giá trị cộng đồng người
+                    Việt tại xứ sở lá phong.</p>
+                <div style="display:flex; gap:8px;">
+                    <a href="#"
+                        style="width:34px; height:34px; background:var(--bg-subtle); border-radius:50%; display:flex; align-items:center; justify-content:center; color:var(--text-main);"><i
+                            class="fa-brands fa-facebook-f"></i></a>
+                    <a href="#"
+                        style="width:34px; height:34px; background:var(--bg-subtle); border-radius:50%; display:flex; align-items:center; justify-content:center; color:var(--text-main);"><i
+                            class="fa-brands fa-youtube"></i></a>
+                    <a href="#"
+                        style="width:34px; height:34px; background:var(--bg-subtle); border-radius:50%; display:flex; align-items:center; justify-content:center; color:var(--text-main);"><i
+                            class="fa-brands fa-tiktok"></i></a>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            &copy; 2026 VC Now Canada. All rights reserved. Powered by Canadian News Aggregator.
+        </div>
+    </footer>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        document.getElementById('current-date').innerText = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+
+        // HỆ THỐNG BẬT TẮT CHẾ ĐỘ SÁNG / TỐI
+        function toggleDarkMode() {
+            const isDark = document.body.classList.toggle('dark-mode');
+            const icon = document.getElementById('dark-icon');
+
+            if (isDark) {
+                icon.className = 'fa-solid fa-sun';
+                localStorage.setItem('vc_theme', 'dark');
+            } else {
+                icon.className = 'fa-solid fa-moon';
+                localStorage.setItem('vc_theme', 'light');
+            }
+        }
+
+        if (localStorage.getItem('vc_theme') === 'light') {
+            document.body.classList.remove('dark-mode');
+            document.getElementById('dark-icon').className = 'fa-solid fa-moon';
+        } else {
+            document.body.classList.add('dark-mode');
+            document.getElementById('dark-icon').className = 'fa-solid fa-sun';
+        }
+
+        const RSS_FEEDS = [
+            { name: 'CBC Canada', url: 'https://www.cbc.ca/cmlink/rss-topstories', category: 'canada' },
+            { name: 'CBC Politics', url: 'https://www.cbc.ca/cmlink/rss-politics', category: 'canada' },
+            { name: 'CBC Business', url: 'https://www.cbc.ca/cmlink/rss-business', category: 'canada' },
+            { name: 'BBC World', url: 'http://feeds.bbci.co.uk/news/world/rss.xml', category: 'world' },
+            { name: 'BBC Culture', url: 'http://feeds.bbci.co.uk/news/entertainment_and_arts/rss.xml', category: 'culture' },
+            { name: 'VnExpress Travel', url: 'https://e.vnexpress.net/rss/travel.rss', category: 'vietnam' },
+            { name: 'BBC Business', url: 'http://feeds.bbci.co.uk/news/business/rss.xml', category: 'business' },
+            { name: 'BBC Tech', url: 'http://feeds.bbci.co.uk/news/technology/rss.xml', category: 'tech' },
+            { name: 'CNN Politics', url: 'http://rss.cnn.com/rss/edition.rss', category: 'politics' }
+        ];
+
+        const CANADA_CITIES = [
+            { name: 'Toronto', lat: 43.70, lon: -79.42 },
+            { name: 'Vancouver', lat: 49.25, lon: -123.12 },
+            { name: 'Montreal', lat: 45.50, lon: -73.56 },
+            { name: 'Calgary', lat: 51.05, lon: -114.07 }
+        ];
+
+        let weatherCache = {};
+
+        function getWeatherCondition(code) {
+            if (code === 0) return { textVi: 'Trời quang đãng', textEn: 'Clear Sky', icon: 'fa-sun', color: '#f59e0b' };
+            if (code >= 1 && code <= 3) return { textVi: 'Có mây rải rác', textEn: 'Partly Cloudy', icon: 'fa-cloud-sun', color: '#38bdf8' };
+            if (code >= 45) return { textVi: 'Có sương mù', textEn: 'Foggy', icon: 'fa-smog', color: '#94a3b8' };
+            if (code >= 51 && code <= 67) return { textVi: 'Mưa rào nhẹ', textEn: 'Rain Showers', icon: 'fa-cloud-rain', color: '#0284c7' };
+            if (code >= 71) return { textVi: 'Tuyết rơi', textEn: 'Snowing', icon: 'fa-snowflake', color: '#e0f2fe' };
+            return { textVi: 'Nhiều mây', textEn: 'Cloudy', icon: 'fa-cloud', color: '#64748b' };
+        }
+
+        // THỜI TIẾT CANADA
+        async function fetchCanadaWeather() {
+            const container = document.getElementById('weather-container');
+            try {
+                let html = '';
+                for (let city of CANADA_CITIES) {
+                    const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${city.lat}&longitude=${city.lon}&current_weather=true&daily=temperature_2m_max,temperature_2m_min&timezone=auto`);
+                    const data = await res.json();
+                    weatherCache[city.name] = data;
+
+                    const temp = Math.round(data.current_weather.temperature);
+                    const code = data.current_weather.weathercode;
+                    const cond = getWeatherCondition(code);
+
+                    html += `
+            <div class="weather-card-pill" onclick="openWeatherModal('${city.name}')">
               <div class="weather-city-name">${city.name}</div>
               <i class="fa-solid ${cond.icon} weather-icon"></i>
               <div class="weather-temp">${temp}°C</div>
               <div class="weather-click-hint">${currentLang === 'vi' ? 'Xem chi tiết' : 'View details'}</div>
             </div>
           `;
-        }
-
-        container.innerHTML = htmlContent;
-
-      } catch (e) {
-        console.error('Weather error:', e);
-        container.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:10px; color:var(--text-muted);">${currentLang === 'vi' ? 'Lỗi tải thời tiết' : 'Weather load error'}</div>`;
-      }
-    }
-
-    function openWeatherModal(cityName) {
-      const data = weatherCache[cityName];
-      if (!data) return;
-
-      const current = data.current_weather;
-      const daily = data.daily;
-      const cond = getWeatherCondition(current.weathercode);
-
-      document.getElementById('w-modal-city').innerText = `${cityName}, Canada`;
-      document.getElementById('w-modal-temp').innerText = `${Math.round(current.temperature)}°C`;
-      document.getElementById('w-modal-desc').innerText = currentLang === 'vi' ? cond.textVi : cond.textEn;
-      document.getElementById('w-modal-main-icon').className = `fa-solid ${cond.icon}`;
-      document.getElementById('w-modal-main-icon').style.color = cond.color;
-
-      document.getElementById('w-modal-wind').innerText = `${current.windspeed} km/h`;
-      document.getElementById('w-modal-wind-dir').innerText = `${current.winddirection}°`;
-      document.getElementById('w-modal-range').innerText = `${Math.round(daily.temperature_2m_max[0])}°C / ${Math.round(daily.temperature_2m_min[0])}°C`;
-      
-      const timeStr = new Date(current.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-      document.getElementById('w-modal-time').innerText = timeStr;
-
-      document.getElementById('weather-modal').style.display = 'flex';
-      document.body.style.overflow = 'hidden';
-    }
-
-    function closeWeatherModal() {
-      document.getElementById('weather-modal').style.display = 'none';
-      document.body.style.overflow = 'auto';
-    }
-
-    function handleWeatherModalBgClick(event) {
-      if (event.target.id === 'weather-modal') closeWeatherModal();
-    }
-
-    function extractImageUrl(item) {
-      if (item.thumbnail && typeof item.thumbnail === 'string' && item.thumbnail.startsWith('http')) {
-        return item.thumbnail;
-      }
-      if (item.enclosure && item.enclosure.link && item.enclosure.link.startsWith('http')) {
-        return item.enclosure.link;
-      }
-      const fullHtml = (item.description || '') + ' ' + (item.content || '') + ' ' + (item['content:encoded'] || '');
-      if (fullHtml.includes('<img')) {
-        const div = document.createElement('div');
-        div.innerHTML = fullHtml;
-        const img = div.querySelector('img');
-        if (img && img.src && img.src.startsWith('http')) {
-          return img.src;
-        }
-      }
-      return 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=600&q=80';
-    }
-
-    function cleanFullDescription(item) {
-      let rawContent = item.content || item.description || '';
-      const div = document.createElement('div');
-      div.innerHTML = rawContent;
-      
-      const imgs = div.querySelectorAll('img');
-      imgs.forEach(img => img.remove());
-
-      let text = div.textContent || div.innerText || '';
-      text = text.trim();
-      
-      return text.length > 0 ? text : 'Click button below to read full article at official source...';
-    }
-
-    async function translateText(text, targetLang) {
-      if (targetLang === 'en' || !text) return text;
-      try {
-        const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=${targetLang}&dt=t&q=${encodeURIComponent(text)}`;
-        const res = await fetch(url);
-        const data = await res.json();
-        if (data && data[0]) {
-          return data[0].map(x => x[0]).join('');
-        }
-        return text;
-      } catch (e) {
-        return text;
-      }
-    }
-
-    async function translateSingleArticle(item) {
-      if (!item || currentLang !== 'vi') return;
-
-      if (!item.title_vi) {
-        item.title_vi = await translateText(item.title, 'vi');
-      }
-      if (!item.desc_vi) {
-        item.desc_vi = await translateText(item.description, 'vi');
-      }
-    }
-
-    async function translateVisibleArticles() {
-      if (currentLang !== 'vi') return;
-
-      for (let item of currentHeroArticles) {
-        await translateSingleArticle(item);
-      }
-      if (!document.getElementById('search-input').value && currentHeroArticles.length >= 3) {
-        renderHeroSection(currentHeroArticles);
-      }
-
-      const displayArticles = currentFilteredArticles.slice(0, visibleCount);
-      for (let item of displayArticles) {
-        await translateSingleArticle(item);
-      }
-      renderNews();
-    }
-
-    async function fetchNews() {
-      const container = document.getElementById('news-container');
-      try {
-        let rawArticles = [];
-
-        const feedPromises = RSS_FEEDS.map(async (feed) => {
-          try {
-            const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(feed.url)}&_t=${Date.now()}`;
-            const response = await fetch(apiUrl);
-            const data = await response.json();
-
-            if (data.status === 'ok') {
-              return data.items.map(item => ({
-                source: feed.name,
-                category: feed.category,
-                title: item.title,
-                description: cleanFullDescription(item),
-                image: extractImageUrl(item),
-                link: item.link,
-                rawDate: new Date(item.pubDate),
-                pubDate: new Date(item.pubDate).toLocaleDateString('vi-VN')
-              }));
+                }
+                container.innerHTML = html;
+            } catch (err) {
+                container.innerHTML = `<div style="grid-column:1/-1; text-align:center; color:var(--text-muted);">Đang cập nhật thời tiết...</div>`;
             }
-          } catch (err) {
-            return [];
-          }
-          return [];
-        });
-
-        const results = await Promise.all(feedPromises);
-        rawArticles = results.flat();
-
-        const uniqueTitles = new Set();
-        let uniqueArticles = [];
-        
-        for (let item of rawArticles) {
-          const cleanTitle = item.title.trim().toLowerCase();
-          if (!uniqueTitles.has(cleanTitle)) {
-            uniqueTitles.add(cleanTitle);
-            uniqueArticles.push(item);
-          }
         }
 
-        uniqueArticles.sort((a, b) => b.rawDate - a.rawDate);
+        function openWeatherModal(cityName) {
+            const data = weatherCache[cityName];
+            if (!data) return;
 
-        articlesData = uniqueArticles;
-        
-        filterNews();
-        translateVisibleArticles();
+            const current = data.current_weather;
+            const daily = data.daily;
+            const cond = getWeatherCondition(current.weathercode);
 
-      } catch (error) {
-        container.innerHTML = '<p style="text-align:center; padding:2rem;">Lỗi tải nguồn tin tức.</p>';
-        console.error(error);
-      }
-    }
+            document.getElementById('w-modal-city').innerText = `${cityName}, Canada`;
+            document.getElementById('w-modal-temp').innerText = `${Math.round(current.temperature)}°C`;
+            document.getElementById('w-modal-desc').innerText = currentLang === 'vi' ? cond.textVi : cond.textEn;
+            document.getElementById('w-modal-main-icon').className = `fa-solid ${cond.icon}`;
+            document.getElementById('w-modal-main-icon').style.color = cond.color;
 
-    function renderHeroSection(articles) {
-      const heroContainer = document.getElementById('hero-section');
-      if (!articles || articles.length < 3) {
-        heroContainer.style.display = 'none';
-        return;
-      }
+            document.getElementById('w-modal-wind').innerText = `${current.windspeed} km/h`;
+            document.getElementById('w-modal-wind-dir').innerText = `${current.winddirection}°`;
+            document.getElementById('w-modal-range').innerText = `${Math.round(daily.temperature_2m_max[0])}°C / ${Math.round(daily.temperature_2m_min[0])}°C`;
 
-      heroContainer.style.display = 'grid';
-      const main = articles[0];
-      const sub1 = articles[1];
-      const sub2 = articles[2];
+            const timeStr = new Date(current.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            document.getElementById('w-modal-time').innerText = timeStr;
 
-      const mainTitle = (currentLang === 'vi' && main.title_vi) ? main.title_vi : main.title;
-      const sub1Title = (currentLang === 'vi' && sub1.title_vi) ? sub1.title_vi : sub1.title;
-      const sub2Title = (currentLang === 'vi' && sub2.title_vi) ? sub2.title_vi : sub2.title;
+            document.getElementById('weather-modal').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
 
-      heroContainer.innerHTML = `
-        <div class="hero-main-card" onclick="openModal(${articlesData.indexOf(main)})">
-          <img src="${main.image}" alt="Hero Image">
-          <div class="hero-main-body">
-            <div>
-              <span class="source-tag">${main.source}</span>
-              <h2>${mainTitle}</h2>
-            </div>
-            <div class="news-meta" style="margin-top:10px;">
-              <span><i class="fa-regular fa-clock"></i> ${main.pubDate}</span>
-            </div>
+        function closeWeatherModal() {
+            document.getElementById('weather-modal').style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        function handleWeatherModalBgClick(event) {
+            if (event.target.id === 'weather-modal') closeWeatherModal();
+        }
+
+        const PLAYLIST_ID = "PLDdOhIx3i1Q4";
+        let playlistVideos = [
+            { id: "K5KG-YvcV28", title: "TT Carney Trả Đũa Sau Khi Trump Bạc Nhược Miễn Trừ Năng Lượng", pubDate: "Mới nhất", thumbnail: "https://img.youtube.com/vi/K5KG-YvcV28/hqdefault.jpg" },
+            { id: "w74x_9_lTzU", title: "Bản tin thời sự cộng đồng người Việt tại Canada hôm nay", pubDate: "Mới nhất", thumbnail: "https://images.unsplash.com/photo-1517935703635-27190760468e?auto=format&fit=crop&w=400&q=80" },
+            { id: "2g811Eo7K8U", title: "Phân tích kinh tế và chính sách tiền tệ Ngân hàng Canada", pubDate: "Mới nhất", thumbnail: "https://images.unsplash.com/photo-1503614472-8c93d56e92ce?auto=format&fit=crop&w=400&q=80" }
+        ];
+
+        let articlesData = [];
+        let currentHeroArticles = [];
+        let currentFilteredArticles = [];
+        let visibleCount = 6;
+        let currentLang = 'vi';
+        let currentCategory = 'all';
+
+        function toggleMobileMenu() {
+            document.getElementById('nav-menu').classList.toggle('open');
+        }
+
+        function handleNewsletterSubmit(e) {
+            e.preventDefault();
+            alert(currentLang === 'vi' ? 'Cảm ơn bạn đã đăng ký nhận bản tin VC Now Canada!' : 'Thank you for subscribing to VC Now Canada newsletter!');
+            e.target.reset();
+        }
+
+        // YOUTUBE PLAYLIST TẢI NHANH
+        async function fetchYoutubePlaylist() {
+            renderPlaylistUI();
+            selectVideo(0);
+
+            const rssUrl = `https://www.youtube.com/feeds/videos.xml?playlist_id=${PLAYLIST_ID}`;
+            const proxy1 = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}&_t=${Date.now()}`;
+            const proxy2 = `https://api.allorigins.win/get?url=${encodeURIComponent(rssUrl)}`;
+
+            try {
+                const fetchP1 = fetch(proxy1).then(r => r.json()).then(data => {
+                    if (data.status === 'ok' && data.items && data.items.length > 0) {
+                        return data.items.map(item => {
+                            let vId = item.link.includes('v=') ? item.link.split('v=')[1].split('&')[0] : item.guid.split(':').pop();
+                            return {
+                                id: vId,
+                                title: item.title,
+                                pubDate: new Date(item.pubDate).toLocaleDateString('vi-VN'),
+                                thumbnail: `https://img.youtube.com/vi/${vId}/hqdefault.jpg`
+                            };
+                        });
+                    }
+                    throw new Error();
+                });
+
+                const fetchP2 = fetch(proxy2).then(r => r.json()).then(data => {
+                    if (!data.contents) throw new Error();
+                    const xmlDoc = new DOMParser().parseFromString(data.contents, "text/xml");
+                    const entries = xmlDoc.querySelectorAll("entry");
+                    if (!entries || entries.length === 0) throw new Error();
+                    let parsed = [];
+                    entries.forEach(entry => {
+                        const vId = entry.querySelector("videoId") ? entry.querySelector("videoId").textContent : "";
+                        const title = entry.querySelector("title") ? entry.querySelector("title").textContent : "";
+                        if (vId) {
+                            parsed.push({
+                                id: vId,
+                                title: title,
+                                pubDate: 'Mới nhất',
+                                thumbnail: `https://img.youtube.com/vi/${vId}/hqdefault.jpg`
+                            });
+                        }
+                    });
+                    return parsed;
+                });
+
+                const res = await Promise.any([fetchP1, fetchP2]);
+                if (res && res.length > 0) {
+                    playlistVideos = res;
+                    renderPlaylistUI();
+                    selectVideo(0);
+                }
+            } catch (e) { }
+        }
+
+        function renderPlaylistUI() {
+            const container = document.getElementById('yt-playlist-container');
+            container.innerHTML = '';
+
+            playlistVideos.forEach((v, idx) => {
+                const row = document.createElement('div');
+                row.className = `yt-item-row ${idx === 0 ? 'active' : ''}`;
+                row.id = `yt-row-${idx}`;
+                row.onclick = () => selectVideo(idx);
+
+                row.innerHTML = `
+          <img src="${v.thumbnail}" alt="thumb">
+          <div class="yt-item-info">
+            <div class="yt-item-title">${v.title}</div>
+          </div>
+        `;
+                container.appendChild(row);
+            });
+        }
+
+        function selectVideo(idx) {
+            const v = playlistVideos[idx];
+            if (!v) return;
+
+            document.getElementById('yt-main-player').src = `https://www.youtube-nocookie.com/embed/${v.id}?autoplay=1`;
+            document.getElementById('yt-active-title').innerText = v.title;
+
+            document.querySelectorAll('.yt-item-row').forEach(r => r.classList.remove('active'));
+            const activeEl = document.getElementById(`yt-row-${idx}`);
+            if (activeEl) activeEl.classList.add('active');
+
+            document.getElementById('panorama-img').src = v.thumbnail;
+            document.getElementById('panorama-title').innerText = v.title;
+        }
+
+        function playMainPanoramaVideo() {
+            selectVideo(0);
+            window.scrollTo({ top: document.querySelector('.yt-playlist-box').offsetTop - 100, behavior: 'smooth' });
+        }
+
+        // TRANSLATION API
+        async function translateText(text, targetLang) {
+            if (targetLang === 'en' || !text) return text;
+            try {
+                const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=auto&tl=${targetLang}&dt=t&q=${encodeURIComponent(text)}`;
+                const res = await fetch(url);
+                const data = await res.json();
+                if (data && data[0]) return data[0].map(x => x[0]).join('');
+                return text;
+            } catch (e) { return text; }
+        }
+
+        async function translateSingleArticle(item) {
+            if (!item || currentLang !== 'vi') return;
+            if (!item.title_vi) item.title_vi = await translateText(item.title, 'vi');
+            if (!item.desc_vi) item.desc_vi = await translateText(item.description, 'vi');
+        }
+
+        async function translateVisibleArticles() {
+            if (currentLang !== 'vi') return;
+
+            for (let item of currentHeroArticles) {
+                await translateSingleArticle(item);
+            }
+            if (!document.getElementById('search-input').value && currentHeroArticles.length >= 3) {
+                renderHeroTriple(currentHeroArticles);
+            }
+
+            const displayList = currentFilteredArticles.slice(0, visibleCount);
+            for (let item of displayList) {
+                await translateSingleArticle(item);
+            }
+            renderNewsGrid();
+        }
+
+        function extractImageUrl(item) {
+            if (item.thumbnail && typeof item.thumbnail === 'string' && item.thumbnail.startsWith('http')) return item.thumbnail;
+            if (item.enclosure && item.enclosure.link && item.enclosure.link.startsWith('http')) return item.enclosure.link;
+            const fullHtml = (item.description || '') + ' ' + (item.content || '');
+            if (fullHtml.includes('<img')) {
+                const div = document.createElement('div');
+                div.innerHTML = fullHtml;
+                const img = div.querySelector('img');
+                if (img && img.src && img.src.startsWith('http')) return img.src;
+            }
+            return 'https://images.unsplash.com/photo-1517935703635-27190760468e?auto=format&fit=crop&w=600&q=80';
+        }
+
+        function cleanDescription(item) {
+            let raw = item.content || item.description || '';
+            const div = document.createElement('div');
+            div.innerHTML = raw;
+            div.querySelectorAll('img').forEach(img => img.remove());
+            let txt = div.textContent || div.innerText || '';
+            return txt.trim().length > 0 ? txt.trim() : 'Xem toàn văn bài viết tại nguồn chính thức...';
+        }
+
+        async function fetchNews() {
+            try {
+                let rawList = [];
+                const promises = RSS_FEEDS.map(async (feed) => {
+                    try {
+                        const res = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(feed.url)}&_t=${Date.now()}`);
+                        const data = await res.json();
+                        if (data.status === 'ok') {
+                            return data.items.map(item => ({
+                                source: feed.name,
+                                category: feed.category,
+                                title: item.title,
+                                description: cleanDescription(item),
+                                image: extractImageUrl(item),
+                                link: item.link,
+                                rawDate: new Date(item.pubDate),
+                                pubDate: new Date(item.pubDate).toLocaleDateString('vi-VN')
+                            }));
+                        }
+                    } catch (e) { return []; }
+                    return [];
+                });
+
+                const results = await Promise.all(promises);
+                rawList = results.flat();
+
+                const uniqueTitles = new Set();
+                let unique = [];
+                for (let it of rawList) {
+                    const cleanT = it.title.trim().toLowerCase();
+                    if (!uniqueTitles.has(cleanT)) {
+                        uniqueTitles.add(cleanT);
+                        unique.push(it);
+                    }
+                }
+
+                unique.sort((a, b) => b.rawDate - a.rawDate);
+                articlesData = unique;
+
+                filterNews();
+                translateVisibleArticles();
+            } catch (e) { }
+        }
+
+        function renderHeroTriple(articles) {
+            if (!articles || articles.length < 3) return;
+
+            const main = articles[0];
+            const sub1 = articles[1];
+            const sub2 = articles[2];
+
+            const tMain = (currentLang === 'vi' && main.title_vi) ? main.title_vi : main.title;
+            const tSub1 = (currentLang === 'vi' && sub1.title_vi) ? sub1.title_vi : sub1.title;
+            const tSub2 = (currentLang === 'vi' && sub2.title_vi) ? sub2.title_vi : sub2.title;
+
+            document.getElementById('hero-triple-container').innerHTML = `
+        <div class="hero-main-banner" onclick="openModal(${articlesData.indexOf(main)})">
+          <img src="${main.image}" class="hero-bg" alt="Hero">
+          <div class="hero-gradient-overlay"></div>
+          <div class="hero-banner-content">
+            <span class="badge-category">${main.source}</span>
+            <h2 class="hero-main-heading">${tMain}</h2>
+            <div style="font-size:0.75rem; color:#cbd5e1;"><i class="fa-regular fa-clock"></i> ${main.pubDate}</div>
           </div>
         </div>
 
-        <div class="hero-sub-grid">
-          <div class="hero-sub-card" onclick="openModal(${articlesData.indexOf(sub1)})">
-            <img src="${sub1.image}" alt="Sub Hero Image">
-            <div style="display:flex; flex-direction:column; justify-content:space-between; flex:1;">
+        <div class="hero-sub-column">
+          <div class="hero-sub-box" onclick="openModal(${articlesData.indexOf(sub1)})">
+            <img src="${sub1.image}" alt="Sub">
+            <div class="hero-sub-body">
               <div>
-                <span class="source-tag">${sub1.source}</span>
-                <h3>${sub1Title}</h3>
+                <span class="badge-category" style="padding:2px 6px; font-size:0.65rem;">${sub1.source}</span>
+                <h4>${tSub1}</h4>
               </div>
-              <div class="news-meta" style="margin-top:6px;">
-                <span><i class="fa-regular fa-clock"></i> ${sub1.pubDate}</span>
-              </div>
+              <div style="font-size:0.7rem; color:var(--text-muted);"><i class="fa-regular fa-clock"></i> ${sub1.pubDate}</div>
             </div>
           </div>
 
-          <div class="hero-sub-card" onclick="openModal(${articlesData.indexOf(sub2)})">
-            <img src="${sub2.image}" alt="Sub Hero Image">
-            <div style="display:flex; flex-direction:column; justify-content:space-between; flex:1;">
+          <div class="hero-sub-box" onclick="openModal(${articlesData.indexOf(sub2)})">
+            <img src="${sub2.image}" alt="Sub">
+            <div class="hero-sub-body">
               <div>
-                <span class="source-tag">${sub2.source}</span>
-                <h3>${sub2Title}</h3>
+                <span class="badge-category" style="padding:2px 6px; font-size:0.65rem;">${sub2.source}</span>
+                <h4>${tSub2}</h4>
               </div>
-              <div class="news-meta" style="margin-top:6px;">
-                <span><i class="fa-regular fa-clock"></i> ${sub2.pubDate}</span>
-              </div>
+              <div style="font-size:0.7rem; color:var(--text-muted);"><i class="fa-regular fa-clock"></i> ${sub2.pubDate}</div>
             </div>
           </div>
         </div>
       `;
-    }
+        }
 
-    function filterCategory(cat, element) {
-      currentCategory = cat;
-      visibleCount = 5;
+        function filterCategory(cat, element) {
+            currentCategory = cat;
+            visibleCount = 6;
 
-      document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
-      if (element) element.classList.add('active');
+            document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+            if (element) element.classList.add('active');
 
-      const nav = document.getElementById('nav-menu');
-      if (nav.classList.contains('open')) toggleMobileMenu();
+            const nav = document.getElementById('nav-menu');
+            if (nav.classList.contains('open')) toggleMobileMenu();
 
-      const catTitles = {
-        'all': currentLang === 'vi' ? 'Tin Tức Canada Mới Nhất' : 'Canada Latest News',
-        'world': currentLang === 'vi' ? 'Thời Sự Thế Giới' : 'World News',
-        'culture': currentLang === 'vi' ? 'Văn Hóa & Nghệ Thuật' : 'Culture & Arts',
-        'vietnam': currentLang === 'vi' ? 'Khám Phá Việt Nam & Du Lịch' : 'Discover Vietnam',
-        'business': currentLang === 'vi' ? 'Kinh Doanh & Tài Chính' : 'Business & Finance',
-        'tech': currentLang === 'vi' ? 'Công Nghệ & Khoa Học' : 'Technology & Science',
-        'politics': currentLang === 'vi' ? 'Tin Tức Chính Trị' : 'Politics News'
-      };
-      document.getElementById('section-title').innerText = catTitles[cat] || 'News';
+            const catTitlesVi = {
+                'all': 'TIN TỨC CANADA & THẾ GIỚI MỚI NHẤT',
+                'world': 'THỜI SỰ QUỐC TẾ 24H',
+                'culture': 'VĂN HÓA & ĐỜI SỐNG CANADA',
+                'vietnam': 'KHÁM PHÁ VIỆT NAM & DU LỊCH',
+                'business': 'KINH DOANH & BẤT ĐỘNG SẢN',
+                'tech': 'CÔNG NGHỆ, AI & KHOA HỌC',
+                'politics': 'CHÍNH TRỊ & CHÍNH SÁCH CANADA'
+            };
 
-      filterNews();
-      translateVisibleArticles();
-    }
+            const catTitlesEn = {
+                'all': 'LATEST CANADA & GLOBAL NEWS',
+                'world': 'WORLD NEWS 24H',
+                'culture': 'CULTURE & LIFESTYLE',
+                'vietnam': 'DISCOVER VIETNAM',
+                'business': 'BUSINESS & REAL ESTATE',
+                'tech': 'TECHNOLOGY & AI SCIENCE',
+                'politics': 'CANADA POLITICS & POLICIES'
+            };
 
-    function filterNews() {
-      const query = document.getElementById('search-input').value.toLowerCase();
-      
-      const filtered = articlesData.filter(item => {
-        const matchesCategory = (currentCategory === 'all') ? (item.category === 'canada') : (item.category === currentCategory);
-        const title = ((currentLang === 'vi' && item.title_vi) ? item.title_vi : item.title).toLowerCase();
-        const matchesSearch = title.includes(query);
-        return matchesCategory && matchesSearch;
-      });
+            const title = currentLang === 'vi' ? (catTitlesVi[cat] || 'TIN TỨC') : (catTitlesEn[cat] || 'NEWS');
+            document.getElementById('section-head-text').innerHTML = `<i class="fa-solid fa-fire"></i> ${title}`;
 
-      if (!query && filtered.length >= 3) {
-        currentHeroArticles = filtered.slice(0, 3);
-        currentFilteredArticles = filtered.slice(3);
-        renderHeroSection(currentHeroArticles);
-      } else {
-        document.getElementById('hero-section').style.display = 'none';
-        currentHeroArticles = [];
-        currentFilteredArticles = filtered;
-      }
+            filterNews();
+            translateVisibleArticles();
+        }
 
-      renderNews();
-    }
+        function filterNews() {
+            const q = document.getElementById('search-input').value.toLowerCase();
 
-    function renderNews() {
-      const container = document.getElementById('news-container');
-      const loadMoreBox = document.getElementById('load-more-box');
-      container.innerHTML = '';
+            const filtered = articlesData.filter(item => {
+                const matchCat = (currentCategory === 'all') ? true : (item.category === currentCategory);
+                const title = ((currentLang === 'vi' && item.title_vi) ? item.title_vi : item.title).toLowerCase();
+                return matchCat && title.includes(q);
+            });
 
-      if (currentFilteredArticles.length === 0) {
-        container.innerHTML = `<p style="text-align:center; color:var(--text-muted); padding:2rem;">${currentLang === 'vi' ? 'Không có bài viết phù hợp.' : 'No matching articles found.'}</p>`;
-        loadMoreBox.style.display = 'none';
-        return;
-      }
+            if (!q && filtered.length >= 3) {
+                currentHeroArticles = filtered.slice(0, 3);
+                currentFilteredArticles = filtered.slice(3);
+                renderHeroTriple(currentHeroArticles);
+            } else {
+                document.getElementById('hero-triple-container').style.display = 'none';
+                currentHeroArticles = [];
+                currentFilteredArticles = filtered;
+            }
 
-      const displayArticles = currentFilteredArticles.slice(0, visibleCount);
+            renderNewsGrid();
+        }
 
-      displayArticles.forEach((item) => {
-        const index = articlesData.indexOf(item);
-        const card = document.createElement('article');
-        card.className = 'news-card';
-        card.onclick = () => openModal(index);
-        
-        const displayTitle = (currentLang === 'vi' && item.title_vi) ? item.title_vi : item.title;
-        const displayDesc = (currentLang === 'vi' && item.desc_vi) ? item.desc_vi : item.description;
+        function renderNewsGrid() {
+            const container = document.getElementById('news-container');
+            const loadBtn = document.getElementById('load-more-box');
+            container.innerHTML = '';
 
-        card.innerHTML = `
-          <div class="news-img-wrapper">
-            <img class="news-img" src="${item.image}" alt="Thumbnail" onerror="this.src='https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=400&q=80'">
+            if (currentFilteredArticles.length === 0) {
+                container.innerHTML = `<p style="grid-column:1/-1; text-align:center; padding:2rem; color:var(--text-muted);">${currentLang === 'vi' ? 'Không có bài viết phù hợp.' : 'No matching articles.'}</p>`;
+                loadBtn.style.display = 'none';
+                return;
+            }
+
+            const displayList = currentFilteredArticles.slice(0, visibleCount);
+
+            displayList.forEach(item => {
+                const idx = articlesData.indexOf(item);
+                const card = document.createElement('div');
+                card.className = 'magazine-card';
+                card.onclick = () => openModal(idx);
+
+                const title = (currentLang === 'vi' && item.title_vi) ? item.title_vi : item.title;
+
+                card.innerHTML = `
+          <div class="magazine-card-img-wrap">
+            <img src="${item.image}" alt="Thumb" onerror="this.src='https://images.unsplash.com/photo-1517935703635-27190760468e?auto=format&fit=crop&w=400&q=80'">
           </div>
-          <div class="news-content">
+          <div class="magazine-card-content">
             <div>
-              <span class="source-tag">${item.source}</span>
-              <h3>${displayTitle}</h3>
-              <p>${displayDesc}</p>
+              <span class="magazine-source-tag">● ${item.source}</span>
+              <h3 class="magazine-card-title">${title}</h3>
             </div>
-            <div class="news-meta">
+            <div class="magazine-meta">
               <span><i class="fa-regular fa-clock"></i> ${item.pubDate}</span>
-              <span style="color:var(--primary-red); font-weight:600; margin-left:auto;"><i class="fa-solid fa-book-open"></i> ${currentLang === 'vi' ? 'Đọc nhanh' : 'Quick Read'}</span>
+              <span style="color:var(--primary-pink); font-weight:700; margin-left:auto;">${currentLang === 'vi' ? 'Đọc nhanh' : 'Quick Read'}</span>
             </div>
           </div>
         `;
-        container.appendChild(card);
-      });
+                container.appendChild(card);
+            });
 
-      if (visibleCount < currentFilteredArticles.length) {
-        loadMoreBox.style.display = 'block';
-      } else {
-        loadMoreBox.style.display = 'none';
-      }
-    }
+            loadBtn.style.display = (visibleCount < currentFilteredArticles.length) ? 'block' : 'none';
+        }
 
-    function loadMoreNews() {
-      visibleCount += 5;
-      renderNews();
-      translateVisibleArticles();
-    }
+        function loadMoreNews() {
+            visibleCount += 6;
+            renderNewsGrid();
+            translateVisibleArticles();
+        }
 
-    function openModal(index) {
-      const item = articlesData[index];
+        function openModal(idx) {
+            const item = articlesData[idx];
+            if (!item) return;
 
-      document.getElementById('modal-source').innerText = item.source;
-      document.getElementById('modal-title').innerText = (currentLang === 'vi' && item.title_vi) ? item.title_vi : item.title;
-      document.getElementById('modal-date').innerText = item.pubDate;
-      document.getElementById('modal-img').src = item.image;
-      
-      const rawText = (currentLang === 'vi' && item.desc_vi) ? item.desc_vi : item.description;
-      const paragraphs = rawText.split('\n').filter(p => p.trim().length > 0);
-      document.getElementById('modal-desc').innerHTML = paragraphs.map(p => `<p>${p}</p>`).join('');
+            document.getElementById('modal-source').innerText = item.source;
+            document.getElementById('modal-title').innerText = (currentLang === 'vi' && item.title_vi) ? item.title_vi : item.title;
+            document.getElementById('modal-date').innerText = item.pubDate;
+            document.getElementById('modal-img').src = item.image;
 
-      document.getElementById('modal-link').href = item.link;
+            const rawText = (currentLang === 'vi' && item.desc_vi) ? item.desc_vi : item.description;
+            const paragraphs = rawText.split('\n').filter(p => p.trim().length > 0);
+            document.getElementById('modal-desc').innerHTML = paragraphs.map(p => `<p>${p}</p>`).join('');
 
-      document.getElementById('article-modal').style.display = 'flex';
-      document.body.style.overflow = 'hidden';
-    }
+            document.getElementById('modal-link').href = item.link;
 
-    function closeModal() {
-      document.getElementById('article-modal').style.display = 'none';
-      document.body.style.overflow = 'auto';
-    }
+            document.getElementById('article-modal').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
 
-    function handleModalBgClick(event) {
-      if (event.target.id === 'article-modal') closeModal();
-    }
+        function closeModal() {
+            document.getElementById('article-modal').style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
 
-    function changeLanguage(lang) {
-      if (currentLang === lang) return;
-      currentLang = lang;
+        function handleModalBgClick(e) {
+            if (e.target.id === 'article-modal') closeModal();
+        }
 
-      document.getElementById('btn-en').classList.toggle('active', lang === 'en');
-      document.getElementById('btn-vi').classList.toggle('active', lang === 'vi');
+        function changeLanguage(lang) {
+            if (currentLang === lang) return;
+            currentLang = lang;
 
-      if (lang === 'vi') {
-        document.getElementById('weather-title').innerText = 'Thời Tiết Canada';
-        document.getElementById('about-title').innerText = 'Giới Thiệu';
-        document.getElementById('about-text').innerText = 'Kênh tin tức & văn hóa VC Now Canada, cập nhật liên tục thông tin Canada, thời sự quốc tế và luồng truyền hình trực tiếp.';
-        document.getElementById('nav-all').innerText = 'Tin Canada';
-        document.getElementById('nav-world').innerText = 'Thế Giới';
-        document.getElementById('nav-culture').innerText = 'Văn Hóa';
-        document.getElementById('nav-vietnam').innerText = 'Khám Phá Việt Nam';
-        document.getElementById('nav-business').innerText = 'Kinh Doanh';
-        document.getElementById('nav-tech').innerText = 'Công Nghệ';
-        document.getElementById('nav-politics').innerText = 'Chính Trị';
-        document.getElementById('footer-desc').innerText = 'Cung cấp thông tin thời sự Canada, văn hóa và nhịp sống minh bạch, nhanh chóng và khách quan từ các đối tác báo chí toàn cầu.';
-        document.getElementById('f-header-links').innerText = 'Liên Kết Nhanh';
-        document.getElementById('f-header-sources').innerText = 'Nguồn Tin';
-        document.getElementById('modal-footer-note').innerText = 'Nguồn bài viết gốc từ nhà xuất bản:';
-        document.getElementById('load-more-text').innerText = 'MỞ RỘNG BÀI VIẾT';
-        
-        document.getElementById('podcast-title').innerText = 'New Podcast';
-        document.getElementById('newsletter-title').innerText = 'Đăng ký nhận bản tin';
-        document.getElementById('newsletter-sub').innerText = 'Cập nhật tin tức, ưu đãi và thông báo mới nhất.';
-        document.getElementById('social-title').innerText = 'Mạng Xã Hội';
-      } else {
-        document.getElementById('weather-title').innerText = 'Canada Weather';
-        document.getElementById('about-title').innerText = 'About Us';
-        document.getElementById('about-text').innerText = 'VC Now Canada news & lifestyle channel, updating Canada current affairs, Vietnam discovery, and live video streams.';
-        document.getElementById('nav-all').innerText = 'Canada News';
-        document.getElementById('nav-world').innerText = 'World';
-        document.getElementById('nav-culture').innerText = 'Culture';
-        document.getElementById('nav-vietnam').innerText = 'Discover Vietnam';
-        document.getElementById('nav-business').innerText = 'Business';
-        document.getElementById('nav-tech').innerText = 'Technology';
-        document.getElementById('nav-politics').innerText = 'Politics';
-        document.getElementById('footer-desc').innerText = 'Providing transparent, fast, and unbiased news and culture aggregation from global publishers.';
-        document.getElementById('f-header-links').innerText = 'Quick Links';
-        document.getElementById('f-header-sources').innerText = 'News Sources';
-        document.getElementById('modal-footer-note').innerText = 'Read original text at provider:';
-        document.getElementById('load-more-text').innerText = 'LOAD MORE ARTICLES';
-        
-        document.getElementById('podcast-title').innerText = 'New Podcast';
-        document.getElementById('newsletter-title').innerText = 'Subscribe to our newsletter';
-        document.getElementById('newsletter-sub').innerText = 'To be updated with all the latest news, offers and special announcements.';
-        document.getElementById('social-title').innerText = 'Stay Connected';
-      }
+            document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+            document.getElementById('btn-vi').classList.toggle('active', lang === 'vi');
 
-      filterCategory(currentCategory, document.querySelector(`.nav-link.active`));
-      fetchCanadaWeather();
-      translateVisibleArticles();
-    }
+            if (lang === 'vi') {
+                document.getElementById('search-input').placeholder = 'Tìm kiếm tin tức, sự kiện...';
+                document.getElementById('tab-all').innerHTML = '<i class="fa-solid fa-newspaper"></i> Tin Canada';
+                document.getElementById('tab-world').innerHTML = '<i class="fa-solid fa-earth-americas"></i> Thế Giới';
+                document.getElementById('tab-culture').innerHTML = '<i class="fa-solid fa-masks-theater"></i> Văn Hóa';
+                document.getElementById('tab-vietnam').innerHTML = '<i class="fa-solid fa-compass"></i> Khám Phá Việt Nam';
+                document.getElementById('tab-business').innerHTML = '<i class="fa-solid fa-chart-line"></i> Kinh Doanh';
+                document.getElementById('tab-tech').innerHTML = '<i class="fa-solid fa-microchip"></i> Công Nghệ';
+                document.getElementById('tab-politics').innerHTML = '<i class="fa-solid fa-landmark"></i> Chính Trị';
 
-    // TẢI DỮ LIỆU KHI TRANG KHỞI CHẠY
-    fetchNews();
-    fetchCanadaWeather();
-    fetchYoutubePlaylist();
-  </script>
+                document.getElementById('load-more-lbl').innerText = 'XEM THÊM BÀI VIẾT';
+                document.getElementById('weather-widget-heading').innerText = 'Thời Tiết Các Tỉnh Bang';
+                document.getElementById('news-box-title').innerText = 'Đăng Ký Bản Tin Sáng';
+                document.getElementById('news-box-desc').innerText = 'Cập nhật tin tức quan trọng, cơ hội việc làm và định cư Canada mỗi sáng.';
+                document.getElementById('news-btn-lbl').innerText = 'NHẬN BẢN TIN NGAY';
+                document.getElementById('modal-footer-note').innerText = 'Nguồn bài viết gốc từ nhà xuất bản:';
+            } else {
+                document.getElementById('search-input').placeholder = 'Search Canada & world news...';
+                document.getElementById('tab-all').innerHTML = '<i class="fa-solid fa-newspaper"></i> Canada News';
+                document.getElementById('tab-world').innerHTML = '<i class="fa-solid fa-earth-americas"></i> World';
+                document.getElementById('tab-culture').innerHTML = '<i class="fa-solid fa-masks-theater"></i> Culture';
+                document.getElementById('tab-vietnam').innerHTML = '<i class="fa-solid fa-compass"></i> Discover Vietnam';
+                document.getElementById('tab-business').innerHTML = '<i class="fa-solid fa-chart-line"></i> Business';
+                document.getElementById('tab-tech').innerHTML = '<i class="fa-solid fa-microchip"></i> Tech';
+                document.getElementById('tab-politics').innerHTML = '<i class="fa-solid fa-landmark"></i> Politics';
+
+                document.getElementById('load-more-lbl').innerText = 'LOAD MORE STORIES';
+                document.getElementById('weather-widget-heading').innerText = 'Canada Weather Forecast';
+                document.getElementById('news-box-title').innerText = 'Morning Briefing Newsletter';
+                document.getElementById('news-box-desc').innerText = 'Get essential Canadian immigration, business, and local stories daily.';
+                document.getElementById('news-btn-lbl').innerText = 'SUBSCRIBE NOW';
+                document.getElementById('modal-footer-note').innerText = 'Read original article at publisher:';
+            }
+
+            filterCategory(currentCategory, document.querySelector(`.nav-tab.active`));
+            translateVisibleArticles();
+        }
+
+        // KHỞI CHẠY
+        fetchNews();
+        fetchCanadaWeather();
+        fetchYoutubePlaylist();
+    </script>
 </body>
+
 </html>

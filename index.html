@@ -925,13 +925,13 @@
         <span style="margin-left: 6px;" id="current-date">Loading date...</span>
       </div>
       <div>
-        <i class="fa-solid fa-globe"></i> VC NOW CANADA
+        <i class="fa-solid fa-globe"></i> VC Now Canada
       </div>
     </div>
 
     <div class="brand-header">
       <div class="brand-logo">
-        VC NOW <span>CANADA</span>
+        VC Now <span>Canada</span>
       </div>
 
       <div class="search-box">
@@ -1024,7 +1024,7 @@
       <div class="widget">
         <h3 class="widget-title">
           <i class="fa-brands fa-youtube"></i>
-          <span id="youtube-title">VC NOW CANADA</span>
+          <span id="youtube-title">VC Now Canada</span>
         </h3>
         
         <div class="yt-playlist-wrapper">
@@ -1050,7 +1050,7 @@
           <span id="about-title">Giới Thiệu</span>
         </h3>
         <p id="about-text" style="font-size:0.88rem; color:var(--text-muted);">
-          Kênh tin tức & văn hóa VC NOW CANADA, cập nhật liên tục thông tin Canada, thời sự quốc tế và luồng truyền hình trực tiếp.
+          Kênh tin tức & văn hóa VC Now Canada, cập nhật liên tục thông tin Canada, thời sự quốc tế và luồng truyền hình trực tiếp.
         </p>
       </div>
 
@@ -1067,7 +1067,7 @@
         <div class="podcast-content">
           <div class="podcast-text">
             <h5 id="podcast-heading">Billions in EV Investments Face Delays and Uncertainty Across Canada</h5>
-            <span>VC NOW CANADA - June 5, 2026</span>
+            <span>VC Now Canada - June 5, 2026</span>
           </div>
           <img class="podcast-img" src="https://images.unsplash.com/photo-1590602847861-f357a9332bbc?auto=format&fit=crop&w=200&q=80" alt="Podcast">
         </div>
@@ -1187,7 +1187,7 @@
     <div class="footer-container">
       <div class="footer-col">
         <div class="brand-logo" style="color:white; margin-bottom:1rem; font-size:1.5rem;">
-          VC NOW <span style="color:var(--primary-red)">CANADA</span>
+          VC Now <span style="color:var(--primary-red)">Canada</span>
         </div>
         <p id="footer-desc">Cung cấp thông tin thời sự Canada, văn hóa và nhịp sống minh bạch, nhanh chóng và khách quan từ các đối tác báo chí toàn cầu.</p>
         <div class="social-links">
@@ -1228,7 +1228,7 @@
     </div>
 
     <div class="footer-bottom">
-      &copy; 2026 VC NOW CANADA. All rights reserved. Content aggregated via RSS APIs.
+      &copy; 2026 VC Now Canada. All rights reserved. 
     </div>
   </footer>
 
@@ -1260,8 +1260,8 @@
         dataType: "jsonp",
         complete: function () {
           const successMsg = currentLang === 'vi' 
-            ? 'Cảm ơn bạn đã đăng ký nhận bản tin VC NOW CANADA!' 
-            : 'Thank you for subscribing to VC NOW CANADA newsletter!';
+            ? 'Cảm ơn bạn đã đăng ký nhận bản tin VC Now Canada!' 
+            : 'Thank you for subscribing to VC Now Canada newsletter!';
           alert(successMsg);
           
           form.reset();
@@ -1394,6 +1394,7 @@
     ];
 
     let articlesData = [];
+    let currentHeroArticles = [];
     let currentFilteredArticles = [];
     let visibleCount = 5;
     let currentLang = 'vi';
@@ -1528,7 +1529,7 @@
 
     // DỊCH TỪNG BÀI VIẾT
     async function translateSingleArticle(item) {
-      if (currentLang !== 'vi') return;
+      if (!item || currentLang !== 'vi') return;
 
       if (!item.title_vi) {
         item.title_vi = await translateText(item.title, 'vi');
@@ -1538,25 +1539,24 @@
       }
     }
 
-    // DỊCH TẤT CẢ CÁC BÀI VIẾT ĐANG HIỂN THỊ (CẢ HERO VÀ DANH SÁCH)
+    // DỊCH CÁC BÀI ĐANG HIỂN THỊ CỦA TAB HIỆN TẠI (ĐÃ SỬA LỖI ĐỨNG KHỐI HERO)
     async function translateVisibleArticles() {
       if (currentLang !== 'vi') return;
 
-      // 1. Dịch 3 bài khối Hero ở trên cùng
-      const heroArticles = articlesData.slice(0, 3);
-      for (let item of heroArticles) {
+      // 1. Dịch 3 bài khối Hero của tab hiện tại
+      for (let item of currentHeroArticles) {
         await translateSingleArticle(item);
       }
-      if (!document.getElementById('search-input').value) {
-        renderHeroSection(articlesData.slice(0, 3));
+      if (!document.getElementById('search-input').value && currentHeroArticles.length >= 3) {
+        renderHeroSection(currentHeroArticles);
       }
 
-      // 2. Dịch các bài trong Danh sách bên dưới
+      // 2. Dịch các bài trong danh sách bên dưới của tab hiện tại
       const displayArticles = currentFilteredArticles.slice(0, visibleCount);
       for (let item of displayArticles) {
         await translateSingleArticle(item);
-        renderNews();
       }
+      renderNews();
     }
 
     // ⚡ HÀM TẢI TIN TỨC
@@ -1676,13 +1676,13 @@
       `;
     }
 
-    // CHUYỂN DANH MỤC CÓ GỌI LẠI HÀM DỊCH
+    // CHUYỂN DANH MỤC TAB
     function filterCategory(cat, element) {
       currentCategory = cat;
       visibleCount = 5;
 
       document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
-      if(element) element.classList.add('active');
+      if (element) element.classList.add('active');
 
       const nav = document.getElementById('nav-menu');
       if (nav.classList.contains('open')) toggleMobileMenu();
@@ -1702,6 +1702,7 @@
       translateVisibleArticles();
     }
 
+    // LỌC TIN TỨC THEO DANH MỤC VÀ TÌM KIẾM
     function filterNews() {
       const query = document.getElementById('search-input').value.toLowerCase();
       
@@ -1712,11 +1713,13 @@
         return matchesCategory && matchesSearch;
       });
 
-      if (!query) {
-        renderHeroSection(filtered.slice(0, 3));
+      if (!query && filtered.length >= 3) {
+        currentHeroArticles = filtered.slice(0, 3);
         currentFilteredArticles = filtered.slice(3);
+        renderHeroSection(currentHeroArticles);
       } else {
         document.getElementById('hero-section').style.display = 'none';
+        currentHeroArticles = [];
         currentFilteredArticles = filtered;
       }
 
@@ -1810,7 +1813,7 @@
       if (lang === 'vi') {
         document.getElementById('weather-title').innerText = 'Thời Tiết Canada';
         document.getElementById('about-title').innerText = 'Giới Thiệu';
-        document.getElementById('about-text').innerText = 'Kênh tin tức & văn hóa VC NOW CANADA, cập nhật liên tục thông tin Canada, thời sự quốc tế và luồng truyền hình trực tiếp.';
+        document.getElementById('about-text').innerText = 'Kênh tin tức & văn hóa VC Now Canada, cập nhật liên tục thông tin Canada, thời sự quốc tế và luồng truyền hình trực tiếp.';
         document.getElementById('nav-all').innerText = 'Tin Canada';
         document.getElementById('nav-world').innerText = 'Thế Giới';
         document.getElementById('nav-culture').innerText = 'Văn Hóa';
@@ -1831,7 +1834,7 @@
       } else {
         document.getElementById('weather-title').innerText = 'Canada Weather';
         document.getElementById('about-title').innerText = 'About Us';
-        document.getElementById('about-text').innerText = 'VC NOW CANADA news & lifestyle channel, updating Canada current affairs, Vietnam discovery, and live video streams.';
+        document.getElementById('about-text').innerText = 'VC Now Canada news & lifestyle channel, updating Canada current affairs, Vietnam discovery, and live video streams.';
         document.getElementById('nav-all').innerText = 'Canada News';
         document.getElementById('nav-world').innerText = 'World';
         document.getElementById('nav-culture').innerText = 'Culture';

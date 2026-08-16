@@ -24,6 +24,7 @@
       --primary-pink: #ec4899;
       --primary-red: #ef4444;
       --accent-cyan: #0284c7;
+      --accent-orange: #ff5b00;
       --text-main: #0f172a;
       --text-muted: #64748b;
       --border-color: rgba(0, 0, 0, 0.08);
@@ -45,6 +46,7 @@
       --primary-pink: #ec4899;
       --primary-red: #ef4444;
       --accent-cyan: #06b6d4;
+      --accent-orange: #ff5b00;
       --text-main: #f8fafc;
       --text-muted: #94a3b8;
       --border-color: rgba(255, 255, 255, 0.08);
@@ -256,9 +258,10 @@
       margin: 0 auto;
       padding: 0 1.5rem;
       display: flex;
-      gap: 2rem;
+      gap: 1.8rem;
       overflow-x: auto;
       white-space: nowrap;
+      align-items: center;
     }
 
     .nav-tab {
@@ -278,6 +281,26 @@
     .nav-tab:hover, .nav-tab.active {
       color: var(--text-main);
       border-bottom-color: var(--primary-pink);
+    }
+
+    .nav-affiliate-btn {
+      margin-left: auto;
+      background: linear-gradient(135deg, #ff5b00, #ff8c00);
+      color: white !important;
+      font-size: 0.78rem;
+      font-weight: 800;
+      padding: 5px 12px;
+      border-radius: 20px;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      box-shadow: 0 2px 10px rgba(255, 91, 0, 0.3);
+      transition: var(--transition);
+    }
+
+    .nav-affiliate-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 15px rgba(255, 91, 0, 0.5);
     }
 
     /* TOP STORY CIRCLES */
@@ -728,6 +751,92 @@
 
     .widget-head i { color: var(--primary-pink); }
 
+    /* QUẢNG CÁO AFFILIATE & SPONSOR WIDGETS */
+    .affiliate-ad-box {
+      background: linear-gradient(145deg, #1e293b, #0f172a);
+      border-radius: var(--radius-md);
+      padding: 1.25rem;
+      border: 1px solid rgba(255, 91, 0, 0.35);
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.25);
+    }
+
+    .affiliate-badge {
+      background: linear-gradient(135deg, #ff5b00, #ff8c00);
+      color: white;
+      font-size: 0.68rem;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: 4px;
+      text-transform: uppercase;
+      display: inline-block;
+      margin-bottom: 8px;
+      letter-spacing: 0.5px;
+    }
+
+    .affiliate-ad-title {
+      font-size: 1rem;
+      font-weight: 800;
+      color: #ffffff;
+      margin-bottom: 6px;
+      line-height: 1.35;
+    }
+
+    .affiliate-ad-desc {
+      font-size: 0.78rem;
+      color: #94a3b8;
+      margin-bottom: 14px;
+      line-height: 1.5;
+    }
+
+    .affiliate-btn-action {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      background: linear-gradient(135deg, #ff5b00, #ea580c);
+      color: white !important;
+      padding: 9px 12px;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 0.82rem;
+      text-decoration: none;
+      transition: var(--transition);
+      box-shadow: 0 4px 15px rgba(255, 91, 0, 0.4);
+    }
+
+    .affiliate-btn-action:hover {
+      transform: translateY(-2px);
+      filter: brightness(1.1);
+    }
+
+    .sponsor-ad-box {
+      background: var(--bg-card);
+      border-radius: var(--radius-md);
+      padding: 1.2rem;
+      border: 1px dashed var(--border-color);
+      text-align: center;
+    }
+
+    .sponsor-ad-btn {
+      display: inline-block;
+      background: var(--bg-subtle);
+      color: var(--text-main);
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      margin-top: 10px;
+      transition: var(--transition);
+    }
+
+    .sponsor-ad-btn:hover {
+      background: var(--primary-purple);
+      color: white;
+    }
+
     /* YOUTUBE PLAYLIST WIDGET */
     .yt-playlist-box {
       background: #0a0e1a;
@@ -1085,7 +1194,8 @@
       }
       .nav-inner.open { display: flex; }
       .nav-tab { width: 100%; padding: 0.85rem 1.25rem; border-bottom: 1px solid var(--border-color); }
-      
+      .nav-affiliate-btn { margin: 10px 1.25rem; justify-content: center; }
+
       .story-circles-wrap { padding: 0 1rem 0.5rem; gap: 1rem; }
       .story-avatar-ring { width: 58px; height: 58px; }
       .story-inner-circle { font-size: 1.15rem; }
@@ -1128,7 +1238,7 @@
   <div class="top-live-bar">
     <div>
       <span class="live-pulse-badge"><i class="fa-solid fa-bolt"></i> HOT TRENDING</span>
-      <span id="current-date">Saturday, August 15, 2026</span>
+      <span id="current-date">Sunday, August 16, 2026</span>
     </div>
     <div>
       <i class="fa-brands fa-canadian-maple-leaf" style="color:var(--primary-red);"></i> VC Now Canada | Tiếng Nói Người Việt Tại Canada
@@ -1174,6 +1284,11 @@
         <span class="nav-tab" id="tab-business" onclick="filterCategory('business', this)"><i class="fa-solid fa-chart-line"></i> Kinh Doanh</span>
         <span class="nav-tab" id="tab-tech" onclick="filterCategory('tech', this)"><i class="fa-solid fa-microchip"></i> Công Nghệ</span>
         <span class="nav-tab" id="tab-politics" onclick="filterCategory('politics', this)"><i class="fa-solid fa-landmark"></i> Chính Trị</span>
+        
+        <!-- QUẢNG CÁO AFFILIATE TRÊN MENU -->
+        <a href="https://klook.tpx.gr/FbrW6Dol" target="_blank" rel="noopener noreferrer" class="nav-affiliate-btn">
+          <i class="fa-solid fa-ticket"></i> Săn Vé & Tour Klook
+        </a>
       </div>
     </nav>
   </header>
@@ -1312,6 +1427,18 @@
         </div>
       </div>
 
+      <!-- QUẢNG CÁO ĐỐI TÁC DU LỊCH KLOOK -->
+      <div class="affiliate-ad-box">
+        <span class="affiliate-badge"><i class="fa-solid fa-tag"></i> ƯU ĐÃI ĐỘC QUYỀN</span>
+        <h4 class="affiliate-ad-title">Vé Tham Quan & Tour Canada / Quốc Tế</h4>
+        <p class="affiliate-ad-desc">
+          Đặt vé Tháp CN, tour ngắm Thác Niagara, vé công viên giải trí Canada & quốc tế giảm đến 30% trên Klook.
+        </p>
+        <a href="https://klook.tpx.gr/FbrW6Dol" target="_blank" rel="noopener noreferrer" class="affiliate-btn-action">
+          <span>Xem Ưu Đãi Klook Ngay</span> <i class="fa-solid fa-arrow-up-right-from-square"></i>
+        </a>
+      </div>
+
       <!-- THỜI TIẾT CANADA -->
       <div class="widget-panel">
         <h3 class="widget-head">
@@ -1321,6 +1448,20 @@
         <div class="weather-grid-mini" id="weather-container">
           <div style="grid-column: 1/-1; text-align: center; color: var(--text-muted); font-size: 0.8rem;">Đang tải dữ liệu...</div>
         </div>
+      </div>
+
+      <!-- KHÔNG GIAN TÀI TRỢ DOANH NGHIỆP ĐỊA PHƯƠNG -->
+      <div class="sponsor-ad-box">
+        <div style="font-size:0.75rem; font-weight:800; color:var(--primary-pink); text-transform:uppercase; letter-spacing:0.5px;">
+          <i class="fa-solid fa-bullhorn"></i> Hợp Tác Quảng Bá
+        </div>
+        <h4 style="font-size:0.95rem; font-weight:700; margin:6px 0; color:var(--text-main);">Dịch Vụ Di Trú & Kiều Bào</h4>
+        <p style="font-size:0.78rem; color:var(--text-muted); line-height:1.4;">
+          Quảng bá dịch vụ vé máy bay, di trú, kế toán, bất động sản tới cộng đồng người Việt tại Canada.
+        </p>
+        <a href="mailto:peaterkh@gmail.com" class="sponsor-ad-btn">
+          Liên Hệ Đặt Banner
+        </a>
       </div>
 
       <!-- NEWSLETTER BOX -->

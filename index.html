@@ -824,17 +824,20 @@
       display: inline-block;
       background: var(--bg-subtle);
       color: var(--text-main);
-      padding: 8px 16px;
+      padding: 9px 16px;
       border-radius: 8px;
       font-size: 0.78rem;
       font-weight: 700;
       margin-top: 10px;
+      border: 1px solid var(--border-color);
+      cursor: pointer;
       transition: var(--transition);
     }
 
     .sponsor-ad-btn:hover {
       background: var(--primary-purple);
       color: white;
+      border-color: transparent;
     }
 
     /* YOUTUBE PLAYLIST WIDGET */
@@ -1285,8 +1288,8 @@
         <span class="nav-tab" id="tab-tech" onclick="filterCategory('tech', this)"><i class="fa-solid fa-microchip"></i> Công Nghệ</span>
         <span class="nav-tab" id="tab-politics" onclick="filterCategory('politics', this)"><i class="fa-solid fa-landmark"></i> Chính Trị</span>
         
-        <!-- QUẢNG CÁO AFFILIATE TRÊN MENU -->
-        <a href="https://klook.tpx.gr/FbrW6Dol" target="_blank" rel="noopener noreferrer" class="nav-affiliate-btn">
+        <!-- QUẢNG CÁO AFFILIATE TRÊN MENU (LINK CHUẨN KHÔNG 404) -->
+        <a href="https://www.klook.com/?aid=765325" target="_blank" rel="noopener noreferrer" class="nav-affiliate-btn">
           <i class="fa-solid fa-ticket"></i> Săn Vé & Tour Klook
         </a>
       </div>
@@ -1427,14 +1430,14 @@
         </div>
       </div>
 
-      <!-- QUẢNG CÁO ĐỐI TÁC DU LỊCH KLOOK -->
+      <!-- QUẢNG CÁO ĐỐI TÁC DU LỊCH KLOOK (LINK CHUẨN KHÔNG 404) -->
       <div class="affiliate-ad-box">
         <span class="affiliate-badge"><i class="fa-solid fa-tag"></i> ƯU ĐÃI ĐỘC QUYỀN</span>
         <h4 class="affiliate-ad-title">Vé Tham Quan & Tour Canada / Quốc Tế</h4>
         <p class="affiliate-ad-desc">
           Đặt vé Tháp CN, tour ngắm Thác Niagara, vé công viên giải trí Canada & quốc tế giảm đến 30% trên Klook.
         </p>
-        <a href="https://klook.tpx.gr/FbrW6Dol" target="_blank" rel="noopener noreferrer" class="affiliate-btn-action">
+        <a href="https://www.klook.com/?aid=765325" target="_blank" rel="noopener noreferrer" class="affiliate-btn-action">
           <span>Xem Ưu Đãi Klook Ngay</span> <i class="fa-solid fa-arrow-up-right-from-square"></i>
         </a>
       </div>
@@ -1459,9 +1462,9 @@
         <p style="font-size:0.78rem; color:var(--text-muted); line-height:1.4;">
           Quảng bá dịch vụ vé máy bay, di trú, kế toán, bất động sản tới cộng đồng người Việt tại Canada.
         </p>
-        <a href="mailto:peaterkh@gmail.com" class="sponsor-ad-btn">
+        <button type="button" class="sponsor-ad-btn" onclick="openSponsorModal()">
           Liên Hệ Đặt Banner
-        </a>
+        </button>
       </div>
 
       <!-- NEWSLETTER BOX -->
@@ -1556,6 +1559,30 @@
           </div>
         </div>
       </div>
+    </div>
+  </div>
+
+  <!-- POPUP MODAL LIÊN HỆ ĐẶT QUẢNG CÁO -->
+  <div id="sponsor-modal" class="modal-overlay" onclick="handleSponsorModalBgClick(event)">
+    <div class="modal-box" style="max-width: 500px; text-align: center;">
+      <div class="close-modal-btn" onclick="closeSponsorModal()"><i class="fa-solid fa-xmark"></i></div>
+      <div style="width: 50px; height: 50px; background: linear-gradient(135deg, var(--primary-pink), var(--primary-purple)); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 12px; color: white; font-size: 1.4rem;">
+        <i class="fa-solid fa-bullhorn"></i>
+      </div>
+      <h2 style="font-family: var(--font-title); font-size: 1.4rem; color: var(--text-main); margin-bottom: 6px;">Hợp Tác Truyền Thông & Quảng Cáo</h2>
+      <p style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 20px;">
+        Đưa thương hiệu và dịch vụ của bạn tiếp cận trực tiếp hàng ngàn kiều bào tại Canada.
+      </p>
+
+      <div style="background: var(--bg-subtle); padding: 14px; border-radius: 10px; text-align: left; display: flex; flex-direction: column; gap: 10px; font-size: 0.85rem; border: 1px solid var(--border-color);">
+        <div><i class="fa-solid fa-envelope" style="color: var(--primary-pink); width: 20px;"></i> <strong>Email:</strong> peaterkh@gmail.com</div>
+        <div><i class="fa-brands fa-youtube" style="color: #ef4444; width: 20px;"></i> <strong>Kênh Media:</strong> VC Now Canada</div>
+        <div><i class="fa-solid fa-location-dot" style="color: #38bdf8; width: 20px;"></i> <strong>Thị trường:</strong> Toronto, Vancouver & Toàn Canada</div>
+      </div>
+
+      <a href="https://mail.google.com/mail/?view=cm&fs=1&to=peaterkh@gmail.com&su=Lien%20he%20dat%20quang%20cao%20VC%20Now%20Canada" target="_blank" rel="noopener noreferrer" style="display: block; margin-top: 18px; background: linear-gradient(135deg, var(--primary-pink), var(--primary-purple)); color: white; padding: 10px; border-radius: 8px; font-weight: 700; font-size: 0.85rem; text-decoration: none;">
+        <i class="fa-solid fa-paper-plane"></i> Gửi Thư Qua Gmail
+      </a>
     </div>
   </div>
 
@@ -1724,6 +1751,21 @@
 
     function handleWeatherModalBgClick(event) {
       if (event.target.id === 'weather-modal') closeWeatherModal();
+    }
+
+    // MODAL LIÊN HỆ TÀI TRỢ
+    function openSponsorModal() {
+      document.getElementById('sponsor-modal').style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeSponsorModal() {
+      document.getElementById('sponsor-modal').style.display = 'none';
+      document.body.style.overflow = 'auto';
+    }
+
+    function handleSponsorModalBgClick(event) {
+      if (event.target.id === 'sponsor-modal') closeSponsorModal();
     }
 
     const PLAYLIST_ID = "PLDdOhIx3i1Q4";

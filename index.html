@@ -751,65 +751,14 @@
 
     .widget-head i { color: var(--primary-pink); }
 
-    /* QUẢNG CÁO AFFILIATE & SPONSOR WIDGETS */
-    .affiliate-ad-box {
-      background: linear-gradient(145deg, #1e293b, #0f172a);
-      border-radius: var(--radius-md);
-      padding: 1.25rem;
-      border: 1px solid rgba(255, 91, 0, 0.35);
-      position: relative;
-      overflow: hidden;
-      box-shadow: 0 8px 25px rgba(0,0,0,0.25);
-    }
-
-    .affiliate-badge {
-      background: linear-gradient(135deg, #ff5b00, #ff8c00);
-      color: white;
-      font-size: 0.68rem;
-      font-weight: 800;
-      padding: 3px 8px;
-      border-radius: 4px;
-      text-transform: uppercase;
-      display: inline-block;
-      margin-bottom: 8px;
-      letter-spacing: 0.5px;
-    }
-
-    .affiliate-ad-title {
-      font-size: 1rem;
-      font-weight: 800;
-      color: #ffffff;
-      margin-bottom: 6px;
-      line-height: 1.35;
-    }
-
-    .affiliate-ad-desc {
-      font-size: 0.78rem;
-      color: #94a3b8;
-      margin-bottom: 14px;
-      line-height: 1.5;
-    }
-
-    .affiliate-btn-action {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
+    /* KHUNG CHỨA WIDGET KLOOK TỐI ƯU HIỂN THỊ */
+    .klook-widget-container {
       width: 100%;
-      background: linear-gradient(135deg, #ff5b00, #ea580c);
-      color: white !important;
-      padding: 9px 12px;
-      border-radius: 8px;
-      font-weight: 700;
-      font-size: 0.82rem;
-      text-decoration: none;
-      transition: var(--transition);
-      box-shadow: 0 4px 15px rgba(255, 91, 0, 0.4);
-    }
-
-    .affiliate-btn-action:hover {
-      transform: translateY(-2px);
-      filter: brightness(1.1);
+      min-height: 250px;
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
     }
 
     .sponsor-ad-box {
@@ -1288,7 +1237,7 @@
         <span class="nav-tab" id="tab-tech" onclick="filterCategory('tech', this)"><i class="fa-solid fa-microchip"></i> Công Nghệ</span>
         <span class="nav-tab" id="tab-politics" onclick="filterCategory('politics', this)"><i class="fa-solid fa-landmark"></i> Chính Trị</span>
         
-        <!-- QUẢNG CÁO AFFILIATE TRÊN MENU (LINK CHUẨN KHÔNG 404) -->
+        <!-- QUẢNG CÁO AFFILIATE TRÊN MENU -->
         <a href="https://www.klook.com/?aid=765325" target="_blank" rel="noopener noreferrer" class="nav-affiliate-btn">
           <i class="fa-solid fa-ticket"></i> Săn Vé & Tour Klook
         </a>
@@ -1430,16 +1379,15 @@
         </div>
       </div>
 
-      <!-- QUẢNG CÁO ĐỐI TÁC DU LỊCH KLOOK (LINK CHUẨN KHÔNG 404) -->
-      <div class="affiliate-ad-box">
-        <span class="affiliate-badge"><i class="fa-solid fa-tag"></i> ƯU ĐÃI ĐỘC QUYỀN</span>
-        <h4 class="affiliate-ad-title">Vé Tham Quan & Tour Canada / Quốc Tế</h4>
-        <p class="affiliate-ad-desc">
-          Đặt vé Tháp CN, tour ngắm Thác Niagara, vé công viên giải trí Canada & quốc tế giảm đến 30% trên Klook.
-        </p>
-        <a href="https://www.klook.com/?aid=765325" target="_blank" rel="noopener noreferrer" class="affiliate-btn-action">
-          <span>Xem Ưu Đãi Klook Ngay</span> <i class="fa-solid fa-arrow-up-right-from-square"></i>
-        </a>
+      <!-- KHỐI WIDGET TOUR KLOOK ĐỘNG CHUẨN TRAVELPAYOUTS -->
+      <div class="widget-panel" style="padding: 1rem; overflow: hidden;">
+        <h3 class="widget-head" style="margin-bottom: 0.8rem;">
+          <i class="fa-solid fa-ticket" style="color: #ff5b00;"></i>
+          <span>Vé Tham Quan & Tour Canada</span>
+        </h3>
+        <div class="klook-widget-container">
+          <script async src="https://tpwgt.com/content?currency=CAD&trs=562927&shmarker=765325&locale=vi&city_id=534&category=2&amount=3&powered_by=true&campaign_id=137&promo_id=4497" charset="utf-8"></script>
+        </div>
       </div>
 
       <!-- THỜI TIẾT CANADA -->
@@ -1575,7 +1523,7 @@
       </p>
 
       <div style="background: var(--bg-subtle); padding: 14px; border-radius: 10px; text-align: left; display: flex; flex-direction: column; gap: 10px; font-size: 0.85rem; border: 1px solid var(--border-color);">
-        <div><i class="fa-solid fa-envelope" style="color: var(--primary-pink); width: 20px;"></i> <strong>Email:</strong> contact@vcnowcanada.com</div>
+        <div><i class="fa-solid fa-envelope" style="color: var(--primary-pink); width: 20px;"></i> <strong>Email:</strong> peaterkh@gmail.com</div>
         <div><i class="fa-brands fa-youtube" style="color: #ef4444; width: 20px;"></i> <strong>Kênh Media:</strong> VC Now Canada</div>
         <div><i class="fa-solid fa-location-dot" style="color: #38bdf8; width: 20px;"></i> <strong>Thị trường:</strong> Toronto, Vancouver & Toàn Canada</div>
       </div>

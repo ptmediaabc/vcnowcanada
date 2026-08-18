@@ -55,6 +55,7 @@
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
+    /* Chống bôi đen sao chép văn bản */
     body {
       background-color: var(--bg-dark);
       color: var(--text-main);
@@ -65,6 +66,10 @@
       min-height: 100vh;
       overflow-x: hidden;
       transition: background-color 0.3s ease, color 0.3s ease;
+      user-select: none;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
     }
 
     button, input, select, textarea, .badge-category, .btn-gradient-load, .newsletter-form-inline button, .lang-pill-btn {
@@ -132,6 +137,8 @@
       font-weight: 800;
       letter-spacing: -0.5px;
       color: var(--text-main);
+      white-space: nowrap !important;
+      flex-shrink: 0;
     }
 
     .brand-logo .brand-icon {
@@ -189,6 +196,7 @@
       display: flex;
       align-items: center;
       gap: 12px;
+      flex-shrink: 0;
     }
 
     .dark-mode-btn {
@@ -1118,7 +1126,7 @@
       color: white;
       font-size: 1rem;
       font-weight: 800;
-      margin-bottom: 1.2rem;
+      margin-bottom: 12px;
     }
 
     .footer-links { list-style: none; }
@@ -1150,7 +1158,7 @@
     @media (max-width: 768px) {
       .top-live-bar { flex-direction: column; gap: 4px; text-align: center; padding: 0.5rem 1rem; }
       .header-inner { padding: 0.75rem 1rem; gap: 1rem; }
-      .brand-logo { font-size: 1.4rem; }
+      .brand-logo { font-size: 1.35rem; }
       .brand-logo .brand-icon { width: 32px; height: 32px; font-size: 0.95rem; }
       
       .header-search-wrap { display: none; }
@@ -1208,7 +1216,7 @@
   <div class="top-live-bar">
     <div>
       <span class="live-pulse-badge"><i class="fa-solid fa-bolt"></i> HOT TRENDING</span>
-      <span id="current-date">Monday, August 17, 2026</span>
+      <span id="current-date">Sunday, August 16, 2026</span>
     </div>
     <div>
       <i class="fa-brands fa-canadian-maple-leaf" style="color:var(--primary-red);"></i> VC Now Canada | Tiếng Nói Người Việt Tại Canada
@@ -1388,7 +1396,7 @@
     <!-- RIGHT SIDEBAR -->
     <aside class="sidebar">
       
-      <!-- KHỐI YOUTUBE PLAYLIST -->
+      <!-- KHỐI YOUTUBE PLAYLIST (TỰ ĐỘNG CHUYỂN PLAYLIST KHI ĐỔI TAB) -->
       <div class="widget-panel" style="padding: 0.9rem;">
         <h3 class="widget-head">
           <i class="fa-brands fa-youtube"></i>
@@ -1409,7 +1417,7 @@
         </div>
       </div>
 
-      <!-- KHỐI WIDGET ESIM DU LỊCH AIRALO TOÀN CẦU (ĐÃ TÍCH HỢP CODE) -->
+      <!-- KHỐI WIDGET ESIM DU LỊCH AIRALO TOÀN CẦU -->
       <div class="widget-panel" style="padding: 1.1rem; border: 1px solid rgba(255, 91, 0, 0.35);">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 0.8rem; border-bottom: 2px solid var(--border-color); padding-bottom: 0.5rem;">
           <h3 style="font-size:1rem; font-weight:800; color:var(--text-main); display:flex; align-items:center; gap:8px;">
@@ -1419,14 +1427,14 @@
           <span style="background:linear-gradient(135deg, #ff5b00, #ea580c); color:#fff; font-size:0.65rem; font-weight:800; padding:2px 6px; border-radius:4px;">4G/5G DATA</span>
         </div>
         <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 10px; line-height: 1.4;">
-          Kết nối mạng tốc độ cao tại hơn 200 quốc gia. Không cần tháo SIM vật lý.
+          Kết nối mạng tốc độ cao tại hơn 200 quốc gia. Giữ liên lạc khi bay về Việt Nam hoặc đi công tác quốc tế.
         </p>
         <div style="width:100%; overflow:hidden;">
           <script async src="https://tpwgt.com/content?trs=562927&shmarker=765325&locale=en&country=Vietnam&powered_by=true&color_button=%23ff5b00&color_focused=%23f2685f&secondary=%23FFFFFF&dark=%2311100f&light=%23FFFFFF&special=%23C4C4C4&border_radius=5&plain=true&no_labels=true&promo_id=8588&campaign_id=541" charset="utf-8"></script>
         </div>
       </div>
 
-      <!-- KHỐI TOUR DU LỊCH CANADA NỔI BẬT (NATIVE WIDGET - KHÔNG BỊ ADBLOCK CHẶN) -->
+      <!-- KHỐI TOUR DU LỊCH CANADA NỔI BẬT (XOAY VÒNG TỰ ĐỘNG - NATIVE ANTI-ADBLOCK) -->
       <div class="widget-panel" style="padding: 1.1rem;">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; border-bottom:2px solid var(--border-color); padding-bottom:0.5rem;">
           <h3 style="font-size:1rem; font-weight:800; color:var(--text-main); display:flex; align-items:center; gap:8px;">
@@ -1436,42 +1444,8 @@
           <span style="background:rgba(255,91,0,0.15); color:#ff5b00; font-size:0.65rem; font-weight:800; padding:2px 6px; border-radius:4px;">KLOOK</span>
         </div>
 
-        <div style="display:flex; flex-direction:column; gap:10px;">
-          <!-- Item 1: Tháp CN Toronto -->
-          <a href="https://www.klook.com/en-CA/city/6-toronto-things-to-do/?aid=765325" target="_blank" rel="noopener noreferrer" style="display:flex; gap:10px; background:var(--bg-subtle); padding:8px; border-radius:8px; text-decoration:none; border:1px solid var(--border-color); transition:var(--transition);">
-            <img src="https://images.unsplash.com/photo-1509822929063-6b6cfc9b42f2?auto=format&fit=crop&w=160&q=80" style="width:75px; height:65px; border-radius:6px; object-fit:cover; flex-shrink:0;">
-            <div style="display:flex; flex-direction:column; justify-content:space-between; flex:1;">
-              <div style="font-size:0.8rem; font-weight:700; color:var(--text-main); line-height:1.25; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;">Vé Tháp CN Tower & Vé Tham Quan Toronto</div>
-              <div style="display:flex; justify-content:space-between; align-items:center;">
-                <span style="color:#f59e0b; font-size:0.7rem; font-weight:700;"><i class="fa-solid fa-star"></i> 4.8</span>
-                <span style="color:#ff5b00; font-weight:800; font-size:0.85rem;">Từ ~45 CAD</span>
-              </div>
-            </div>
-          </a>
-
-          <!-- Item 2: Thác Niagara -->
-          <a href="https://www.klook.com/en-CA/city/6-toronto-things-to-do/?aid=765325" target="_blank" rel="noopener noreferrer" style="display:flex; gap:10px; background:var(--bg-subtle); padding:8px; border-radius:8px; text-decoration:none; border:1px solid var(--border-color); transition:var(--transition);">
-            <img src="https://images.unsplash.com/photo-1534430480872-3498386e7856?auto=format&fit=crop&w=160&q=80" style="width:75px; height:65px; border-radius:6px; object-fit:cover; flex-shrink:0;">
-            <div style="display:flex; flex-direction:column; justify-content:space-between; flex:1;">
-              <div style="font-size:0.8rem; font-weight:700; color:var(--text-main); line-height:1.25; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;">Tour Trọn Gói Thác Niagara Từ Toronto Trong Ngày</div>
-              <div style="display:flex; justify-content:space-between; align-items:center;">
-                <span style="color:#f59e0b; font-size:0.7rem; font-weight:700;"><i class="fa-solid fa-star"></i> 4.9</span>
-                <span style="color:#ff5b00; font-weight:800; font-size:0.85rem;">Từ ~89 CAD</span>
-              </div>
-            </div>
-          </a>
-
-          <!-- Item 3: Vancouver -->
-          <a href="https://www.klook.com/en-CA/city/60-vancouver-things-to-do/?aid=765325" target="_blank" rel="noopener noreferrer" style="display:flex; gap:10px; background:var(--bg-subtle); padding:8px; border-radius:8px; text-decoration:none; border:1px solid var(--border-color); transition:var(--transition);">
-            <img src="https://images.unsplash.com/photo-1503614472-8c93d56e92ce?auto=format&fit=crop&w=160&q=80" style="width:75px; height:65px; border-radius:6px; object-fit:cover; flex-shrink:0;">
-            <div style="display:flex; flex-direction:column; justify-content:space-between; flex:1;">
-              <div style="font-size:0.8rem; font-weight:700; color:var(--text-main); line-height:1.25; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;">Tour Cầu Treo Capilano & Ngắm Cảnh Vancouver</div>
-              <div style="display:flex; justify-content:space-between; align-items:center;">
-                <span style="color:#f59e0b; font-size:0.7rem; font-weight:700;"><i class="fa-solid fa-star"></i> 4.9</span>
-                <span style="color:#ff5b00; font-weight:800; font-size:0.85rem;">Từ ~62 CAD</span>
-              </div>
-            </div>
-          </a>
+        <div style="display:flex; flex-direction:column; gap:10px;" id="canada-tour-container">
+          <!-- Render tự động bởi JS -->
         </div>
 
         <a href="https://www.klook.com/?aid=765325" target="_blank" rel="noopener noreferrer" style="margin-top:12px; display:block; text-align:center; background:linear-gradient(135deg, #ff5b00, #ea580c); color:white; font-size:0.8rem; font-weight:800; padding:8px; border-radius:8px; text-decoration:none; box-shadow:0 3px 12px rgba(255,91,0,0.35);">
@@ -1671,7 +1645,46 @@
     </div>
   </footer>
 
-  <!-- JAVASCRIPT LOGIC -->
+  <!-- SCRIPT BẢO VỆ MÃ NGUỒN (CHẶN F12, CHUỘT PHẢI, CTRL+U, CTRL+SHIFT+I) -->
+  <script>
+    // 1. Vô hiệu hóa menu chuột phải
+    document.addEventListener('contextmenu', function(e) {
+      e.preventDefault();
+      return false;
+    });
+
+    // 2. Chặn các tổ hợp phím kiểm tra mã nguồn (DevTools / Inspect)
+    document.addEventListener('keydown', function(e) {
+      // Chặn phím F12
+      if (e.key === 'F12' || e.keyCode === 123) {
+        e.preventDefault();
+        return false;
+      }
+      // Chặn Ctrl+Shift+I (Inspect), Ctrl+Shift+J (Console), Ctrl+Shift+C (Element picker)
+      if (e.ctrlKey && e.shiftKey && ['I','i','J','j','C','c'].includes(e.key)) {
+        e.preventDefault();
+        return false;
+      }
+      // Chặn Ctrl+U (View Source)
+      if (e.ctrlKey && (e.key === 'U' || e.key === 'u')) {
+        e.preventDefault();
+        return false;
+      }
+      // Chặn Ctrl+S (Save Page)
+      if (e.ctrlKey && (e.key === 'S' || e.key === 's')) {
+        e.preventDefault();
+        return false;
+      }
+    });
+
+    // 3. Vô hiệu hóa bôi đen nội dung (Copy protection)
+    document.addEventListener('selectstart', function(e) {
+      e.preventDefault();
+      return false;
+    });
+  </script>
+
+  <!-- JAVASCRIPT LOGIC TRANG WEB -->
   <script>
     document.getElementById('current-date').innerText = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
 
@@ -1715,6 +1728,77 @@
       { name: 'Montreal', lat: 45.50, lon: -73.56 },
       { name: 'Calgary', lat: 51.05, lon: -114.07 }
     ];
+
+    // DANH SÁCH TOUR DU LỊCH CANADA XOAY VÒNG TỰ ĐỘNG
+    const CANADA_KLOOK_TOURS = [
+      {
+        title: 'Vé Tháp CN Tower & Vé Tham Quan Toronto',
+        price: 'Từ ~45 CAD',
+        rating: '4.8',
+        img: 'https://images.unsplash.com/photo-1509822929063-6b6cfc9b42f2?auto=format&fit=crop&w=200&q=80',
+        link: 'https://www.klook.com/en-CA/city/6-toronto-things-to-do/?aid=765325'
+      },
+      {
+        title: 'Tour Trọn Gói Thác Niagara Từ Toronto Trong Ngày',
+        price: 'Từ ~89 CAD',
+        rating: '4.9',
+        img: 'https://images.unsplash.com/photo-1534430480872-3498386e7856?auto=format&fit=crop&w=200&q=80',
+        link: 'https://www.klook.com/en-CA/city/6-toronto-things-to-do/?aid=765325'
+      },
+      {
+        title: 'Tour Cầu Treo Capilano & Ngắm Cảnh Vancouver',
+        price: 'Từ ~62 CAD',
+        rating: '4.9',
+        img: 'https://images.unsplash.com/photo-1503614472-8c93d56e92ce?auto=format&fit=crop&w=200&q=80',
+        link: 'https://www.klook.com/en-CA/city/60-vancouver-things-to-do/?aid=765325'
+      },
+      {
+        title: 'Tour Vườn Quốc Gia Banff & Hồ Louise Rocky Mountains',
+        price: 'Từ ~120 CAD',
+        rating: '4.9',
+        img: 'https://images.unsplash.com/photo-1517935703635-27190760468e?auto=format&fit=crop&w=200&q=80',
+        link: 'https://www.klook.com/en-CA/city/60-vancouver-things-to-do/?aid=765325'
+      },
+      {
+        title: 'Vé Thủy Cung Ripley’s Aquarium Of Canada Tại Toronto',
+        price: 'Từ ~42 CAD',
+        rating: '4.8',
+        img: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=200&q=80',
+        link: 'https://www.klook.com/en-CA/city/6-toronto-things-to-do/?aid=765325'
+      },
+      {
+        title: 'Tour Xe Bus Ngắm Toàn Cảnh Phố Cổ Montreal & Đồi Mont Royal',
+        price: 'Từ ~39 CAD',
+        rating: '4.7',
+        img: 'https://images.unsplash.com/photo-1519178173562-b94f068779a5?auto=format&fit=crop&w=200&q=80',
+        link: 'https://www.klook.com/en-CA/city/6-toronto-things-to-do/?aid=765325'
+      }
+    ];
+
+    function renderRandomCanadaTours() {
+      const container = document.getElementById('canada-tour-container');
+      if (!container) return;
+
+      const shuffled = [...CANADA_KLOOK_TOURS].sort(() => 0.5 - Math.random());
+      const selected = shuffled.slice(0, 3);
+
+      let html = '';
+      selected.forEach(t => {
+        html += `
+          <a href="${t.link}" target="_blank" rel="noopener noreferrer" style="display:flex; gap:10px; background:var(--bg-subtle); padding:8px; border-radius:8px; text-decoration:none; border:1px solid var(--border-color); transition:var(--transition);" onmouseover="this.style.borderColor='#ff5b00'" onmouseout="this.style.borderColor='var(--border-color)'">
+            <img src="${t.img}" alt="${t.title}" style="width:75px; height:65px; border-radius:6px; object-fit:cover; flex-shrink:0;" onerror="this.src='https://images.unsplash.com/photo-1509822929063-6b6cfc9b42f2?auto=format&fit=crop&w=200&q=80'">
+            <div style="display:flex; flex-direction:column; justify-content:space-between; flex:1;">
+              <div style="font-size:0.8rem; font-weight:700; color:var(--text-main); line-height:1.25; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;">${t.title}</div>
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                <span style="color:#f59e0b; font-size:0.7rem; font-weight:700;"><i class="fa-solid fa-star"></i> ${t.rating}</span>
+                <span style="color:#ff5b00; font-weight:800; font-size:0.85rem;">${t.price}</span>
+              </div>
+            </div>
+          </a>
+        `;
+      });
+      container.innerHTML = html;
+    }
 
     let weatherCache = {};
 
@@ -1805,10 +1889,12 @@
       if (event.target.id === 'sponsor-modal') closeSponsorModal();
     }
 
-    const PLAYLIST_ID = "PLDdOhIx3i1Q4";
+    // CÁC PLAYLIST YOUTUBE THEO TỪNG CHUYÊN MỤC
+    const PLAYLIST_NEWS_ID = "PLDdOhIx3i1Q4";       // Kênh chính VC Now Canada (Tin tức & Chính trị)
+    const PLAYLIST_CULTURE_ID = "PLHUOBLknLbUQ";    // Kênh VC Life Canada (Văn hóa, Đời sống, Khám phá)
     const FALLBACK_THUMB = "https://i.ytimg.com/vi/i2iXCkWRg80/hqdefault.jpg";
 
-    let playlistVideos = [
+    let defaultNewsVideos = [
       { 
         id: "i2iXCkWRg80", 
         title: "TT Carney và Ford Bóp Nghẹt đòn bẩy dầu mỏ của Trump khi các cuộc đàm phán thuế quan phản tác dụng", 
@@ -1841,6 +1927,24 @@
       }
     ];
 
+    let defaultCultureVideos = [
+      {
+        id: "LsxaoEegdEs",
+        title: "Montreal, Vì Sao Thành Phố Này Giống Âu Châu Hơn Cả Canada ? | VC LIFE KHÁM PHÁ",
+        pubDate: "12/08/2026",
+        thumbnail: "https://i.ytimg.com/vi/LsxaoEegdEs/hqdefault.jpg"
+      },
+      {
+        id: "1d2dpuprzck",
+        title: "Đừng Đến Canada Nếu Chưa Biết Những Điều Này | VC Life Canada",
+        pubDate: "10/08/2026",
+        thumbnail: "https://i.ytimg.com/vi/1d2dpuprzck/hqdefault.jpg"
+      }
+    ];
+
+    let currentLoadedPlaylistId = "";
+    let playlistVideos = [];
+
     let articlesData = [];
     let currentHeroArticles = [];
     let currentFilteredArticles = [];
@@ -1858,12 +1962,21 @@
       e.target.reset();
     }
 
-    // YOUTUBE PLAYLIST TẢI NHANH
-    async function fetchYoutubePlaylist() {
+    // HÀM TẢI PLAYLIST YOUTUBE ĐỘNG THEO ID
+    async function loadYoutubePlaylistById(playlistId, customTitle) {
+      if (currentLoadedPlaylistId === playlistId) return;
+      currentLoadedPlaylistId = playlistId;
+
+      if (customTitle) {
+        document.getElementById('yt-widget-heading').innerText = customTitle;
+      }
+
+      // Đặt danh sách mặc định tương ứng để hiển thị ngay lập tức
+      playlistVideos = (playlistId === PLAYLIST_CULTURE_ID) ? [...defaultCultureVideos] : [...defaultNewsVideos];
       renderPlaylistUI();
       selectVideo(0);
 
-      const rssUrl = `https://www.youtube.com/feeds/videos.xml?playlist_id=${PLAYLIST_ID}`;
+      const rssUrl = `https://www.youtube.com/feeds/videos.xml?playlist_id=${playlistId}`;
       const proxy1 = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}&_t=${Date.now()}`;
       const proxy2 = `https://api.allorigins.win/get?url=${encodeURIComponent(rssUrl)}`;
 
@@ -2109,7 +2222,12 @@
       visibleCount = 6;
 
       document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-      if (element) element.classList.add('active');
+      if (element) {
+        element.classList.add('active');
+      } else {
+        const tabEl = document.getElementById(`tab-${cat}`);
+        if (tabEl) tabEl.classList.add('active');
+      }
 
       const nav = document.getElementById('nav-menu');
       if (nav.classList.contains('open')) toggleMobileMenu();
@@ -2136,6 +2254,13 @@
 
       const title = currentLang === 'vi' ? (catTitlesVi[cat] || 'TIN TỨC') : (catTitlesEn[cat] || 'NEWS');
       document.getElementById('section-head-text').innerHTML = `<i class="fa-solid fa-fire"></i> ${title}`;
+
+      // TỰ ĐỘNG ĐỔI PLAYLIST YOUTUBE KHI VÀO CHUYÊN MỤC VĂN HÓA
+      if (cat === 'culture') {
+        loadYoutubePlaylistById(PLAYLIST_CULTURE_ID, 'VC Life Canada - Khám Phá & Đời Sống');
+      } else {
+        loadYoutubePlaylistById(PLAYLIST_NEWS_ID, 'VC Now Media Stream');
+      }
 
       filterNews();
       translateVisibleArticles();
@@ -2288,7 +2413,8 @@
     // KHỞI CHẠY
     fetchNews();
     fetchCanadaWeather();
-    fetchYoutubePlaylist();
+    loadYoutubePlaylistById(PLAYLIST_NEWS_ID, 'VC Now Media Stream');
+    renderRandomCanadaTours();
   </script>
 </body>
 </html>

@@ -7,6 +7,7 @@
   
   <link rel="icon" type="image/png" href="https://img.icons8.com/color/48/maple-leaf.png">
 
+  <!-- Google Fonts HỖ TRỢ ĐẦY ĐỦ TIẾNG VIỆT -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300..800;1,300..800&family=Playfair+Display:ital,wght@0,600..900;1,400&display=swap&subset=vietnamese" rel="stylesheet">
@@ -54,6 +55,7 @@
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
+    /* Chống bôi đen sao chép văn bản */
     body {
       background-color: var(--bg-dark);
       color: var(--text-main);
@@ -66,6 +68,8 @@
       transition: background-color 0.3s ease, color 0.3s ease;
       user-select: none;
       -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
     }
 
     button, input, select, textarea, .badge-category, .btn-gradient-load, .newsletter-form-inline button, .lang-pill-btn {
@@ -302,6 +306,11 @@
       transition: var(--transition);
     }
 
+    .nav-affiliate-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 15px rgba(255, 91, 0, 0.5);
+    }
+
     /* TOP STORY CIRCLES */
     .story-circles-wrap {
       max-width: 1360px;
@@ -322,6 +331,8 @@
       flex-shrink: 0;
       transition: var(--transition);
     }
+
+    .story-circle-item:hover { transform: translateY(-3px); }
 
     .story-avatar-ring {
       width: 66px;
@@ -369,7 +380,7 @@
       flex: 1;
     }
 
-    /* HERO MAGAZINE GRID */
+    /* HERO MAGAZINE 3-TIER GRID */
     .hero-triple-grid {
       display: grid;
       grid-template-columns: 1.7fr 1fr;
@@ -407,7 +418,10 @@
       z-index: 2;
     }
 
-    .hero-banner-content { position: relative; z-index: 3; }
+    .hero-banner-content {
+      position: relative;
+      z-index: 3;
+    }
 
     .badge-category {
       background: linear-gradient(135deg, var(--primary-purple), var(--primary-pink));
@@ -483,7 +497,7 @@
       overflow: hidden;
     }
 
-    /* SOCIAL ROW */
+    /* SOCIAL GRADIENT STATS ROW */
     .social-counters-bar {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
@@ -504,12 +518,27 @@
       white-space: nowrap;
     }
 
+    .social-stat-pill:hover { transform: translateY(-2px); filter: brightness(1.1); }
+
     .soc-brand-group {
       display: flex;
       align-items: center;
       gap: 8px;
       font-weight: 800;
       font-size: 0.88rem;
+    }
+
+    .soc-brand-group i {
+      font-size: 1.15rem;
+      flex-shrink: 0;
+    }
+
+    .soc-count-tag {
+      font-size: 0.75rem;
+      font-weight: 700;
+      opacity: 0.95;
+      text-align: right;
+      line-height: 1.2;
     }
 
     .soc-fb { background: linear-gradient(135deg, #1877f2, #3b82f6); }
@@ -555,6 +584,8 @@
       transition: var(--transition);
       margin-bottom: 12px;
     }
+
+    .video-play-pulse-btn:hover { transform: scale(1.15); }
 
     .panorama-video-caption {
       position: absolute;
@@ -668,6 +699,8 @@
       transition: transform 0.5s ease;
     }
 
+    .magazine-card:hover .magazine-card-img-wrap img { transform: scale(1.08); }
+
     .magazine-card-content {
       flex: 1;
       display: flex;
@@ -724,6 +757,11 @@
       box-shadow: var(--shadow-glow);
     }
 
+    .btn-gradient-load:hover {
+      transform: translateY(-2px);
+      filter: brightness(1.15);
+    }
+
     /* SIDEBAR */
     .sidebar { display: flex; flex-direction: column; gap: 1.8rem; }
 
@@ -769,6 +807,12 @@
       border: 1px solid var(--border-color);
       cursor: pointer;
       transition: var(--transition);
+    }
+
+    .sponsor-ad-btn:hover {
+      background: var(--primary-purple);
+      color: white;
+      border-color: transparent;
     }
 
     /* YOUTUBE PLAYLIST WIDGET */
@@ -876,6 +920,12 @@
       transition: var(--transition);
     }
 
+    .weather-card-pill:hover {
+      border-color: var(--primary-purple);
+      background: var(--bg-card);
+      transform: translateY(-2px);
+    }
+
     .weather-city-name { font-size: 0.82rem; font-weight: 800; color: var(--text-main); }
     .weather-icon { font-size: 1.4rem; color: #38bdf8; margin: 4px 0; }
     .weather-temp { font-size: 1.15rem; font-weight: 900; color: var(--primary-pink); }
@@ -889,8 +939,18 @@
       border: 1px solid rgba(236, 72, 153, 0.2);
     }
 
-    .newsletter-box h4 { font-size: 1.05rem; font-weight: 800; color: white; margin-bottom: 6px; }
-    .newsletter-box p { font-size: 0.78rem; color: #cbd5e1; margin-bottom: 12px; }
+    .newsletter-box h4 {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: white;
+      margin-bottom: 6px;
+    }
+
+    .newsletter-box p {
+      font-size: 0.78rem;
+      color: #cbd5e1;
+      margin-bottom: 12px;
+    }
 
     .newsletter-form-inline input {
       width: 100%;
@@ -915,9 +975,12 @@
       font-size: 0.85rem;
       cursor: pointer;
       transition: var(--transition);
+      letter-spacing: 0.3px;
     }
 
-    /* POPUP MODAL QUICK READ NÂNG CẤP - BÀI BÁO THỰC TẾ ĐẦY ĐỦ */
+    .newsletter-form-inline button:hover { filter: brightness(1.15); }
+
+    /* POPUP MODAL QUICK READ & WEATHER */
     .modal-overlay {
       display: none;
       position: fixed;
@@ -932,9 +995,9 @@
 
     .modal-box {
       background: var(--bg-card);
-      max-width: 860px;
+      max-width: 820px;
       width: 100%;
-      max-height: 90vh;
+      max-height: 88vh;
       overflow-y: auto;
       border-radius: 20px;
       padding: 2.5rem;
@@ -989,10 +1052,9 @@
       display: block;
     }
 
-    /* ĐỊNH DẠNG ĐOẠN VĂN ĐỌC TIN CHUẨN BÁO CHÍ */
     .modal-body-content {
       font-size: 1.05rem;
-      line-height: 1.9;
+      line-height: 1.85;
       color: var(--text-main);
     }
 
@@ -1002,14 +1064,42 @@
     }
 
     .modal-body-content p:first-of-type::first-letter {
-      font-size: 3rem;
+      font-size: 2.8rem;
       line-height: 1;
       float: left;
       font-weight: 800;
-      margin-right: 10px;
+      margin-right: 8px;
       color: var(--primary-pink);
       font-family: var(--font-title);
     }
+
+    /* WEATHER MODAL CARD */
+    .weather-modal-card {
+      background: linear-gradient(135deg, #1e1b4b 0%, #311042 100%);
+      color: white;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin: 1rem 0;
+      border: 1px solid rgba(236, 72, 153, 0.3);
+    }
+
+    .weather-detail-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .weather-detail-item {
+      background: rgba(255,255,255,0.08);
+      padding: 0.8rem;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .weather-detail-item i { font-size: 1.3rem; color: #38bdf8; }
 
     /* FOOTER */
     footer {
@@ -1028,8 +1118,17 @@
       gap: 2.5rem;
     }
 
-    footer .brand-logo { color: #ffffff !important; }
-    .footer-head { color: white; font-size: 1rem; font-weight: 800; margin-bottom: 12px; }
+    footer .brand-logo {
+      color: #ffffff !important;
+    }
+
+    .footer-head {
+      color: white;
+      font-size: 1rem;
+      font-weight: 800;
+      margin-bottom: 12px;
+    }
+
     .footer-links { list-style: none; }
     .footer-links li { margin-bottom: 0.5rem; }
     .footer-links a { font-size: 0.85rem; transition: var(--transition); }
@@ -1044,6 +1143,11 @@
     }
 
     /* RESPONSIVE DESIGN NÂNG CAO */
+    @media (max-width: 1200px) {
+      .hero-main-heading { font-size: 1.45rem; }
+      .hero-main-banner { min-height: 380px; padding: 1.5rem; }
+    }
+
     @media (max-width: 1024px) {
       .main-grid-layout { grid-template-columns: 1fr; gap: 1.5rem; }
       .social-counters-bar { grid-template-columns: repeat(2, 1fr); gap: 10px; }
@@ -1056,6 +1160,7 @@
       .header-inner { padding: 0.75rem 1rem; gap: 1rem; }
       .brand-logo { font-size: 1.35rem; }
       .brand-logo .brand-icon { width: 32px; height: 32px; font-size: 0.95rem; }
+      
       .header-search-wrap { display: none; }
       .mobile-nav-toggle { display: block; }
       
@@ -1069,17 +1174,45 @@
       .nav-tab { width: 100%; padding: 0.85rem 1.25rem; border-bottom: 1px solid var(--border-color); }
       .nav-affiliate-btn { margin: 10px 1.25rem; justify-content: center; }
 
+      .story-circles-wrap { padding: 0 1rem 0.5rem; gap: 1rem; }
+      .story-avatar-ring { width: 58px; height: 58px; }
+      .story-inner-circle { font-size: 1.15rem; }
+      
       .main-grid-layout { padding: 0 1rem; margin: 1rem auto 2.5rem; }
       .hero-main-banner { min-height: 300px; padding: 1.25rem; border-radius: var(--radius-md); }
+      .hero-main-heading { font-size: 1.25rem; }
+      
       .news-grid-2col { grid-template-columns: 1fr; gap: 1rem; }
+      .magazine-card { padding: 0.85rem; gap: 0.9rem; }
+      .magazine-card-img-wrap { width: 110px; height: 95px; }
+      .magazine-card-title { font-size: 0.88rem; }
+      
+      .panorama-video-banner { min-height: 220px; border-radius: var(--radius-md); }
+      .video-play-pulse-btn { width: 54px; height: 54px; font-size: 1.3rem; }
+      .panorama-video-caption h3 { font-size: 1rem !important; }
+      
       .modal-overlay { padding: 1rem; }
       .modal-box { padding: 1.4rem; border-radius: 16px; max-height: 92vh; }
+      .modal-box h1 { font-size: 1.25rem !important; }
       .modal-img-container img { height: 200px; }
+      .modal-body-content { font-size: 0.95rem; line-height: 1.7; }
+      
+      .footer-inner { grid-template-columns: 1fr; gap: 1.75rem; padding: 0 1rem 2rem; }
+    }
+
+    @media (max-width: 480px) {
+      .social-counters-bar { grid-template-columns: 1fr; }
+      .social-stat-pill { padding: 0.75rem 0.9rem; }
+      .hero-sub-box { flex-direction: row; padding: 0.75rem; }
+      .hero-sub-box img { width: 85px; height: 75px; }
+      .weather-grid-mini { grid-template-columns: 1fr; }
+      .weather-detail-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
 <body class="dark-mode">
 
+  <!-- TOP LIVE BAR -->
   <div class="top-live-bar">
     <div>
       <span class="live-pulse-badge"><i class="fa-solid fa-bolt"></i> HOT TRENDING</span>
@@ -1090,6 +1223,7 @@
     </div>
   </div>
 
+  <!-- HEADER -->
   <header>
     <div class="header-inner">
       <div class="brand-logo">
@@ -1118,6 +1252,7 @@
       </div>
     </div>
 
+    <!-- NAVIGATION TABS -->
     <nav>
       <div class="nav-inner" id="nav-menu">
         <span class="nav-tab active" id="tab-all" onclick="filterCategory('all', this)"><i class="fa-solid fa-newspaper"></i> Tin Canada</span>
@@ -1128,6 +1263,7 @@
         <span class="nav-tab" id="tab-tech" onclick="filterCategory('tech', this)"><i class="fa-solid fa-microchip"></i> Công Nghệ</span>
         <span class="nav-tab" id="tab-politics" onclick="filterCategory('politics', this)"><i class="fa-solid fa-landmark"></i> Chính Trị</span>
         
+        <!-- QUẢNG CÁO TIẾP THỊ TRÊN MENU -->
         <a href="https://www.klook.com/?aid=765325" target="_blank" rel="noopener noreferrer" class="nav-affiliate-btn">
           <i class="fa-solid fa-ticket"></i> Săn Vé & Tour Klook
         </a>
@@ -1135,6 +1271,7 @@
     </nav>
   </header>
 
+  <!-- TOP STORY CIRCLES -->
   <div class="story-circles-wrap">
     <div class="story-circle-item" onclick="filterCategory('all')">
       <div class="story-avatar-ring">
@@ -1174,30 +1311,49 @@
     </div>
   </div>
 
+  <!-- MAIN WRAPPER -->
   <div class="main-grid-layout">
     
     <main>
+      <!-- HERO 3-TIER GRID -->
       <div class="hero-triple-grid" id="hero-triple-container"></div>
 
+      <!-- SOCIAL GRADIENT COUNTERS -->
       <div class="social-counters-bar">
         <div class="social-stat-pill soc-fb">
-          <div class="soc-brand-group"><i class="fa-brands fa-facebook-f"></i><span>Facebook</span></div>
+          <div class="soc-brand-group">
+            <i class="fa-brands fa-facebook-f"></i>
+            <span>Facebook</span>
+          </div>
           <span class="soc-count-tag">48.5K Fans</span>
         </div>
+
         <div class="social-stat-pill soc-yt">
-          <div class="soc-brand-group"><i class="fa-brands fa-youtube"></i><span>YouTube</span></div>
+          <div class="soc-brand-group">
+            <i class="fa-brands fa-youtube"></i>
+            <span>YouTube</span>
+          </div>
           <span class="soc-count-tag">125K Subs</span>
         </div>
+
         <div class="social-stat-pill soc-ig">
-          <div class="soc-brand-group"><i class="fa-brands fa-instagram"></i><span>Instagram</span></div>
+          <div class="soc-brand-group">
+            <i class="fa-brands fa-instagram"></i>
+            <span>Instagram</span>
+          </div>
           <span class="soc-count-tag">28.2K Follow</span>
         </div>
+
         <div class="social-stat-pill soc-tt">
-          <div class="soc-brand-group"><i class="fa-brands fa-tiktok"></i><span>TikTok</span></div>
+          <div class="soc-brand-group">
+            <i class="fa-brands fa-tiktok"></i>
+            <span>TikTok</span>
+          </div>
           <span class="soc-count-tag">85.1K Likes</span>
         </div>
       </div>
 
+      <!-- PANORAMA VIDEO FEATURE BANNER -->
       <div class="panorama-video-banner" id="panorama-box" onclick="playMainPanoramaVideo()">
         <img id="panorama-img" src="https://i.ytimg.com/vi/i2iXCkWRg80/hqdefault.jpg" alt="Video">
         <div class="video-play-pulse-btn"><i class="fa-solid fa-play"></i></div>
@@ -1207,6 +1363,7 @@
         </div>
       </div>
 
+      <!-- KHỐI TÌM VÉ MÁY BAY CHUYÊN TUYẾN CANADA - VIỆT NAM (FLIGHTS SEARCH FORM) -->
       <div class="flight-search-wrapper">
         <div class="flight-search-header">
           <div class="flight-search-title">
@@ -1218,12 +1375,14 @@
         <script async src="https://tpwgt.com/content?currency=usd&trs=562927&shmarker=765325&locale=en&default_origin=YTO&default_destination=SGN&stops=any&show_hotels=true&powered_by=true&border_radius=0&plain=false&color_button=%23ff5b00&color_button_text=%23ff5b00&promo_id=3414&campaign_id=111" charset="utf-8"></script>
       </div>
 
+      <!-- SECTION TITLE -->
       <div class="section-head-bar">
         <h2 class="section-head-title" id="section-head-text">
           <i class="fa-solid fa-fire"></i> TIN TỨC CANADA & THẾ GIỚI MỚI NHẤT
         </h2>
       </div>
 
+      <!-- NEWS GRID 2 COLUMNS -->
       <div class="news-grid-2col" id="news-container"></div>
 
       <div class="load-more-center" id="load-more-box">
@@ -1234,8 +1393,10 @@
 
     </main>
 
+    <!-- RIGHT SIDEBAR -->
     <aside class="sidebar">
       
+      <!-- KHỐI YOUTUBE PLAYLIST (TỰ ĐỘNG CHUYỂN PLAYLIST KHI ĐỔI TAB) -->
       <div class="widget-panel" style="padding: 0.9rem;">
         <h3 class="widget-head">
           <i class="fa-brands fa-youtube"></i>
@@ -1246,14 +1407,17 @@
           <div class="yt-player-wrap">
             <iframe id="yt-main-player" src="" title="YouTube Player" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
           </div>
+
           <div class="yt-active-bar">
             <i class="fa-solid fa-circle-play"></i>
             <div class="yt-active-title" id="yt-active-title">Đang phát danh sách video...</div>
           </div>
+
           <div class="yt-scroll-list" id="yt-playlist-container"></div>
         </div>
       </div>
 
+      <!-- KHỐI WIDGET ESIM DU LỊCH AIRALO TOÀN CẦU -->
       <div class="widget-panel" style="padding: 1.1rem; border: 1px solid rgba(255, 91, 0, 0.35);">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 0.8rem; border-bottom: 2px solid var(--border-color); padding-bottom: 0.5rem;">
           <h3 style="font-size:1rem; font-weight:800; color:var(--text-main); display:flex; align-items:center; gap:8px;">
@@ -1270,6 +1434,7 @@
         </div>
       </div>
 
+      <!-- KHỐI TOUR DU LỊCH CANADA NỔI BẬT (XOAY VÒNG TỰ ĐỘNG - NATIVE ANTI-ADBLOCK) -->
       <div class="widget-panel" style="padding: 1.1rem;">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; border-bottom:2px solid var(--border-color); padding-bottom:0.5rem;">
           <h3 style="font-size:1rem; font-weight:800; color:var(--text-main); display:flex; align-items:center; gap:8px;">
@@ -1278,12 +1443,17 @@
           </h3>
           <span style="background:rgba(255,91,0,0.15); color:#ff5b00; font-size:0.65rem; font-weight:800; padding:2px 6px; border-radius:4px;">KLOOK</span>
         </div>
-        <div style="display:flex; flex-direction:column; gap:10px;" id="canada-tour-container"></div>
+
+        <div style="display:flex; flex-direction:column; gap:10px;" id="canada-tour-container">
+          <!-- Render tự động bởi JS -->
+        </div>
+
         <a href="https://www.klook.com/?aid=765325" target="_blank" rel="noopener noreferrer" style="margin-top:12px; display:block; text-align:center; background:linear-gradient(135deg, #ff5b00, #ea580c); color:white; font-size:0.8rem; font-weight:800; padding:8px; border-radius:8px; text-decoration:none; box-shadow:0 3px 12px rgba(255,91,0,0.35);">
           Xem Tất Cả Ưu Đãi Klook Canada →
         </a>
       </div>
 
+      <!-- THỜI TIẾT CANADA -->
       <div class="widget-panel">
         <h3 class="widget-head">
           <i class="fa-solid fa-cloud-sun-rain"></i>
@@ -1294,6 +1464,7 @@
         </div>
       </div>
 
+      <!-- KHÔNG GIAN TÀI TRỢ DOANH NGHIỆP ĐỊA PHƯƠNG -->
       <div class="sponsor-ad-box">
         <div style="font-size:0.75rem; font-weight:800; color:var(--primary-pink); text-transform:uppercase; letter-spacing:0.5px;">
           <i class="fa-solid fa-bullhorn"></i> Hợp Tác Quảng Bá
@@ -1302,9 +1473,12 @@
         <p style="font-size:0.78rem; color:var(--text-muted); line-height:1.4;">
           Quảng bá dịch vụ vé máy bay, di trú, kế toán, bất động sản tới cộng đồng người Việt tại Canada.
         </p>
-        <button type="button" class="sponsor-ad-btn" onclick="openSponsorModal()">Liên Hệ Đặt Banner</button>
+        <button type="button" class="sponsor-ad-btn" onclick="openSponsorModal()">
+          Liên Hệ Đặt Banner
+        </button>
       </div>
 
+      <!-- NEWSLETTER BOX -->
       <div class="newsletter-box">
         <h4 id="news-box-title">Đăng Ký Bản Tin Sáng</h4>
         <p id="news-box-desc">Cập nhật tin tức quan trọng, cơ hội việc làm và định cư Canada mỗi sáng.</p>
@@ -1318,6 +1492,7 @@
 
   </div>
 
+  <!-- POPUP QUICK READ MODAL -->
   <div id="article-modal" class="modal-overlay" onclick="handleModalBgClick(event)">
     <div class="modal-box">
       <div class="close-modal-btn" onclick="closeModal()"><i class="fa-solid fa-xmark"></i></div>
@@ -1326,7 +1501,7 @@
       
       <div class="modal-meta-row">
         <span><i class="fa-regular fa-clock" style="margin-right: 4px;"></i> <span id="modal-date">Date</span></span>
-        <span><i class="fa-solid fa-user-pen" style="margin-right: 4px;"></i> VC Now Canada Newsroom</span>
+        <span><i class="fa-solid fa-user-pen" style="margin-right: 4px;"></i> VC Now Canada Editorial</span>
       </div>
 
       <div class="modal-img-container">
@@ -1345,6 +1520,7 @@
     </div>
   </div>
 
+  <!-- POPUP MODAL THỜI TIẾT CHI TIẾT -->
   <div id="weather-modal" class="modal-overlay" onclick="handleWeatherModalBgClick(event)">
     <div class="modal-box" style="max-width: 550px;">
       <div class="close-modal-btn" onclick="closeWeatherModal()"><i class="fa-solid fa-xmark"></i></div>
@@ -1361,15 +1537,43 @@
         </div>
 
         <div class="weather-detail-grid">
-          <div class="weather-detail-item"><i class="fa-solid fa-wind"></i><div><div style="font-size:0.72rem; opacity:0.8;">Tốc độ gió</div><div id="w-modal-wind" style="font-weight:700; font-size:0.9rem;">-- km/h</div></div></div>
-          <div class="weather-detail-item"><i class="fa-solid fa-compass"></i><div><div style="font-size:0.72rem; opacity:0.8;">Hướng gió</div><div id="w-modal-wind-dir" style="font-weight:700; font-size:0.9rem;">--°</div></div></div>
-          <div class="weather-detail-item"><i class="fa-solid fa-temperature-arrow-up"></i><div><div style="font-size:0.72rem; opacity:0.8;">Nhiệt độ Cao/Thấp</div><div id="w-modal-range" style="font-weight:700; font-size:0.9rem;">--°C / --°C</div></div></div>
-          <div class="weather-detail-item"><i class="fa-solid fa-clock"></i><div><div style="font-size:0.72rem; opacity:0.8;">Giờ cập nhật</div><div id="w-modal-time" style="font-weight:700; font-size:0.9rem;">--:--</div></div></div>
+          <div class="weather-detail-item">
+            <i class="fa-solid fa-wind"></i>
+            <div>
+              <div style="font-size:0.72rem; opacity:0.8;">Tốc độ gió</div>
+              <div id="w-modal-wind" style="font-weight:700; font-size:0.9rem;">-- km/h</div>
+            </div>
+          </div>
+
+          <div class="weather-detail-item">
+            <i class="fa-solid fa-compass"></i>
+            <div>
+              <div style="font-size:0.72rem; opacity:0.8;">Hướng gió</div>
+              <div id="w-modal-wind-dir" style="font-weight:700; font-size:0.9rem;">--°</div>
+            </div>
+          </div>
+
+          <div class="weather-detail-item">
+            <i class="fa-solid fa-temperature-arrow-up"></i>
+            <div>
+              <div style="font-size:0.72rem; opacity:0.8;">Nhiệt độ Cao/Thấp</div>
+              <div id="w-modal-range" style="font-weight:700; font-size:0.9rem;">--°C / --°C</div>
+            </div>
+          </div>
+
+          <div class="weather-detail-item">
+            <i class="fa-solid fa-clock"></i>
+            <div>
+              <div style="font-size:0.72rem; opacity:0.8;">Giờ cập nhật</div>
+              <div id="w-modal-time" style="font-weight:700; font-size:0.9rem;">--:--</div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   </div>
 
+  <!-- POPUP MODAL LIÊN HỆ ĐẶT QUẢNG CÁO -->
   <div id="sponsor-modal" class="modal-overlay" onclick="handleSponsorModalBgClick(event)">
     <div class="modal-box" style="max-width: 500px; text-align: center;">
       <div class="close-modal-btn" onclick="closeSponsorModal()"><i class="fa-solid fa-xmark"></i></div>
@@ -1393,6 +1597,7 @@
     </div>
   </div>
 
+  <!-- FOOTER -->
   <footer>
     <div class="footer-inner">
       <div>
@@ -1406,7 +1611,7 @@
       </div>
 
       <div>
-        <h4 class="footer-head">Chuyên Mục</h4>
+        <h4 class="footer-head" id="f-head-1">Chuyên Mục</h4>
         <ul class="footer-links">
           <li><a href="javascript:void(0)" onclick="filterCategory('all')">Tin Tức Canada</a></li>
           <li><a href="javascript:void(0)" onclick="filterCategory('world')">Thời Sự Thế Giới</a></li>
@@ -1416,7 +1621,7 @@
       </div>
 
       <div>
-        <h4 class="footer-head">Nguồn Tin</h4>
+        <h4 class="footer-head" id="f-head-2">Nguồn Tin</h4>
         <ul class="footer-links">
           <li><a href="https://www.cbc.ca" target="_blank">CBC News Canada</a></li>
           <li><a href="https://www.bbc.com" target="_blank">BBC World</a></li>
@@ -1427,6 +1632,11 @@
       <div>
         <h4 class="footer-head">VC Now Media</h4>
         <p style="font-size:0.82rem; margin-bottom:10px;">Kết nối thông tin và lan tỏa giá trị cộng đồng người Việt tại xứ sở lá phong.</p>
+        <div style="display:flex; gap:8px;">
+          <a href="#" style="width:34px; height:34px; background:var(--bg-subtle); border-radius:50%; display:flex; align-items:center; justify-content:center; color:var(--text-main);"><i class="fa-brands fa-facebook-f"></i></a>
+          <a href="#" style="width:34px; height:34px; background:var(--bg-subtle); border-radius:50%; display:flex; align-items:center; justify-content:center; color:var(--text-main);"><i class="fa-brands fa-youtube"></i></a>
+          <a href="#" style="width:34px; height:34px; background:var(--bg-subtle); border-radius:50%; display:flex; align-items:center; justify-content:center; color:var(--text-main);"><i class="fa-brands fa-tiktok"></i></a>
+        </div>
       </div>
     </div>
 
@@ -1435,28 +1645,69 @@
     </div>
   </footer>
 
+  <!-- SCRIPT BẢO VỆ MÃ NGUỒN (CHẶN F12, CHUỘT PHẢI, CTRL+U, CTRL+SHIFT+I) -->
   <script>
-    document.addEventListener('contextmenu', e => e.preventDefault());
-    document.addEventListener('keydown', e => {
-      if (e.key === 'F12' || e.keyCode === 123) { e.preventDefault(); return false; }
-      if (e.ctrlKey && e.shiftKey && ['I','i','J','j','C','c'].includes(e.key)) { e.preventDefault(); return false; }
-      if (e.ctrlKey && ['U','u','S','s'].includes(e.key)) { e.preventDefault(); return false; }
+    // 1. Vô hiệu hóa menu chuột phải
+    document.addEventListener('contextmenu', function(e) {
+      e.preventDefault();
+      return false;
     });
-    document.addEventListener('selectstart', e => e.preventDefault());
+
+    // 2. Chặn các tổ hợp phím kiểm tra mã nguồn (DevTools / Inspect)
+    document.addEventListener('keydown', function(e) {
+      // Chặn phím F12
+      if (e.key === 'F12' || e.keyCode === 123) {
+        e.preventDefault();
+        return false;
+      }
+      // Chặn Ctrl+Shift+I (Inspect), Ctrl+Shift+J (Console), Ctrl+Shift+C (Element picker)
+      if (e.ctrlKey && e.shiftKey && ['I','i','J','j','C','c'].includes(e.key)) {
+        e.preventDefault();
+        return false;
+      }
+      // Chặn Ctrl+U (View Source)
+      if (e.ctrlKey && (e.key === 'U' || e.key === 'u')) {
+        e.preventDefault();
+        return false;
+      }
+      // Chặn Ctrl+S (Save Page)
+      if (e.ctrlKey && (e.key === 'S' || e.key === 's')) {
+        e.preventDefault();
+        return false;
+      }
+    });
+
+    // 3. Vô hiệu hóa bôi đen nội dung (Copy protection)
+    document.addEventListener('selectstart', function(e) {
+      e.preventDefault();
+      return false;
+    });
   </script>
 
+  <!-- JAVASCRIPT LOGIC TRANG WEB -->
   <script>
     document.getElementById('current-date').innerText = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
 
+    // HỆ THỐNG BẬT TẮT CHẾ ĐỘ SÁNG / TỐI
     function toggleDarkMode() {
       const isDark = document.body.classList.toggle('dark-mode');
-      document.getElementById('dark-icon').className = isDark ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
-      localStorage.setItem('vc_theme', isDark ? 'dark' : 'light');
+      const icon = document.getElementById('dark-icon');
+      
+      if (isDark) {
+        icon.className = 'fa-solid fa-sun';
+        localStorage.setItem('vc_theme', 'dark');
+      } else {
+        icon.className = 'fa-solid fa-moon';
+        localStorage.setItem('vc_theme', 'light');
+      }
     }
 
     if (localStorage.getItem('vc_theme') === 'light') {
       document.body.classList.remove('dark-mode');
       document.getElementById('dark-icon').className = 'fa-solid fa-moon';
+    } else {
+      document.body.classList.add('dark-mode');
+      document.getElementById('dark-icon').className = 'fa-solid fa-sun';
     }
 
     const RSS_FEEDS = [
@@ -1478,19 +1729,61 @@
       { name: 'Calgary', lat: 51.05, lon: -114.07 }
     ];
 
+    // DANH SÁCH TOUR DU LỊCH CANADA XOAY VÒNG TỰ ĐỘNG
     const CANADA_KLOOK_TOURS = [
-      { title: 'Vé Tháp CN Tower & Vé Tham Quan Toronto', price: 'Từ ~45 CAD', rating: '4.8', img: 'https://images.unsplash.com/photo-1509822929063-6b6cfc9b42f2?auto=format&fit=crop&w=200&q=80', link: 'https://www.klook.com/en-CA/city/6-toronto-things-to-do/?aid=765325' },
-      { title: 'Tour Trọn Gói Thác Niagara Từ Toronto Trong Ngày', price: 'Từ ~89 CAD', rating: '4.9', img: 'https://images.unsplash.com/photo-1534430480872-3498386e7856?auto=format&fit=crop&w=200&q=80', link: 'https://www.klook.com/en-CA/city/6-toronto-things-to-do/?aid=765325' },
-      { title: 'Tour Cầu Treo Capilano & Ngắm Cảnh Vancouver', price: 'Từ ~62 CAD', rating: '4.9', img: 'https://images.unsplash.com/photo-1503614472-8c93d56e92ce?auto=format&fit=crop&w=200&q=80', link: 'https://www.klook.com/en-CA/city/60-vancouver-things-to-do/?aid=765325' },
-      { title: 'Tour Vườn Quốc Gia Banff & Hồ Louise Rocky Mountains', price: 'Từ ~120 CAD', rating: '4.9', img: 'https://images.unsplash.com/photo-1517935703635-27190760468e?auto=format&fit=crop&w=200&q=80', link: 'https://www.klook.com/en-CA/city/60-vancouver-things-to-do/?aid=765325' }
+      {
+        title: 'Vé Tháp CN Tower & Vé Tham Quan Toronto',
+        price: 'Từ ~45 CAD',
+        rating: '4.8',
+        img: 'https://images.unsplash.com/photo-1509822929063-6b6cfc9b42f2?auto=format&fit=crop&w=200&q=80',
+        link: 'https://www.klook.com/en-CA/city/6-toronto-things-to-do/?aid=765325'
+      },
+      {
+        title: 'Tour Trọn Gói Thác Niagara Từ Toronto Trong Ngày',
+        price: 'Từ ~89 CAD',
+        rating: '4.9',
+        img: 'https://images.unsplash.com/photo-1534430480872-3498386e7856?auto=format&fit=crop&w=200&q=80',
+        link: 'https://www.klook.com/en-CA/city/6-toronto-things-to-do/?aid=765325'
+      },
+      {
+        title: 'Tour Cầu Treo Capilano & Ngắm Cảnh Vancouver',
+        price: 'Từ ~62 CAD',
+        rating: '4.9',
+        img: 'https://images.unsplash.com/photo-1503614472-8c93d56e92ce?auto=format&fit=crop&w=200&q=80',
+        link: 'https://www.klook.com/en-CA/city/60-vancouver-things-to-do/?aid=765325'
+      },
+      {
+        title: 'Tour Vườn Quốc Gia Banff & Hồ Louise Rocky Mountains',
+        price: 'Từ ~120 CAD',
+        rating: '4.9',
+        img: 'https://images.unsplash.com/photo-1517935703635-27190760468e?auto=format&fit=crop&w=200&q=80',
+        link: 'https://www.klook.com/en-CA/city/60-vancouver-things-to-do/?aid=765325'
+      },
+      {
+        title: 'Vé Thủy Cung Ripley’s Aquarium Of Canada Tại Toronto',
+        price: 'Từ ~42 CAD',
+        rating: '4.8',
+        img: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=200&q=80',
+        link: 'https://www.klook.com/en-CA/city/6-toronto-things-to-do/?aid=765325'
+      },
+      {
+        title: 'Tour Xe Bus Ngắm Toàn Cảnh Phố Cổ Montreal & Đồi Mont Royal',
+        price: 'Từ ~39 CAD',
+        rating: '4.7',
+        img: 'https://images.unsplash.com/photo-1519178173562-b94f068779a5?auto=format&fit=crop&w=200&q=80',
+        link: 'https://www.klook.com/en-CA/city/6-toronto-things-to-do/?aid=765325'
+      }
     ];
 
     function renderRandomCanadaTours() {
       const container = document.getElementById('canada-tour-container');
       if (!container) return;
+
       const shuffled = [...CANADA_KLOOK_TOURS].sort(() => 0.5 - Math.random());
+      const selected = shuffled.slice(0, 3);
+
       let html = '';
-      shuffled.slice(0, 3).forEach(t => {
+      selected.forEach(t => {
         html += `
           <a href="${t.link}" target="_blank" rel="noopener noreferrer" style="display:flex; gap:10px; background:var(--bg-subtle); padding:8px; border-radius:8px; text-decoration:none; border:1px solid var(--border-color); transition:var(--transition);" onmouseover="this.style.borderColor='#ff5b00'" onmouseout="this.style.borderColor='var(--border-color)'">
             <img src="${t.img}" alt="${t.title}" style="width:75px; height:65px; border-radius:6px; object-fit:cover; flex-shrink:0;" onerror="this.src='https://images.unsplash.com/photo-1509822929063-6b6cfc9b42f2?auto=format&fit=crop&w=200&q=80'">
@@ -1508,6 +1801,7 @@
     }
 
     let weatherCache = {};
+
     function getWeatherCondition(code) {
       if (code === 0) return { textVi: 'Trời quang đãng', textEn: 'Clear Sky', icon: 'fa-sun', color: '#f59e0b' };
       if (code >= 1 && code <= 3) return { textVi: 'Có mây rải rác', textEn: 'Partly Cloudy', icon: 'fa-cloud-sun', color: '#38bdf8' };
@@ -1517,6 +1811,7 @@
       return { textVi: 'Nhiều mây', textEn: 'Cloudy', icon: 'fa-cloud', color: '#64748b' };
     }
 
+    // THỜI TIẾT CANADA
     async function fetchCanadaWeather() {
       const container = document.getElementById('weather-container');
       try {
@@ -1525,8 +1820,11 @@
           const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${city.lat}&longitude=${city.lon}&current_weather=true&daily=temperature_2m_max,temperature_2m_min&timezone=auto`);
           const data = await res.json();
           weatherCache[city.name] = data;
+
           const temp = Math.round(data.current_weather.temperature);
-          const cond = getWeatherCondition(data.current_weather.weathercode);
+          const code = data.current_weather.weathercode;
+          const cond = getWeatherCondition(code);
+
           html += `
             <div class="weather-card-pill" onclick="openWeatherModal('${city.name}')">
               <div class="weather-city-name">${city.name}</div>
@@ -1545,6 +1843,7 @@
     function openWeatherModal(cityName) {
       const data = weatherCache[cityName];
       if (!data) return;
+
       const current = data.current_weather;
       const daily = data.daily;
       const cond = getWeatherCondition(current.weathercode);
@@ -1554,10 +1853,13 @@
       document.getElementById('w-modal-desc').innerText = currentLang === 'vi' ? cond.textVi : cond.textEn;
       document.getElementById('w-modal-main-icon').className = `fa-solid ${cond.icon}`;
       document.getElementById('w-modal-main-icon').style.color = cond.color;
+
       document.getElementById('w-modal-wind').innerText = `${current.windspeed} km/h`;
       document.getElementById('w-modal-wind-dir').innerText = `${current.winddirection}°`;
       document.getElementById('w-modal-range').innerText = `${Math.round(daily.temperature_2m_max[0])}°C / ${Math.round(daily.temperature_2m_min[0])}°C`;
-      document.getElementById('w-modal-time').innerText = new Date(current.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      
+      const timeStr = new Date(current.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      document.getElementById('w-modal-time').innerText = timeStr;
 
       document.getElementById('weather-modal').style.display = 'flex';
       document.body.style.overflow = 'hidden';
@@ -1568,10 +1870,11 @@
       document.body.style.overflow = 'auto';
     }
 
-    function handleWeatherModalBgClick(e) {
-      if (e.target.id === 'weather-modal') closeWeatherModal();
+    function handleWeatherModalBgClick(event) {
+      if (event.target.id === 'weather-modal') closeWeatherModal();
     }
 
+    // MODAL LIÊN HỆ TÀI TRỢ
     function openSponsorModal() {
       document.getElementById('sponsor-modal').style.display = 'flex';
       document.body.style.overflow = 'hidden';
@@ -1582,25 +1885,66 @@
       document.body.style.overflow = 'auto';
     }
 
-    function handleSponsorModalBgClick(e) {
-      if (e.target.id === 'sponsor-modal') closeSponsorModal();
+    function handleSponsorModalBgClick(event) {
+      if (event.target.id === 'sponsor-modal') closeSponsorModal();
     }
 
-    const PLAYLIST_NEWS_ID = "PLDdOhIx3i1Q4";
-    const PLAYLIST_CULTURE_ID = "PLHUOBLknLbUQ";
+    // CÁC PLAYLIST YOUTUBE THEO TỪNG CHUYÊN MỤC
+    const PLAYLIST_NEWS_ID = "PLDdOhIx3i1Q4";       // Kênh chính VC Now Canada (Tin tức & Chính trị)
+    const PLAYLIST_CULTURE_ID = "PLHUOBLknLbUQ";    // Kênh VC Life Canada (Văn hóa, Đời sống, Khám phá)
     const FALLBACK_THUMB = "https://i.ytimg.com/vi/i2iXCkWRg80/hqdefault.jpg";
 
     let defaultNewsVideos = [
-      { id: "i2iXCkWRg80", title: "TT Carney và Ford Bóp Nghẹt đòn bẩy dầu mỏ của Trump khi các cuộc đàm phán thuế quan phản tác dụng", pubDate: "15/08/2026", thumbnail: "https://i.ytimg.com/vi/i2iXCkWRg80/hqdefault.jpg" },
-      { id: "irKgfTCqQOo", title: "Vì Sao Thỏa Thuận Uranium Của Canada Khiến Thuế Quan Của Trump Phản Tác Dụng?", pubDate: "09/08/2026", thumbnail: "https://i.ytimg.com/vi/irKgfTCqQOo/hqdefault.jpg" }
+      { 
+        id: "i2iXCkWRg80", 
+        title: "TT Carney và Ford Bóp Nghẹt đòn bẩy dầu mỏ của Trump khi các cuộc đàm phán thuế quan phản tác dụng", 
+        pubDate: "15/08/2026", 
+        thumbnail: "https://i.ytimg.com/vi/i2iXCkWRg80/hqdefault.jpg" 
+      },
+      { 
+        id: "irKgfTCqQOo", 
+        title: "Vì Sao Thỏa Thuận Uranium Của Canada Khiến Thuế Quan Của Trump Phản Tác Dụng?", 
+        pubDate: "09/08/2026", 
+        thumbnail: "https://i.ytimg.com/vi/irKgfTCqQOo/hqdefault.jpg" 
+      },
+      { 
+        id: "x_m_rbuFkRQ", 
+        title: "Trump Hoảng Loạn, Hoa Kỳ Cầu Xin Canada Sau Khi Carney Và Đức Ký Thỏa Thuận 18 Tỷ USD", 
+        pubDate: "09/08/2026", 
+        thumbnail: "https://i.ytimg.com/vi/x_m_rbuFkRQ/hqdefault.jpg" 
+      },
+      { 
+        id: "6GKcWZySG4Q", 
+        title: "Căng Thẳng Leo Thang: Thông Điệp Cứng Rắn Của TT Carney Sau Phát Biểu Mới Nhất Từ Trump", 
+        pubDate: "08/08/2026", 
+        thumbnail: "https://i.ytimg.com/vi/6GKcWZySG4Q/hqdefault.jpg" 
+      },
+      { 
+        id: "QelyIpmFWlU", 
+        title: "Con Số 500.000 Chuyến Bay Và Lợi Thế Ẩn Giúp Kinh Tế Canada Bứt Phá?", 
+        pubDate: "06/08/2026", 
+        thumbnail: "https://i.ytimg.com/vi/QelyIpmFWlU/hqdefault.jpg" 
+      }
     ];
 
     let defaultCultureVideos = [
-      { id: "LsxaoEegdEs", title: "Montreal, Vì Sao Thành Phố Này Giống Âu Châu Hơn Cả Canada ? | VC LIFE KHÁM PHÁ", pubDate: "12/08/2026", thumbnail: "https://i.ytimg.com/vi/LsxaoEegdEs/hqdefault.jpg" }
+      {
+        id: "LsxaoEegdEs",
+        title: "Montreal, Vì Sao Thành Phố Này Giống Âu Châu Hơn Cả Canada ? | VC LIFE KHÁM PHÁ",
+        pubDate: "12/08/2026",
+        thumbnail: "https://i.ytimg.com/vi/LsxaoEegdEs/hqdefault.jpg"
+      },
+      {
+        id: "1d2dpuprzck",
+        title: "Đừng Đến Canada Nếu Chưa Biết Những Điều Này | VC Life Canada",
+        pubDate: "10/08/2026",
+        thumbnail: "https://i.ytimg.com/vi/1d2dpuprzck/hqdefault.jpg"
+      }
     ];
 
     let currentLoadedPlaylistId = "";
     let playlistVideos = [];
+
     let articlesData = [];
     let currentHeroArticles = [];
     let currentFilteredArticles = [];
@@ -1618,30 +1962,64 @@
       e.target.reset();
     }
 
+    // HÀM TẢI PLAYLIST YOUTUBE ĐỘNG THEO ID
     async function loadYoutubePlaylistById(playlistId, customTitle) {
       if (currentLoadedPlaylistId === playlistId) return;
       currentLoadedPlaylistId = playlistId;
 
-      if (customTitle) document.getElementById('yt-widget-heading').innerText = customTitle;
+      if (customTitle) {
+        document.getElementById('yt-widget-heading').innerText = customTitle;
+      }
+
+      // Đặt danh sách mặc định tương ứng để hiển thị ngay lập tức
       playlistVideos = (playlistId === PLAYLIST_CULTURE_ID) ? [...defaultCultureVideos] : [...defaultNewsVideos];
       renderPlaylistUI();
       selectVideo(0);
 
       const rssUrl = `https://www.youtube.com/feeds/videos.xml?playlist_id=${playlistId}`;
       const proxy1 = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}&_t=${Date.now()}`;
+      const proxy2 = `https://api.allorigins.win/get?url=${encodeURIComponent(rssUrl)}`;
+
       try {
-        const res = await fetch(proxy1);
-        const data = await res.json();
-        if (data.status === 'ok' && data.items && data.items.length > 0) {
-          playlistVideos = data.items.map(item => {
-            let vId = item.link.includes('v=') ? item.link.split('v=')[1].split('&')[0] : item.guid.split(':').pop();
-            return {
-              id: vId,
-              title: item.title,
-              pubDate: new Date(item.pubDate).toLocaleDateString('vi-VN'),
-              thumbnail: `https://img.youtube.com/vi/${vId}/hqdefault.jpg`
-            };
+        const fetchP1 = fetch(proxy1).then(r => r.json()).then(data => {
+          if (data.status === 'ok' && data.items && data.items.length > 0) {
+            return data.items.map(item => {
+              let vId = item.link.includes('v=') ? item.link.split('v=')[1].split('&')[0] : item.guid.split(':').pop();
+              return {
+                id: vId,
+                title: item.title,
+                pubDate: new Date(item.pubDate).toLocaleDateString('vi-VN'),
+                thumbnail: `https://img.youtube.com/vi/${vId}/hqdefault.jpg`
+              };
+            });
+          }
+          throw new Error();
+        });
+
+        const fetchP2 = fetch(proxy2).then(r => r.json()).then(data => {
+          if (!data.contents) throw new Error();
+          const xmlDoc = new DOMParser().parseFromString(data.contents, "text/xml");
+          const entries = xmlDoc.querySelectorAll("entry");
+          if (!entries || entries.length === 0) throw new Error();
+          let parsed = [];
+          entries.forEach(entry => {
+            const vId = entry.querySelector("videoId") ? entry.querySelector("videoId").textContent : "";
+            const title = entry.querySelector("title") ? entry.querySelector("title").textContent : "";
+            if (vId) {
+              parsed.push({
+                id: vId,
+                title: title,
+                pubDate: 'Mới nhất',
+                thumbnail: `https://img.youtube.com/vi/${vId}/hqdefault.jpg`
+              });
+            }
           });
+          return parsed;
+        });
+
+        const res = await Promise.any([fetchP1, fetchP2]);
+        if (res && res.length > 0) {
+          playlistVideos = res;
           renderPlaylistUI();
           selectVideo(0);
         }
@@ -1651,14 +2029,18 @@
     function renderPlaylistUI() {
       const container = document.getElementById('yt-playlist-container');
       container.innerHTML = '';
+
       playlistVideos.forEach((v, idx) => {
         const row = document.createElement('div');
         row.className = `yt-item-row ${idx === 0 ? 'active' : ''}`;
         row.id = `yt-row-${idx}`;
         row.onclick = () => selectVideo(idx);
+
         row.innerHTML = `
           <img src="${v.thumbnail}" alt="thumb" onerror="this.onerror=null; this.src='${FALLBACK_THUMB}';">
-          <div class="yt-item-info"><div class="yt-item-title">${v.title}</div></div>
+          <div class="yt-item-info">
+            <div class="yt-item-title">${v.title}</div>
+          </div>
         `;
         container.appendChild(row);
       });
@@ -1667,8 +2049,10 @@
     function selectVideo(idx) {
       const v = playlistVideos[idx];
       if (!v) return;
+
       document.getElementById('yt-main-player').src = `https://www.youtube-nocookie.com/embed/${v.id}?autoplay=1`;
       document.getElementById('yt-active-title').innerText = v.title;
+
       document.querySelectorAll('.yt-item-row').forEach(r => r.classList.remove('active'));
       const activeEl = document.getElementById(`yt-row-${idx}`);
       if (activeEl) activeEl.classList.add('active');
@@ -1684,6 +2068,7 @@
       window.scrollTo({ top: document.querySelector('.yt-playlist-box').offsetTop - 100, behavior: 'smooth' });
     }
 
+    // TRANSLATION API
     async function translateText(text, targetLang) {
       if (targetLang === 'en' || !text) return text;
       try {
@@ -1703,12 +2088,18 @@
 
     async function translateVisibleArticles() {
       if (currentLang !== 'vi') return;
-      for (let item of currentHeroArticles) await translateSingleArticle(item);
+
+      for (let item of currentHeroArticles) {
+        await translateSingleArticle(item);
+      }
       if (!document.getElementById('search-input').value && currentHeroArticles.length >= 3) {
         renderHeroTriple(currentHeroArticles);
       }
+
       const displayList = currentFilteredArticles.slice(0, visibleCount);
-      for (let item of displayList) await translateSingleArticle(item);
+      for (let item of displayList) {
+        await translateSingleArticle(item);
+      }
       renderNewsGrid();
     }
 
@@ -1726,12 +2117,12 @@
     }
 
     function cleanDescription(item) {
-      let raw = item.content || item.description || item['content:encoded'] || '';
+      let raw = item.content || item.description || '';
       const div = document.createElement('div');
       div.innerHTML = raw;
-      div.querySelectorAll('img, script, style, figure').forEach(el => el.remove());
+      div.querySelectorAll('img').forEach(img => img.remove());
       let txt = div.textContent || div.innerText || '';
-      return txt.trim();
+      return txt.trim().length > 0 ? txt.trim() : 'Xem toàn văn bài viết tại nguồn chính thức...';
     }
 
     async function fetchNews() {
@@ -1747,7 +2138,6 @@
                 category: feed.category,
                 title: item.title,
                 description: cleanDescription(item),
-                rawHtmlContent: item.content || item.description || '',
                 image: extractImageUrl(item),
                 link: item.link,
                 rawDate: new Date(item.pubDate),
@@ -1781,7 +2171,11 @@
 
     function renderHeroTriple(articles) {
       if (!articles || articles.length < 3) return;
-      const main = articles[0], sub1 = articles[1], sub2 = articles[2];
+
+      const main = articles[0];
+      const sub1 = articles[1];
+      const sub2 = articles[2];
+
       const tMain = (currentLang === 'vi' && main.title_vi) ? main.title_vi : main.title;
       const tSub1 = (currentLang === 'vi' && sub1.title_vi) ? sub1.title_vi : sub1.title;
       const tSub2 = (currentLang === 'vi' && sub2.title_vi) ? sub2.title_vi : sub2.title;
@@ -1861,6 +2255,7 @@
       const title = currentLang === 'vi' ? (catTitlesVi[cat] || 'TIN TỨC') : (catTitlesEn[cat] || 'NEWS');
       document.getElementById('section-head-text').innerHTML = `<i class="fa-solid fa-fire"></i> ${title}`;
 
+      // TỰ ĐỘNG ĐỔI PLAYLIST YOUTUBE KHI VÀO CHUYÊN MỤC VĂN HÓA
       if (cat === 'culture') {
         loadYoutubePlaylistById(PLAYLIST_CULTURE_ID, 'VC Life Canada - Khám Phá & Đời Sống');
       } else {
@@ -1873,6 +2268,7 @@
 
     function filterNews() {
       const q = document.getElementById('search-input').value.toLowerCase();
+      
       const filtered = articlesData.filter(item => {
         const matchCat = (currentCategory === 'all') ? true : (item.category === currentCategory);
         const title = ((currentLang === 'vi' && item.title_vi) ? item.title_vi : item.title).toLowerCase();
@@ -1904,11 +2300,13 @@
       }
 
       const displayList = currentFilteredArticles.slice(0, visibleCount);
+
       displayList.forEach(item => {
         const idx = articlesData.indexOf(item);
         const card = document.createElement('div');
         card.className = 'magazine-card';
         card.onclick = () => openModal(idx);
+
         const title = (currentLang === 'vi' && item.title_vi) ? item.title_vi : item.title;
 
         card.innerHTML = `
@@ -1938,8 +2336,7 @@
       translateVisibleArticles();
     }
 
-    // HÀM MỞ MODAL ĐỌC TIN CHUẨN XÁC 100% THỰC TẾ (CÀO TOÀN VĂN TỪ BÀI BÁO GỐC)
-    async function openModal(idx) {
+    function openModal(idx) {
       const item = articlesData[idx];
       if (!item) return;
 
@@ -1948,68 +2345,15 @@
       document.getElementById('modal-date').innerText = item.pubDate;
       document.getElementById('modal-img').src = item.image;
       document.getElementById('modal-img').onerror = function() { this.src = FALLBACK_THUMB; };
-      document.getElementById('modal-link').href = item.link;
-
-      // Đặt trước nội dung tóm tắt trong lúc tải toàn văn
-      const initialSummary = (currentLang === 'vi' && item.desc_vi) ? item.desc_vi : item.description;
-      const descBox = document.getElementById('modal-desc');
       
-      descBox.innerHTML = `
-        <p>${initialSummary}</p>
-        <div id="full-text-loading" style="text-align:center; padding:15px; color:var(--text-muted); font-size:0.85rem;">
-          <i class="fa-solid fa-spinner fa-spin" style="color:var(--primary-pink); margin-right:6px;"></i> Đang kết nối tải chi tiết bài viết từ ${item.source}...
-        </div>
-      `;
+      const rawText = (currentLang === 'vi' && item.desc_vi) ? item.desc_vi : item.description;
+      const paragraphs = rawText.split('\n').filter(p => p.trim().length > 0);
+      document.getElementById('modal-desc').innerHTML = paragraphs.map(p => `<p>${p}</p>`).join('');
+
+      document.getElementById('modal-link').href = item.link;
 
       document.getElementById('article-modal').style.display = 'flex';
       document.body.style.overflow = 'hidden';
-
-      // Tự động tải nội dung chi tiết thực tế của bài viết
-      try {
-        const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent(item.link)}`;
-        const res = await fetch(proxyUrl);
-        const data = await res.json();
-        
-        if (data.contents) {
-          const parser = new DOMParser();
-          const doc = parser.parseFromString(data.contents, 'text/html');
-          
-          // Trích xuất các đoạn văn bản thực tế từ bài báo
-          const pElements = doc.querySelectorAll('article p, .story-body p, .article__body p, .story p, main p');
-          let paragraphs = [];
-          
-          pElements.forEach(p => {
-            const text = p.textContent.trim();
-            if (text.length > 40 && !text.includes('©') && !text.includes('Subscribe') && !text.includes('Cookie')) {
-              paragraphs.push(text);
-            }
-          });
-
-          if (paragraphs.length >= 2) {
-            // Dịch toàn bộ các đoạn văn bản thực tế sang Tiếng Việt nếu đang ở chế độ VIE
-            let translatedParagraphs = [];
-            const loadingEl = document.getElementById('full-text-loading');
-            if (loadingEl) loadingEl.innerHTML = `<i class="fa-solid fa-spinner fa-spin" style="color:var(--primary-pink); margin-right:6px;"></i> Đang dịch toàn văn sang Tiếng Việt...`;
-
-            for (let pText of paragraphs.slice(0, 8)) { // Lấy 6 - 8 đoạn văn chuẩn của bài báo
-              if (currentLang === 'vi') {
-                const trans = await translateText(pText, 'vi');
-                translatedParagraphs.push(trans);
-              } else {
-                translatedParagraphs.push(pText);
-              }
-            }
-
-            descBox.innerHTML = translatedParagraphs.map(p => `<p>${p}</p>`).join('');
-          } else {
-            const loadingEl = document.getElementById('full-text-loading');
-            if (loadingEl) loadingEl.remove();
-          }
-        }
-      } catch (err) {
-        const loadingEl = document.getElementById('full-text-loading');
-        if (loadingEl) loadingEl.remove();
-      }
     }
 
     function closeModal() {

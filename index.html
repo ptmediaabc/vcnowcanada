@@ -117,12 +117,9 @@
         }
 
         @keyframes pulseGlow {
-
-            0%,
-            100% {
+            0%, 100% {
                 box-shadow: 0 0 12px rgba(236, 72, 153, 0.6);
             }
-
             50% {
                 box-shadow: 0 0 4px rgba(236, 72, 153, 0.2);
             }
@@ -532,7 +529,8 @@
         .social-stat-pill {
             padding: 0.85rem 1rem;
             border-radius: var(--radius-md);
-            color: white;
+            color: white !important;
+            text-decoration: none;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -1576,34 +1574,41 @@
 
             <!-- SOCIAL GRADIENT COUNTERS -->
             <div class="social-counters-bar">
-                <div class="social-stat-pill soc-fb">
+                <!-- Facebook -->
+                <a href="https://www.facebook.com/vcnowcanada" target="_blank" rel="noopener noreferrer" class="social-stat-pill soc-fb">
                     <div class="soc-brand-group">
                         <i class="fa-brands fa-facebook-f"></i>
                         <span>Facebook</span>
                     </div>
                     <span class="soc-count-tag">48.5K Fans</span>
-                </div>
-                <div class="social-stat-pill soc-yt">
+                </a>
+
+                <!-- YouTube -->
+                <a href="https://www.youtube.com/@vcnowcanada" target="_blank" rel="noopener noreferrer" class="social-stat-pill soc-yt">
                     <div class="soc-brand-group">
                         <i class="fa-brands fa-youtube"></i>
                         <span>YouTube</span>
                     </div>
                     <span class="soc-count-tag">125K Subs</span>
-                </div>
-                <div class="social-stat-pill soc-ig">
+                </a>
+
+                <!-- Instagram -->
+                <a href="https://www.instagram.com/vcnowcanada" target="_blank" rel="noopener noreferrer" class="social-stat-pill soc-ig">
                     <div class="soc-brand-group">
                         <i class="fa-brands fa-instagram"></i>
                         <span>Instagram</span>
                     </div>
                     <span class="soc-count-tag">28.2K Follow</span>
-                </div>
-                <div class="social-stat-pill soc-tt">
+                </a>
+
+                <!-- TikTok -->
+                <a href="https://www.tiktok.com/@vcnowdigital" target="_blank" rel="noopener noreferrer" class="social-stat-pill soc-tt">
                     <div class="soc-brand-group">
                         <i class="fa-brands fa-tiktok"></i>
                         <span>TikTok</span>
                     </div>
                     <span class="soc-count-tag">85.1K Likes</span>
-                </div>
+                </a>
             </div>
 
             <!-- PANORAMA VIDEO FEATURE BANNER -->
@@ -1911,13 +1916,13 @@
                 <p style="font-size:0.82rem; margin-bottom:10px;">Kết nối thông tin và lan tỏa giá trị cộng đồng người
                     Việt tại xứ sở lá phong.</p>
                 <div style="display:flex; gap:8px;">
-                    <a href="#"
+                    <a href="https://www.facebook.com/vcnowcanada" target="_blank" rel="noopener noreferrer"
                         style="width:34px; height:34px; background:var(--bg-subtle); border-radius:50%; display:flex; align-items:center; justify-content:center; color:var(--text-main);"><i
                             class="fa-brands fa-facebook-f"></i></a>
-                    <a href="#"
+                    <a href="https://www.youtube.com/@vcnowcanada" target="_blank" rel="noopener noreferrer"
                         style="width:34px; height:34px; background:var(--bg-subtle); border-radius:50%; display:flex; align-items:center; justify-content:center; color:var(--text-main);"><i
                             class="fa-brands fa-youtube"></i></a>
-                    <a href="#"
+                    <a href="https://www.tiktok.com/@vcnowdigital" target="_blank" rel="noopener noreferrer"
                         style="width:34px; height:34px; background:var(--bg-subtle); border-radius:50%; display:flex; align-items:center; justify-content:center; color:var(--text-main);"><i
                             class="fa-brands fa-tiktok"></i></a>
                 </div>
@@ -1963,7 +1968,7 @@
             document.getElementById('dark-icon').className = 'fa-solid fa-sun';
         }
 
-        // ĐÃ CHUYỂN NGUỒN SANG GLOBAL NEWS & CTV NEWS CANADA (HOẠT ĐỘNG 100% ỔN ĐỊNH)
+        // NGUỒN RSS GLOBAL NEWS & CTV NEWS CANADA
         const RSS_FEEDS = [
             { name: 'Global News Canada', url: 'https://globalnews.ca/canada/feed/', category: 'canada' },
             { name: 'CTV News Canada', url: 'https://www.ctvnews.ca/rss/ctvnews-ca-top-stories-public-rss-1.822009', category: 'canada' },
@@ -2312,7 +2317,6 @@
             renderNewsGrid();
         }
 
-        // TRÍCH XUẤT ẢNH THÔNG MINH CHO GLOBAL NEWS VÀ CÁC NGUỒN RSS
         function extractImageUrl(item) {
             if (item.thumbnail && typeof item.thumbnail === 'string' && item.thumbnail.startsWith('http')) return item.thumbnail;
             if (item.enclosure && item.enclosure.link && item.enclosure.link.startsWith('http')) return item.enclosure.link;

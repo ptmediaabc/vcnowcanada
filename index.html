@@ -91,7 +91,7 @@
             color: inherit;
         }
 
-        /* TOP LIVE BAR */
+        /* TOP LIVE BAR ĐƯỢC CHUẨN HÓA */
         .top-live-bar {
             background: var(--bg-dark);
             border-bottom: 1px solid var(--border-color);
@@ -139,7 +139,6 @@
             }
         }
 
-        /* HEADER */
         header {
             background: var(--bg-card);
             border-bottom: 1px solid var(--border-color);
@@ -147,13 +146,12 @@
             top: 0;
             z-index: 1000;
             transition: background-color 0.3s ease;
-            width: 100%;
         }
 
         .header-inner {
             max-width: 1360px;
             margin: 0 auto;
-            padding: 0.8rem 1.5rem;
+            padding: 0.9rem 1.5rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -279,22 +277,11 @@
 
         .mobile-nav-toggle {
             display: none;
-            background: var(--bg-subtle);
-            border: 1px solid var(--border-color);
+            background: transparent;
+            border: none;
             color: var(--text-main);
-            font-size: 1.05rem;
+            font-size: 1.3rem;
             cursor: pointer;
-            width: 36px;
-            height: 36px;
-            border-radius: 8px;
-            align-items: center;
-            justify-content: center;
-            transition: var(--transition);
-        }
-
-        .mobile-nav-toggle:hover {
-            border-color: var(--primary-pink);
-            color: var(--primary-pink);
         }
 
         nav {
@@ -353,7 +340,7 @@
             box-shadow: 0 4px 15px rgba(255, 91, 0, 0.5);
         }
 
-        /* STORY CIRCLES */
+        /* STORY CIRCLES TỐI ƯU CẢ DESKTOP & MOBILE */
         .story-circles-wrap {
             max-width: 1360px;
             margin: 1.25rem auto 0.5rem;
@@ -1309,59 +1296,38 @@
             }
         }
 
-        /* FIX HOÀN CHỈNH CHO GIAO DIỆN DI ĐỘNG (<= 768px) */
+        /* RESPONSIVE TABLET & MOBILE (<= 768px) */
         @media (max-width: 768px) {
             .top-live-bar {
-                padding: 0.35rem 0.8rem;
+                padding: 0.35rem 1rem;
                 font-size: 0.72rem;
             }
 
             .top-bar-right {
-                display: none;
+                display: none; /* Ẩn bớt text thừa trên mobile để thanh luôn nằm trên 1 dòng */
             }
 
-            /* Fix Header vừa vặn, không bị đè nút menu */
             .header-inner {
-                padding: 0.6rem 0.8rem;
-                gap: 0.5rem;
+                padding: 0.75rem 1rem;
+                gap: 1rem;
             }
 
             .brand-logo {
-                font-size: 1.18rem;
-                gap: 6px;
+                font-size: 1.35rem;
             }
 
             .brand-logo .brand-icon {
-                width: 28px;
-                height: 28px;
-                font-size: 0.85rem;
-                border-radius: 6px;
+                width: 32px;
+                height: 32px;
+                font-size: 0.95rem;
             }
 
             .header-search-wrap {
                 display: none;
             }
 
-            .header-actions {
-                gap: 6px;
-            }
-
-            .dark-mode-btn {
-                width: 32px;
-                height: 32px;
-                font-size: 0.85rem;
-            }
-
-            .lang-pill-btn {
-                padding: 4px 8px;
-                font-size: 0.7rem;
-            }
-
             .mobile-nav-toggle {
-                display: flex;
-                width: 32px;
-                height: 32px;
-                font-size: 0.95rem;
+                display: block;
             }
 
             .nav-inner {
@@ -1386,6 +1352,7 @@
                 justify-content: center;
             }
 
+            /* Responsive cho Story Circles: Co đều, hiển thị trọn vẹn 6 nút */
             .story-circles-wrap {
                 padding: 0 0.5rem 0.5rem;
                 gap: 6px;
@@ -1485,48 +1452,11 @@
             }
         }
 
-        /* RESPONSIVE RIÊNG CHO MÀN HÌNH ĐIỆN THOẠI NHỎ (<= 480px / iPhone) */
+        /* RESPONSIVE RIÊNG CHO MÀN HÌNH ĐIỆN THOẠI NHỎ (<= 480px) */
         @media (max-width: 480px) {
-            .header-inner {
-                padding: 0.5rem 0.6rem;
-                gap: 4px;
-            }
-
-            .brand-logo {
-                font-size: 1.05rem;
-                gap: 4px;
-            }
-
-            .brand-logo .brand-icon {
-                width: 26px;
-                height: 26px;
-                font-size: 0.8rem;
-            }
-
-            .header-actions {
-                gap: 4px;
-            }
-
-            .dark-mode-btn {
-                width: 30px;
-                height: 30px;
-                font-size: 0.8rem;
-            }
-
-            .lang-pill-btn {
-                padding: 3px 6px;
-                font-size: 0.65rem;
-            }
-
-            .mobile-nav-toggle {
-                width: 30px;
-                height: 30px;
-                font-size: 0.85rem;
-            }
-
             .story-circles-wrap {
-                padding: 0 6px 0.5rem;
-                gap: 3px;
+                padding: 0 8px 0.5rem;
+                gap: 4px;
                 justify-content: space-between;
             }
 
@@ -1581,7 +1511,7 @@
 
 <body class="dark-mode">
 
-    <!-- TOP LIVE BAR -->
+    <!-- TOP LIVE BAR (ĐÃ ĐƯỢC CHUẨN HÓA GIAO DIỆN) -->
     <div class="top-live-bar">
         <div class="top-bar-left">
             <span class="live-pulse-badge" id="live-indicator"><i class="fa-solid fa-circle"></i> TRỰC TUYẾN</span>
@@ -1592,7 +1522,7 @@
         </div>
     </div>
 
-    <!-- HEADER (ĐÃ FIX KHÔNG BỊ TRÀN/DÍNH NÚT MENU) -->
+    <!-- HEADER -->
     <header>
         <div class="header-inner">
             <div class="brand-logo">
@@ -2068,6 +1998,9 @@
 
     <!-- JAVASCRIPT APP LOGIC -->
     <script>
+        let currentLang = 'vi';
+        let currentCategory = 'canada';
+
         function updateDisplayDate() {
             const locale = currentLang === 'vi' ? 'vi-VN' : 'en-US';
             const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
@@ -2275,7 +2208,7 @@
             if (event.target.id === 'sponsor-modal') closeSponsorModal();
         }
 
-        // CẤU HÌNH YOUTUBE DATA API V3 & PLAYLIST
+        // CẤU HÌNH YOUTUBE DATA API V3 & DANH SÁCH PHÁT
         const YOUTUBE_API_KEY = "AIzaSyCnCoR9sPoI7hAbPVAwUelFcHWjO8oUhfM";
         const PLAYLIST_CANADA_ID = "PLNYiqhzxiuIU";
         const PLAYLIST_POLITICS_ID = "PLDdOhIx3i1Q4";
@@ -2320,7 +2253,7 @@
             playlistVideos = (playlistId === PLAYLIST_CULTURE_ID) ? [...defaultCultureVideos] : [...defaultNewsVideos];
             renderPlaylistUI();
 
-            // Gọi YouTube Data API v3
+            // Gọi YouTube Data API v3 chính thống
             try {
                 const apiUrl = `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=25&playlistId=${playlistId}&key=${YOUTUBE_API_KEY}`;
                 const res = await fetch(apiUrl);
@@ -2356,6 +2289,7 @@
                 console.warn("YouTube API error:", e);
             }
 
+            // Fallback nếu có sự cố
             selectVideo(0);
         }
 
@@ -2588,6 +2522,7 @@
             const title = currentLang === 'vi' ? (catTitlesVi[cat] || 'TIN TỨC') : (catTitlesEn[cat] || 'NEWS');
             document.getElementById('section-head-text').innerHTML = `<i class="fa-solid fa-fire"></i> ${title}`;
 
+            // PHÂN BIỆT PLAYLIST THEO CHUYÊN MỤC
             if (cat === 'culture') {
                 loadYoutubePlaylistById(PLAYLIST_CULTURE_ID, 'VC Life Canada - Khám Phá & Đời Sống');
             } else if (cat === 'politics') {

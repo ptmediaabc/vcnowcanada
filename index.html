@@ -91,6 +91,7 @@
             color: inherit;
         }
 
+        /* TOP LIVE BAR ĐƯỢC CHUẨN HÓA */
         .top-live-bar {
             background: var(--bg-dark);
             border-bottom: 1px solid var(--border-color);
@@ -100,28 +101,44 @@
             justify-content: space-between;
             align-items: center;
             color: var(--text-muted);
+            min-height: 38px;
+        }
+
+        .top-bar-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .live-pulse-badge {
-            background: linear-gradient(135deg, var(--primary-pink), var(--primary-purple));
+            background: linear-gradient(135deg, #ef4444, #f43f5e);
             color: white;
             font-weight: 800;
-            padding: 3px 9px;
+            padding: 2px 8px;
             border-radius: 20px;
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             display: inline-flex;
             align-items: center;
             gap: 5px;
-            margin-right: 10px;
-            animation: pulseGlow 2s infinite;
+            letter-spacing: 0.5px;
+        }
+
+        .live-pulse-badge i {
+            font-size: 0.45rem;
+            animation: pulseGlow 1.5s infinite;
         }
 
         @keyframes pulseGlow {
-            0%, 100% {
-                box-shadow: 0 0 12px rgba(236, 72, 153, 0.6);
+
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1);
             }
+
             50% {
-                box-shadow: 0 0 4px rgba(236, 72, 153, 0.2);
+                opacity: 0.3;
+                transform: scale(0.85);
             }
         }
 
@@ -326,14 +343,15 @@
             box-shadow: 0 4px 15px rgba(255, 91, 0, 0.5);
         }
 
+        /* STORY CIRCLES TỐI ƯU CẢ DESKTOP & MOBILE */
         .story-circles-wrap {
             max-width: 1360px;
-            margin: 1.5rem auto 0.5rem;
+            margin: 1.25rem auto 0.5rem;
             padding: 0 1.5rem;
             display: flex;
-            gap: 1.25rem;
-            overflow-x: auto;
-            padding-bottom: 0.5rem;
+            justify-content: center;
+            gap: 1.5rem;
+            overflow-x: hidden;
         }
 
         .story-circle-item {
@@ -342,7 +360,8 @@
             align-items: center;
             gap: 8px;
             cursor: pointer;
-            flex-shrink: 0;
+            flex: 1;
+            max-width: 80px;
             transition: var(--transition);
         }
 
@@ -378,11 +397,11 @@
             font-size: 0.72rem;
             font-weight: 700;
             color: var(--text-main);
-            max-width: 75px;
             text-align: center;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            width: 100%;
         }
 
         .main-grid-layout {
@@ -1280,12 +1299,16 @@
             }
         }
 
+        /* RESPONSIVE TABLET & MOBILE (<= 768px) */
         @media (max-width: 768px) {
             .top-live-bar {
-                flex-direction: column;
-                gap: 4px;
-                text-align: center;
-                padding: 0.5rem 1rem;
+                padding: 0.35rem 1rem;
+                font-size: 0.72rem;
+            }
+
+            .top-bar-right {
+                display: none;
+                /* Ẩn bớt text thừa trên mobile để thanh luôn nằm trên 1 dòng */
             }
 
             .header-inner {
@@ -1333,18 +1356,25 @@
                 justify-content: center;
             }
 
+            /* Responsive cho Story Circles: Co đều, hiển thị trọn vẹn 6 nút */
             .story-circles-wrap {
-                padding: 0 1rem 0.5rem;
-                gap: 1rem;
+                padding: 0 0.5rem 0.5rem;
+                gap: 6px;
+                justify-content: space-between;
             }
 
             .story-avatar-ring {
-                width: 58px;
-                height: 58px;
+                width: 50px;
+                height: 50px;
+                padding: 2px;
             }
 
             .story-inner-circle {
-                font-size: 1.15rem;
+                font-size: 1.1rem;
+            }
+
+            .story-title-label {
+                font-size: 0.65rem;
             }
 
             .main-grid-layout {
@@ -1426,7 +1456,34 @@
             }
         }
 
+        /* RESPONSIVE RIÊNG CHO MÀN HÌNH ĐIỆN THOẠI NHỎ (<= 480px) */
         @media (max-width: 480px) {
+            .story-circles-wrap {
+                padding: 0 8px 0.5rem;
+                gap: 4px;
+                justify-content: space-between;
+            }
+
+            .story-circle-item {
+                max-width: calc(100% / 6);
+                gap: 4px;
+            }
+
+            .story-avatar-ring {
+                width: 44px;
+                height: 44px;
+                padding: 2px;
+            }
+
+            .story-inner-circle {
+                font-size: 0.95rem;
+            }
+
+            .story-title-label {
+                font-size: 0.58rem;
+                letter-spacing: -0.2px;
+            }
+
             .social-counters-bar {
                 grid-template-columns: 1fr;
             }
@@ -1458,14 +1515,14 @@
 
 <body class="dark-mode">
 
-    <!-- TOP LIVE BAR -->
+    <!-- TOP LIVE BAR (ĐÃ ĐƯỢC CHUẨN HÓA GIAO DIỆN) -->
     <div class="top-live-bar">
-        <div>
-            <span class="live-pulse-badge"><i class="fa-solid fa-bolt"></i> HOT TRENDING</span>
+        <div class="top-bar-left">
+            <span class="live-pulse-badge" id="live-indicator"><i class="fa-solid fa-circle"></i> TRỰC TUYẾN</span>
             <span id="current-date"></span>
         </div>
-        <div>
-            <i class="fa-brands fa-canadian-maple-leaf" style="color:var(--primary-red);"></i> VC Now Canada 
+        <div class="top-bar-right">
+            <i class="fa-brands fa-canadian-maple-leaf" style="color:var(--primary-red);"></i> VC Now Canada
         </div>
     </div>
 
@@ -1575,7 +1632,8 @@
             <!-- SOCIAL GRADIENT COUNTERS -->
             <div class="social-counters-bar">
                 <!-- Facebook -->
-                <a href="https://www.facebook.com/vcnowcanada" target="_blank" rel="noopener noreferrer" class="social-stat-pill soc-fb">
+                <a href="https://www.facebook.com/vcnowcanada" target="_blank" rel="noopener noreferrer"
+                    class="social-stat-pill soc-fb">
                     <div class="soc-brand-group">
                         <i class="fa-brands fa-facebook-f"></i>
                         <span>Facebook</span>
@@ -1584,7 +1642,8 @@
                 </a>
 
                 <!-- YouTube -->
-                <a href="https://www.youtube.com/@vcnowcanada" target="_blank" rel="noopener noreferrer" class="social-stat-pill soc-yt">
+                <a href="https://www.youtube.com/@vcnowcanada" target="_blank" rel="noopener noreferrer"
+                    class="social-stat-pill soc-yt">
                     <div class="soc-brand-group">
                         <i class="fa-brands fa-youtube"></i>
                         <span>YouTube</span>
@@ -1593,7 +1652,8 @@
                 </a>
 
                 <!-- Instagram -->
-                <a href="https://www.instagram.com/vcnowcanada" target="_blank" rel="noopener noreferrer" class="social-stat-pill soc-ig">
+                <a href="https://www.instagram.com/vcnowcanada" target="_blank" rel="noopener noreferrer"
+                    class="social-stat-pill soc-ig">
                     <div class="soc-brand-group">
                         <i class="fa-brands fa-instagram"></i>
                         <span>Instagram</span>
@@ -1602,7 +1662,8 @@
                 </a>
 
                 <!-- TikTok -->
-                <a href="https://www.tiktok.com/@vcnowdigital" target="_blank" rel="noopener noreferrer" class="social-stat-pill soc-tt">
+                <a href="https://www.tiktok.com/@vcnowdigital" target="_blank" rel="noopener noreferrer"
+                    class="social-stat-pill soc-tt">
                     <div class="soc-brand-group">
                         <i class="fa-brands fa-tiktok"></i>
                         <span>TikTok</span>
@@ -1613,12 +1674,12 @@
 
             <!-- PANORAMA VIDEO FEATURE BANNER -->
             <div class="panorama-video-banner" id="panorama-box" onclick="playMainPanoramaVideo()">
-                <img id="panorama-img" src="https://i.ytimg.com/vi/i2iXCkWRg80/hqdefault.jpg" alt="Video">
+                <img id="panorama-img" src="https://i.ytimg.com/vi/0GTNjymrwmk/hqdefault.jpg" alt="Video">
                 <div class="video-play-pulse-btn"><i class="fa-solid fa-play"></i></div>
                 <div class="panorama-video-caption">
                     <span class="badge-category" style="background:var(--primary-pink);">TRUYỀN HÌNH ĐẶC BIỆT</span>
-                    <h3 id="panorama-title" style="font-size:1.35rem; font-weight:800; margin-top:4px;">TT Carney và
-                        Ford Bóp Nghẹt đòn bẩy dầu mỏ của Trump khi các cuộc đàm phán thuế quan phản tác dụng</h3>
+                    <h3 id="panorama-title" style="font-size:1.35rem; font-weight:800; margin-top:4px;">VC Now Canada
+                        Media Stream</h3>
                 </div>
             </div>
 
@@ -1946,7 +2007,21 @@
 
     <!-- JAVASCRIPT APP LOGIC -->
     <script>
-        document.getElementById('current-date').innerText = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+        let currentLang = 'vi';
+        let currentCategory = 'canada';
+
+        function updateDisplayDate() {
+            const locale = currentLang === 'vi' ? 'vi-VN' : 'en-US';
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const dateStr = new Date().toLocaleDateString(locale, options);
+            document.getElementById('current-date').innerHTML = `<i class="fa-regular fa-calendar-days" style="margin-right: 5px;"></i>${dateStr}`;
+
+            const liveEl = document.getElementById('live-indicator');
+            if (liveEl) {
+                liveEl.innerHTML = currentLang === 'vi' ? `<i class="fa-solid fa-circle"></i> TRỰC TUYẾN` : `<i class="fa-solid fa-circle"></i> LIVE`;
+            }
+        }
+        updateDisplayDate();
 
         function toggleDarkMode() {
             const isDark = document.body.classList.toggle('dark-mode');
@@ -2142,16 +2217,15 @@
             if (event.target.id === 'sponsor-modal') closeSponsorModal();
         }
 
-        const PLAYLIST_NEWS_ID = "PLDdOhIx3i1Q4";
+        // CẤU HÌNH YOUTUBE DATA API V3 & DANH SÁCH PHÁT
+        const YOUTUBE_API_KEY = "AIzaSyCnCoR9sPoI7hAbPVAwUelFcHWjO8oUhfM";
+        const PLAYLIST_CANADA_ID = "PLNYiqhzxiuIU";
+        const PLAYLIST_POLITICS_ID = "PLDdOhIx3i1Q4";
         const PLAYLIST_CULTURE_ID = "PLHUOBLknLbUQ";
-        const FALLBACK_THUMB = "https://i.ytimg.com/vi/i2iXCkWRg80/hqdefault.jpg";
+        const FALLBACK_THUMB = "https://i.ytimg.com/vi/0GTNjymrwmk/hqdefault.jpg";
 
         let defaultNewsVideos = [
-            { id: "i2iXCkWRg80", title: "TT Carney và Ford Bóp Nghẹt đòn bẩy dầu mỏ của Trump khi các cuộc đàm phán thuế quan phản tác dụng", pubDate: "15/08/2026", thumbnail: "https://i.ytimg.com/vi/i2iXCkWRg80/hqdefault.jpg" },
-            { id: "irKgfTCqQOo", title: "Vì Sao Thỏa Thuận Uranium Của Canada Khiến Thuế Quan Của Trump Phản Tác Dụng?", pubDate: "09/08/2026", thumbnail: "https://i.ytimg.com/vi/irKgfTCqQOo/hqdefault.jpg" },
-            { id: "x_m_rbuFkRQ", title: "Trump Hoảng Loạn, Hoa Kỳ Cầu Xin Canada Sau Khi Carney Và Đức Ký Thỏa Thuận 18 Tỷ USD", pubDate: "09/08/2026", thumbnail: "https://i.ytimg.com/vi/x_m_rbuFkRQ/hqdefault.jpg" },
-            { id: "6GKcWZySG4Q", title: "Căng Thẳng Leo Thang: Thông Điệp Cứng Rắn Của TT Carney Sau Phát Biểu Mới Nhất Từ Trump", pubDate: "08/08/2026", thumbnail: "https://i.ytimg.com/vi/6GKcWZySG4Q/hqdefault.jpg" },
-            { id: "QelyIpmFWlU", title: "Con Số 500.000 Chuyến Bay Và Lợi Thế Ẩn Giúp Kinh Tế Canada Bứt Phá?", pubDate: "06/08/2026", thumbnail: "https://i.ytimg.com/vi/QelyIpmFWlU/hqdefault.jpg" }
+            { id: "0GTNjymrwmk", title: "Tin Tức Canada Mới Nhất | VC Now Canada", pubDate: "Mới nhất", thumbnail: "https://i.ytimg.com/vi/0GTNjymrwmk/hqdefault.jpg" }
         ];
 
         let defaultCultureVideos = [
@@ -2166,8 +2240,6 @@
         let currentHeroArticles = [];
         let currentFilteredArticles = [];
         let visibleCount = 6;
-        let currentLang = 'vi';
-        let currentCategory = 'canada';
 
         function toggleMobileMenu() {
             document.getElementById('nav-menu').classList.toggle('open');
@@ -2189,56 +2261,45 @@
 
             playlistVideos = (playlistId === PLAYLIST_CULTURE_ID) ? [...defaultCultureVideos] : [...defaultNewsVideos];
             renderPlaylistUI();
-            selectVideo(0);
 
-            const rssUrl = `https://www.youtube.com/feeds/videos.xml?playlist_id=${playlistId}`;
-            const proxy1 = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}&_t=${Date.now()}`;
-            const proxy2 = `https://api.allorigins.win/get?url=${encodeURIComponent(rssUrl)}`;
-
+            // Gọi YouTube Data API v3 chính thống
             try {
-                const fetchP1 = fetch(proxy1).then(r => r.json()).then(data => {
-                    if (data.status === 'ok' && data.items && data.items.length > 0) {
-                        return data.items.map(item => {
-                            let vId = item.link.includes('v=') ? item.link.split('v=')[1].split('&')[0] : item.guid.split(':').pop();
-                            return {
-                                id: vId,
-                                title: item.title,
-                                pubDate: new Date(item.pubDate).toLocaleDateString('vi-VN'),
-                                thumbnail: `https://img.youtube.com/vi/${vId}/hqdefault.jpg`
-                            };
-                        });
-                    }
-                    throw new Error();
-                });
+                const apiUrl = `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=25&playlistId=${playlistId}&key=${YOUTUBE_API_KEY}`;
+                const res = await fetch(apiUrl);
+                const data = await res.json();
 
-                const fetchP2 = fetch(proxy2).then(r => r.json()).then(data => {
-                    if (!data.contents) throw new Error();
-                    const xmlDoc = new DOMParser().parseFromString(data.contents, "text/xml");
-                    const entries = xmlDoc.querySelectorAll("entry");
-                    if (!entries || entries.length === 0) throw new Error();
-                    let parsed = [];
-                    entries.forEach(entry => {
-                        const vId = entry.querySelector("videoId") ? entry.querySelector("videoId").textContent : "";
-                        const title = entry.querySelector("title") ? entry.querySelector("title").textContent : "";
-                        if (vId) {
+                if (data && data.items && data.items.length > 0) {
+                    const parsed = [];
+                    data.items.forEach(item => {
+                        const snippet = item.snippet;
+                        const vId = snippet.resourceId ? snippet.resourceId.videoId : "";
+                        if (vId && snippet.title !== 'Private video' && snippet.title !== 'Deleted video') {
+                            const thumb = (snippet.thumbnails && (snippet.thumbnails.high || snippet.thumbnails.medium || snippet.thumbnails.default))
+                                ? (snippet.thumbnails.high || snippet.thumbnails.medium || snippet.thumbnails.default).url
+                                : `https://img.youtube.com/vi/${vId}/hqdefault.jpg`;
+
                             parsed.push({
                                 id: vId,
-                                title: title,
-                                pubDate: 'Mới nhất',
-                                thumbnail: `https://img.youtube.com/vi/${vId}/hqdefault.jpg`
+                                title: snippet.title,
+                                pubDate: new Date(snippet.publishedAt).toLocaleDateString('vi-VN'),
+                                thumbnail: thumb
                             });
                         }
                     });
-                    return parsed;
-                });
 
-                const res = await Promise.any([fetchP1, fetchP2]);
-                if (res && res.length > 0) {
-                    playlistVideos = res;
-                    renderPlaylistUI();
-                    selectVideo(0);
+                    if (parsed.length > 0) {
+                        playlistVideos = parsed;
+                        renderPlaylistUI();
+                        selectVideo(0);
+                        return;
+                    }
                 }
-            } catch (e) { }
+            } catch (e) {
+                console.warn("YouTube API error:", e);
+            }
+
+            // Fallback nếu có sự cố
+            selectVideo(0);
         }
 
         function renderPlaylistUI() {
@@ -2265,7 +2326,7 @@
             const v = playlistVideos[idx];
             if (!v) return;
 
-            document.getElementById('yt-main-player').src = `https://www.youtube-nocookie.com/embed/${v.id}?autoplay=1`;
+            document.getElementById('yt-main-player').src = `https://www.youtube-nocookie.com/embed/${v.id}?list=${currentLoadedPlaylistId}&autoplay=1`;
             document.getElementById('yt-active-title').innerText = v.title;
 
             document.querySelectorAll('.yt-item-row').forEach(r => r.classList.remove('active'));
@@ -2470,10 +2531,13 @@
             const title = currentLang === 'vi' ? (catTitlesVi[cat] || 'TIN TỨC') : (catTitlesEn[cat] || 'NEWS');
             document.getElementById('section-head-text').innerHTML = `<i class="fa-solid fa-fire"></i> ${title}`;
 
+            // PHÂN BIỆT PLAYLIST THEO CHUYÊN MỤC
             if (cat === 'culture') {
                 loadYoutubePlaylistById(PLAYLIST_CULTURE_ID, 'VC Life Canada - Khám Phá & Đời Sống');
+            } else if (cat === 'politics') {
+                loadYoutubePlaylistById(PLAYLIST_POLITICS_ID, 'Chánh Trị Canada - VC Now');
             } else {
-                loadYoutubePlaylistById(PLAYLIST_NEWS_ID, 'VC Now Media Stream');
+                loadYoutubePlaylistById(PLAYLIST_CANADA_ID, 'VC Now Media Stream');
             }
 
             filterNews();
@@ -2625,6 +2689,7 @@
                 document.getElementById('modal-footer-note').innerText = 'Read original article at publisher:';
             }
 
+            updateDisplayDate();
             filterCategory(currentCategory, document.querySelector(`.nav-tab.active`));
             translateVisibleArticles();
         }
@@ -2632,7 +2697,7 @@
         // KHỞI CHẠY HỆ THỐNG
         fetchNews();
         fetchCanadaWeather();
-        loadYoutubePlaylistById(PLAYLIST_NEWS_ID, 'VC Now Media Stream');
+        loadYoutubePlaylistById(PLAYLIST_CANADA_ID, 'VC Now Media Stream');
         renderRandomCanadaTours();
     </script>
 </body>

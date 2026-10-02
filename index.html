@@ -59,6 +59,12 @@
             padding: 0;
         }
 
+        html {
+            overflow-x: hidden;
+            max-width: 100%;
+            -webkit-text-size-adjust: 100%;
+        }
+
         body {
             background-color: var(--bg-dark);
             color: var(--text-main);
@@ -67,12 +73,20 @@
             display: flex;
             flex-direction: column;
             min-height: 100vh;
+            width: 100%;
+            max-width: 100vw;
             overflow-x: hidden;
             transition: background-color 0.3s ease, color 0.3s ease;
             user-select: none;
             -webkit-user-select: none;
             -moz-user-select: none;
             -ms-user-select: none;
+        }
+
+        img,
+        iframe,
+        video {
+            max-width: 100%;
         }
 
         button,
@@ -108,6 +122,14 @@
             display: flex;
             align-items: center;
             gap: 8px;
+            min-width: 0;
+        }
+
+        .top-bar-left #current-date {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            min-width: 0;
         }
 
         .live-pulse-badge {
@@ -121,6 +143,8 @@
             align-items: center;
             gap: 5px;
             letter-spacing: 0.5px;
+            white-space: nowrap;
+            flex-shrink: 0;
         }
 
         .live-pulse-badge i {
@@ -129,10 +153,13 @@
         }
 
         @keyframes pulseGlow {
-            0%, 100% {
+
+            0%,
+            100% {
                 opacity: 1;
                 transform: scale(1);
             }
+
             50% {
                 opacity: 0.3;
                 transform: scale(0.85);
@@ -146,6 +173,7 @@
             top: 0;
             z-index: 1000;
             transition: background-color 0.3s ease;
+            width: 100%;
         }
 
         .header-inner {
@@ -181,6 +209,7 @@
             font-size: 1.1rem;
             color: white;
             box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4);
+            flex-shrink: 0;
         }
 
         .brand-logo span {
@@ -241,6 +270,7 @@
             cursor: pointer;
             transition: var(--transition);
             font-size: 0.95rem;
+            flex-shrink: 0;
         }
 
         .dark-mode-btn:hover {
@@ -282,6 +312,7 @@
             color: var(--text-main);
             font-size: 1.3rem;
             cursor: pointer;
+            flex-shrink: 0;
         }
 
         nav {
@@ -342,6 +373,7 @@
 
         /* STORY CIRCLES TỐI ƯU CẢ DESKTOP & MOBILE */
         .story-circles-wrap {
+            width: 100%;
             max-width: 1360px;
             margin: 1.25rem auto 0.5rem;
             padding: 0 1.5rem;
@@ -358,6 +390,7 @@
             gap: 8px;
             cursor: pointer;
             flex: 1;
+            min-width: 0;
             max-width: 80px;
             transition: var(--transition);
         }
@@ -402,20 +435,32 @@
         }
 
         .main-grid-layout {
+            width: 100%;
             max-width: 1360px;
             margin: 1.5rem auto 3rem;
             padding: 0 1.5rem;
             display: grid;
-            grid-template-columns: 2.8fr 1.2fr;
+            grid-template-columns: minmax(0, 2.8fr) minmax(0, 1.2fr);
             gap: 2rem;
             flex: 1;
         }
 
+        /* Ngăn nội dung (widget, ảnh, tiêu đề dài) làm phình cột lưới ra ngoài màn hình */
+        .main-grid-layout>main,
+        .main-grid-layout>aside {
+            min-width: 0;
+            max-width: 100%;
+        }
+
         .hero-triple-grid {
             display: grid;
-            grid-template-columns: 1.7fr 1fr;
+            grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr);
             gap: 1.25rem;
             margin-bottom: 2.5rem;
+        }
+
+        .hero-triple-grid>* {
+            min-width: 0;
         }
 
         .hero-main-banner {
@@ -459,6 +504,8 @@
         .hero-banner-content {
             position: relative;
             z-index: 3;
+            min-width: 0;
+            max-width: 100%;
         }
 
         .badge-category {
@@ -472,6 +519,7 @@
             letter-spacing: 0.3px;
             display: inline-block;
             margin-bottom: 8px;
+            max-width: 100%;
         }
 
         .hero-main-heading {
@@ -482,12 +530,14 @@
             color: white;
             margin-bottom: 8px;
             text-shadow: 0 2px 10px rgba(0, 0, 0, 0.6);
+            overflow-wrap: anywhere;
         }
 
         .hero-sub-column {
             display: flex;
             flex-direction: column;
             gap: 1.25rem;
+            min-width: 0;
         }
 
         .hero-sub-box {
@@ -501,6 +551,7 @@
             cursor: pointer;
             transition: var(--transition);
             flex: 1;
+            min-width: 0;
         }
 
         .hero-sub-box:hover {
@@ -522,6 +573,7 @@
             flex-direction: column;
             justify-content: space-between;
             flex: 1;
+            min-width: 0;
         }
 
         .hero-sub-body h4 {
@@ -533,11 +585,12 @@
             -webkit-line-clamp: 3;
             -webkit-box-orient: vertical;
             overflow: hidden;
+            overflow-wrap: anywhere;
         }
 
         .social-counters-bar {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(4, minmax(0, 1fr));
             gap: 12px;
             margin-bottom: 2.5rem;
         }
@@ -554,6 +607,7 @@
             transition: var(--transition);
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
             white-space: nowrap;
+            min-width: 0;
         }
 
         .social-stat-pill:hover {
@@ -661,12 +715,20 @@
             padding: 1.25rem;
             margin-bottom: 2.5rem;
             box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+            max-width: 100%;
+            overflow: hidden;
+        }
+
+        .flight-search-wrapper * {
+            max-width: 100%;
         }
 
         .flight-search-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-wrap: wrap;
+            gap: 6px;
             margin-bottom: 1rem;
             padding-bottom: 0.5rem;
             border-bottom: 2px solid var(--border-color);
@@ -718,7 +780,7 @@
 
         .news-grid-2col {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: repeat(2, minmax(0, 1fr));
             gap: 1.25rem;
         }
 
@@ -731,6 +793,7 @@
             gap: 1.1rem;
             cursor: pointer;
             transition: var(--transition);
+            min-width: 0;
         }
 
         .magazine-card:hover {
@@ -761,6 +824,7 @@
 
         .magazine-card-content {
             flex: 1;
+            min-width: 0;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
@@ -783,6 +847,7 @@
             -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
             overflow: hidden;
+            overflow-wrap: anywhere;
         }
 
         .magazine-meta {
@@ -831,6 +896,8 @@
             padding: 1.25rem;
             border: 1px solid var(--border-color);
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            max-width: 100%;
+            overflow: hidden;
         }
 
         .widget-head {
@@ -920,6 +987,7 @@
             -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
             overflow: hidden;
+            min-width: 0;
         }
 
         .yt-scroll-list {
@@ -958,6 +1026,7 @@
 
         .yt-item-info {
             flex: 1;
+            min-width: 0;
             display: flex;
             flex-direction: column;
             gap: 3px;
@@ -975,7 +1044,7 @@
 
         .weather-grid-mini {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: repeat(2, minmax(0, 1fr));
             gap: 10px;
         }
 
@@ -1137,7 +1206,8 @@
         .modal-meta-row {
             display: flex;
             align-items: center;
-            gap: 16px;
+            flex-wrap: wrap;
+            gap: 6px 16px;
             font-size: 0.8rem;
             color: var(--text-muted);
             margin: 12px 0 18px;
@@ -1164,6 +1234,7 @@
             font-size: 1.05rem;
             line-height: 1.85;
             color: var(--text-main);
+            overflow-wrap: anywhere;
         }
 
         .modal-body-content p {
@@ -1192,7 +1263,7 @@
 
         .weather-detail-grid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: repeat(2, minmax(0, 1fr));
             gap: 1rem;
             margin-top: 1rem;
         }
@@ -1225,6 +1296,10 @@
             display: grid;
             grid-template-columns: 2fr 1fr 1fr 1.4fr;
             gap: 2.5rem;
+        }
+
+        .footer-inner>* {
+            min-width: 0;
         }
 
         footer .brand-logo {
@@ -1277,12 +1352,12 @@
 
         @media (max-width: 1024px) {
             .main-grid-layout {
-                grid-template-columns: 1fr;
+                grid-template-columns: minmax(0, 1fr);
                 gap: 1.5rem;
             }
 
             .social-counters-bar {
-                grid-template-columns: repeat(2, 1fr);
+                grid-template-columns: repeat(2, minmax(0, 1fr));
                 gap: 10px;
             }
 
@@ -1292,7 +1367,7 @@
             }
 
             .hero-triple-grid {
-                grid-template-columns: 1fr;
+                grid-template-columns: minmax(0, 1fr);
             }
         }
 
@@ -1304,22 +1379,28 @@
             }
 
             .top-bar-right {
-                display: none; /* Ẩn bớt text thừa trên mobile để thanh luôn nằm trên 1 dòng */
+                display: none;
+                /* Ẩn bớt text thừa trên mobile để thanh luôn nằm trên 1 dòng */
             }
 
             .header-inner {
                 padding: 0.75rem 1rem;
-                gap: 1rem;
+                gap: 0.5rem;
             }
 
             .brand-logo {
                 font-size: 1.35rem;
+                gap: 8px;
             }
 
             .brand-logo .brand-icon {
                 width: 32px;
                 height: 32px;
                 font-size: 0.95rem;
+            }
+
+            .header-actions {
+                gap: 8px;
             }
 
             .header-search-wrap {
@@ -1389,7 +1470,7 @@
             }
 
             .news-grid-2col {
-                grid-template-columns: 1fr;
+                grid-template-columns: minmax(0, 1fr);
                 gap: 1rem;
             }
 
@@ -1418,8 +1499,21 @@
                 font-size: 1.3rem;
             }
 
+            .panorama-video-caption {
+                left: 14px;
+                right: 14px;
+            }
+
             .panorama-video-caption h3 {
                 font-size: 1rem !important;
+            }
+
+            .section-head-title {
+                font-size: 1.05rem;
+            }
+
+            .flight-search-wrapper {
+                padding: 0.9rem;
             }
 
             .modal-overlay {
@@ -1446,7 +1540,7 @@
             }
 
             .footer-inner {
-                grid-template-columns: 1fr;
+                grid-template-columns: minmax(0, 1fr);
                 gap: 1.75rem;
                 padding: 0 1rem 2rem;
             }
@@ -1454,6 +1548,53 @@
 
         /* RESPONSIVE RIÊNG CHO MÀN HÌNH ĐIỆN THOẠI NHỎ (<= 480px) */
         @media (max-width: 480px) {
+            .header-inner {
+                padding: 0.6rem 0.75rem;
+                gap: 0.4rem;
+            }
+
+            /* Thu nhỏ logo + cụm nút để toàn bộ header vừa 360px, không bị tràn */
+            .brand-logo {
+                font-size: 1.05rem;
+                gap: 6px;
+                letter-spacing: -0.3px;
+            }
+
+            .brand-logo .brand-icon {
+                width: 28px;
+                height: 28px;
+                font-size: 0.8rem;
+                border-radius: 8px;
+            }
+
+            .header-actions {
+                gap: 6px;
+            }
+
+            .dark-mode-btn {
+                width: 32px;
+                height: 32px;
+                font-size: 0.85rem;
+            }
+
+            .lang-pill {
+                padding: 2px;
+            }
+
+            .lang-pill-btn {
+                padding: 4px 8px;
+                font-size: 0.68rem;
+            }
+
+            .mobile-nav-toggle {
+                font-size: 1.15rem;
+                padding: 0 2px;
+            }
+
+            .top-live-bar {
+                padding: 0.3rem 0.75rem;
+            }
+
             .story-circles-wrap {
                 padding: 0 8px 0.5rem;
                 gap: 4px;
@@ -1480,8 +1621,12 @@
                 letter-spacing: -0.2px;
             }
 
+            .hero-main-heading {
+                font-size: 1.1rem;
+            }
+
             .social-counters-bar {
-                grid-template-columns: 1fr;
+                grid-template-columns: minmax(0, 1fr);
             }
 
             .social-stat-pill {
@@ -1499,11 +1644,32 @@
             }
 
             .weather-grid-mini {
-                grid-template-columns: 1fr;
+                grid-template-columns: minmax(0, 1fr);
             }
 
             .weather-detail-grid {
-                grid-template-columns: 1fr;
+                grid-template-columns: minmax(0, 1fr);
+            }
+        }
+
+        /* Màn hình rất nhỏ (<= 360px) */
+        @media (max-width: 360px) {
+            .brand-logo {
+                font-size: 0.95rem;
+            }
+
+            .brand-logo .brand-icon {
+                width: 26px;
+                height: 26px;
+            }
+
+            .lang-pill-btn {
+                padding: 4px 6px;
+            }
+
+            .magazine-card-img-wrap {
+                width: 90px;
+                height: 85px;
             }
         }
     </style>
@@ -1518,7 +1684,7 @@
             <span id="current-date"></span>
         </div>
         <div class="top-bar-right">
-            <i class="fa-brands fa-canadian-maple-leaf" style="color:var(--primary-red);"></i> VC Now Canada 
+            <i class="fa-brands fa-canadian-maple-leaf" style="color:var(--primary-red);"></i> VC Now Canada
         </div>
     </div>
 
@@ -1628,7 +1794,8 @@
             <!-- SOCIAL GRADIENT COUNTERS -->
             <div class="social-counters-bar">
                 <!-- Facebook -->
-                <a href="https://www.facebook.com/vcnowcanada" target="_blank" rel="noopener noreferrer" class="social-stat-pill soc-fb">
+                <a href="https://www.facebook.com/vcnowcanada" target="_blank" rel="noopener noreferrer"
+                    class="social-stat-pill soc-fb">
                     <div class="soc-brand-group">
                         <i class="fa-brands fa-facebook-f"></i>
                         <span>Facebook</span>
@@ -1637,7 +1804,8 @@
                 </a>
 
                 <!-- YouTube -->
-                <a href="https://www.youtube.com/@vcnowcanada" target="_blank" rel="noopener noreferrer" class="social-stat-pill soc-yt">
+                <a href="https://www.youtube.com/@vcnowcanada" target="_blank" rel="noopener noreferrer"
+                    class="social-stat-pill soc-yt">
                     <div class="soc-brand-group">
                         <i class="fa-brands fa-youtube"></i>
                         <span>YouTube</span>
@@ -1646,7 +1814,8 @@
                 </a>
 
                 <!-- Instagram -->
-                <a href="https://www.instagram.com/vcnowcanada" target="_blank" rel="noopener noreferrer" class="social-stat-pill soc-ig">
+                <a href="https://www.instagram.com/vcnowcanada" target="_blank" rel="noopener noreferrer"
+                    class="social-stat-pill soc-ig">
                     <div class="soc-brand-group">
                         <i class="fa-brands fa-instagram"></i>
                         <span>Instagram</span>
@@ -1655,7 +1824,8 @@
                 </a>
 
                 <!-- TikTok -->
-                <a href="https://www.tiktok.com/@vcnowdigital" target="_blank" rel="noopener noreferrer" class="social-stat-pill soc-tt">
+                <a href="https://www.tiktok.com/@vcnowdigital" target="_blank" rel="noopener noreferrer"
+                    class="social-stat-pill soc-tt">
                     <div class="soc-brand-group">
                         <i class="fa-brands fa-tiktok"></i>
                         <span>TikTok</span>
@@ -1670,7 +1840,8 @@
                 <div class="video-play-pulse-btn"><i class="fa-solid fa-play"></i></div>
                 <div class="panorama-video-caption">
                     <span class="badge-category" style="background:var(--primary-pink);">TRUYỀN HÌNH ĐẶC BIỆT</span>
-                    <h3 id="panorama-title" style="font-size:1.35rem; font-weight:800; margin-top:4px;">VC Now Canada Media Stream</h3>
+                    <h3 id="panorama-title" style="font-size:1.35rem; font-weight:800; margin-top:4px;">VC Now Canada
+                        Media Stream</h3>
                 </div>
             </div>
 
@@ -2006,7 +2177,7 @@
             const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
             const dateStr = new Date().toLocaleDateString(locale, options);
             document.getElementById('current-date').innerHTML = `<i class="fa-regular fa-calendar-days" style="margin-right: 5px;"></i>${dateStr}`;
-            
+
             const liveEl = document.getElementById('live-indicator');
             if (liveEl) {
                 liveEl.innerHTML = currentLang === 'vi' ? `<i class="fa-solid fa-circle"></i> TRỰC TUYẾN` : `<i class="fa-solid fa-circle"></i> LIVE`;
@@ -2111,7 +2282,7 @@
                 html += `
           <a href="${t.link}" target="_blank" rel="noopener noreferrer" style="display:flex; gap:10px; background:var(--bg-subtle); padding:8px; border-radius:8px; text-decoration:none; border:1px solid var(--border-color); transition:var(--transition);" onmouseover="this.style.borderColor='#ff5b00'" onmouseout="this.style.borderColor='var(--border-color)'">
             <img src="${t.img}" alt="${t.title}" style="width:75px; height:65px; border-radius:6px; object-fit:cover; flex-shrink:0;" onerror="this.src='https://images.unsplash.com/photo-1509822929063-6b6cfc9b42f2?auto=format&fit=crop&w=200&q=80'">
-            <div style="display:flex; flex-direction:column; justify-content:space-between; flex:1;">
+            <div style="display:flex; flex-direction:column; justify-content:space-between; flex:1; min-width:0;">
               <div style="font-size:0.8rem; font-weight:700; color:var(--text-main); line-height:1.25; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;">${t.title}</div>
               <div style="display:flex; justify-content:space-between; align-items:center;">
                 <span style="color:#f59e0b; font-size:0.7rem; font-weight:700;"><i class="fa-solid fa-star"></i> ${t.rating}</span>

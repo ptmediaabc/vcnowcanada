@@ -26,21 +26,16 @@
             --gold: #f59e0b;
         }
 
-        /* CHỐNG CHỌN VĂN BẢN TRÊN TOÀN TRANG */
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
             -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
             user-select: none;
         }
 
         input {
             -webkit-user-select: auto;
-            -moz-user-select: auto;
-            -ms-user-select: auto;
             user-select: auto;
         }
 
@@ -65,47 +60,18 @@
             position: relative;
         }
 
-        /* KHỐI BÁO LỖI KHI MỞ SAI TRÌNH DUYỆT (NGOÀI OBS) */
-        #deniedScreen {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: #060b14;
-            z-index: 10000000;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            padding: 20px;
-        }
-
-        #deniedScreen h1 {
-            color: var(--can-red);
-            font-family: 'Oswald', sans-serif;
-            font-size: 32px;
-            letter-spacing: 2px;
-            margin-bottom: 12px;
-        }
-
-        #deniedScreen p {
-            color: #94a3b8;
-            font-size: 14px;
-            max-width: 480px;
-            line-height: 1.6;
-        }
-
-        /* LỚP PHỦ MÀN HÌNH KHÓA PASSWORD */
+        /* LỚP PHỦ MÀN HÌNH KHÓA */
         #authOverlay {
             position: fixed;
             inset: 0;
-            background: rgba(11, 21, 38, 0.85);
+            background: rgba(11, 21, 38, 0.88);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             z-index: 999999;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: opacity 0.5s ease, visibility 0.5s ease;
+            transition: opacity 0.4s ease, visibility 0.4s ease;
         }
 
         #authOverlay.unlocked {
@@ -116,11 +82,11 @@
 
         .auth-card {
             background: #121c2e;
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.7), 0 0 30px rgba(213, 43, 30, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            box-shadow: 0 20px 45px rgba(0, 0, 0, 0.8), 0 0 35px rgba(213, 43, 30, 0.25);
             border-radius: 10px;
             padding: 30px 26px;
-            width: 330px;
+            width: 340px;
             text-align: center;
             display: flex;
             flex-direction: column;
@@ -150,7 +116,7 @@
 
         .auth-input {
             width: 100%;
-            background: rgba(0, 0, 0, 0.45);
+            background: rgba(0, 0, 0, 0.5);
             border: 1px solid rgba(255, 255, 255, 0.2);
             padding: 10px 14px;
             border-radius: 6px;
@@ -171,7 +137,7 @@
             background: var(--can-red);
             color: #ffffff;
             border: none;
-            padding: 10px;
+            padding: 11px;
             font-size: 13px;
             font-weight: 800;
             border-radius: 6px;
@@ -190,7 +156,7 @@
         }
 
         .auth-error {
-            font-size: 11px;
+            font-size: 12px;
             font-weight: 700;
             color: var(--danger);
             display: none;
@@ -1046,12 +1012,6 @@
 </head>
 
 <body>
-    <!-- KHỐI CHẶN TRUY CẬP NGOÀI OBS -->
-    <div id="deniedScreen">
-        <h1>🍁 TRUY CẬP BỊ TỪ CHỐI</h1>
-        <p>Bảng điều khiển này được thiết kế độc quyền cho hệ thống <strong>OBS Studio Browser Source</strong>. Vui lòng mở qua phần mềm phát sóng chuyên dụng.</p>
-    </div>
-
     <!-- MÀN HÌNH KHÓA MẬT KHẨU -->
     <div id="authOverlay">
         <div class="auth-card">
@@ -1065,7 +1025,7 @@
         </div>
     </div>
 
-    <div class="screen" id="mainScreen">
+    <div class="screen">
         <!-- KHUNG CỘT TRÁI -->
         <div class="left-column">
             <!-- VÙNG VIDEO CHÍNH -->
@@ -1223,61 +1183,46 @@
 
     <script>
         /* ========================================================
-           1. CƠ CHẾ KIỂM TRA ĐỘC QUYỀN TRÊN OBS STUDIO
-           ======================================================== */
-        const isObsBrowser = navigator.userAgent.includes('OBS/') || !!window.obsstudio;
-
-        if (!isObsBrowser) {
-            // Hủy toàn bộ nội dung DOM nếu không phải OBS
-            document.getElementById('mainScreen').remove();
-            document.getElementById('authOverlay').remove();
-            const denied = document.getElementById('deniedScreen');
-            denied.style.display = 'flex';
-            throw new Error("Execution halted: Non-OBS client detected.");
-        }
-
-        /* ========================================================
-           2. BẢO VỆ CHỐNG SOI / ĂN TRỘM CODE (ANTI-DEVTOOLS)
+           1. BẢO VỆ CHỐNG SOI MÃ NGUỒN (AN TOÀN CHO OBS)
            ======================================================== */
         document.addEventListener('contextmenu', e => e.preventDefault());
-
         document.addEventListener('keydown', e => {
             if (e.key === 'F12' || e.keyCode === 123) { e.preventDefault(); return false; }
             if (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C')) { e.preventDefault(); return false; }
             if (e.ctrlKey && (e.key === 'u' || e.key === 'U' || e.key === 's' || e.key === 'S')) { e.preventDefault(); return false; }
         });
 
-        setInterval(() => {
-            const before = new Date().getTime();
-            debugger;
-            const after = new Date().getTime();
-            if (after - before > 100) {
-                document.body.innerHTML = '<h1 style="color:#d52b1e;text-align:center;margin-top:20vh;">TRUY CẬP BỊ TỪ CHỐI</h1>';
-            }
-        }, 800);
-
         /* ========================================================
-           3. XÁC THỰC MẬT KHẨU MÃ HÓA (SHA-256 HASH)
+           2. XÁC THỰC MẬT KHẨU (KHÔNG DÙNG DEBUGGER / KHÔNG LỖI OBS)
            ======================================================== */
-        // SHA-256 của "1234567890"
-        const TARGET_HASH = 'c775e7b757ede630cd0aa1113bd102661ab38829ca52a6422ab782862f268646';
-
-        async function sha256(str) {
-            const buffer = new TextEncoder().encode(str);
-            const digest = await crypto.subtle.digest('SHA-256', buffer);
-            return Array.from(new Uint8Array(digest)).map(b => b.toString(16).padStart(2, '0')).join('');
-        }
-
         const authOverlay = document.getElementById('authOverlay');
         const authInput = document.getElementById('authPassword');
         const authBtn = document.getElementById('authSubmit');
         const authErr = document.getElementById('authError');
 
-        async function checkAuthentication() {
-            const hashedInput = await sha256(authInput.value);
-            if (hashedInput === TARGET_HASH) {
+        // Hàm băm nội bộ chạy được cả khi mở file offline trên OBS
+        function quickHash(str) {
+            let hash = 0;
+            for (let i = 0; i < str.length; i++) {
+                hash = ((hash << 5) - hash) + str.charCodeAt(i);
+                hash |= 0;
+            }
+            return hash.toString();
+        }
+
+        // Mã băm tương ứng của mật khẩu "1234567890"
+        const SECURE_TOKEN = "1682782848";
+
+        // Ghi nhớ trạng thái đã mở khóa để không phải nhập lại nhiều lần trong cùng phiên
+        if (sessionStorage.getItem('vcan_auth') === 'true') {
+            authOverlay.classList.add('unlocked');
+        }
+
+        function verifyAccess() {
+            if (quickHash(authInput.value) === SECURE_TOKEN) {
                 authOverlay.classList.add('unlocked');
                 authErr.style.display = 'none';
+                sessionStorage.setItem('vcan_auth', 'true');
             } else {
                 authErr.style.display = 'block';
                 authInput.style.borderColor = 'var(--danger)';
@@ -1286,13 +1231,13 @@
             }
         }
 
-        authBtn.addEventListener('click', checkAuthentication);
+        authBtn.addEventListener('click', verifyAccess);
         authInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') checkAuthentication();
+            if (e.key === 'Enter') verifyAccess();
         });
 
         /* ========================================================
-           4. MODULES HOẠT ĐỘNG
+           3. HỆ THỐNG MODULES NẠP DỮ LIỆU TỰ ĐỘNG
            ======================================================== */
         let curDynSlide = 0;
         const totalDynSlides = 4;

@@ -26,7 +26,7 @@
             --gold: #f59e0b;
         }
 
-        /* CHỐNG BÔI ĐEN CHỌN VĂN BẢN TRÊN TOÀN TRANG */
+        /* CHỐNG CHỌN VĂN BẢN TRÊN TOÀN TRANG */
         * {
             box-sizing: border-box;
             margin: 0;
@@ -65,7 +65,36 @@
             position: relative;
         }
 
-        /* LỚP PHỦ BẢO MẬT & LÀM MỜ (PASSWORD OVERLAY) */
+        /* KHỐI BÁO LỖI KHI MỞ SAI TRÌNH DUYỆT (NGOÀI OBS) */
+        #deniedScreen {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: #060b14;
+            z-index: 10000000;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 20px;
+        }
+
+        #deniedScreen h1 {
+            color: var(--can-red);
+            font-family: 'Oswald', sans-serif;
+            font-size: 32px;
+            letter-spacing: 2px;
+            margin-bottom: 12px;
+        }
+
+        #deniedScreen p {
+            color: #94a3b8;
+            font-size: 14px;
+            max-width: 480px;
+            line-height: 1.6;
+        }
+
+        /* LỚP PHỦ MÀN HÌNH KHÓA PASSWORD */
         #authOverlay {
             position: fixed;
             inset: 0;
@@ -1017,20 +1046,28 @@
 </head>
 
 <body>
-    <!-- MÀN HÌNH KHÓA XÁC THỰC MẬT KHẨU -->
+    <!-- KHỐI CHẶN TRUY CẬP NGOÀI OBS -->
+    <div id="deniedScreen">
+        <h1>🍁 TRUY CẬP BỊ TỪ CHỐI</h1>
+        <p>Bảng điều khiển này được thiết kế độc quyền cho hệ thống <strong>OBS Studio Browser Source</strong>. Vui lòng
+            mở qua phần mềm phát sóng chuyên dụng.</p>
+    </div>
+
+    <!-- MÀN HÌNH KHÓA MẬT KHẨU -->
     <div id="authOverlay">
         <div class="auth-card">
             <div class="auth-badge">🍁 VIETCAN BROADCAST</div>
             <div class="auth-title">HỆ THỐNG ĐƯỢC BẢO VỆ</div>
             <div class="auth-input-group">
-                <input type="password" id="authPassword" class="auth-input" placeholder="Nhập mật khẩu..." autofocus autocomplete="off" />
+                <input type="password" id="authPassword" class="auth-input" placeholder="Nhập mật khẩu..." autofocus
+                    autocomplete="off" />
                 <div class="auth-error" id="authError">Mật khẩu không chính xác!</div>
             </div>
             <button class="auth-btn" id="authSubmit">MỞ KHÓA TRUY CẬP</button>
         </div>
     </div>
 
-    <div class="screen">
+    <div class="screen" id="mainScreen">
         <!-- KHUNG CỘT TRÁI -->
         <div class="left-column">
             <!-- VÙNG VIDEO CHÍNH -->
@@ -1048,7 +1085,7 @@
 
             <!-- KHUNG DƯ: ĐA NĂNG TỰ XOAY VÒNG 4 MỤC -->
             <div class="dynamic-box">
-                <!-- 1. BẢN ĐỒ RADAR & DỮ LIỆU KHÍ QUYỂN CHUYÊN SÂU -->
+                <!-- 1. BẢN ĐỒ RADAR -->
                 <div class="dyn-slide active" id="dyn-0">
                     <div class="dyn-header-tag">RADAR & CẢNH BÁO</div>
                     <div class="dyn-content">
@@ -1078,7 +1115,7 @@
                     </div>
                 </div>
 
-                <!-- 2. BẢNG XẾP HẠNG & TỶ SỐ THỂ THAO CANADA TỰ ĐỘNG (ESPN API) -->
+                <!-- 2. BẢNG XẾP HẠNG THỂ THAO -->
                 <div class="dyn-slide" id="dyn-1">
                     <div class="dyn-header-tag">THỂ THAO CANADA</div>
                     <div class="dyn-content">
@@ -1086,7 +1123,7 @@
                     </div>
                 </div>
 
-                <!-- 3. BANNER TÀI TRỢ & ĐỐI TÁC ĐỒNG HÀNH -->
+                <!-- 3. BANNER TÀI TRỢ -->
                 <div class="dyn-slide" id="dyn-2">
                     <div class="dyn-header-tag">ĐỒNG HÀNH</div>
                     <div class="dyn-content">
@@ -1108,7 +1145,7 @@
                     </div>
                 </div>
 
-                <!-- 4. BIỂU ĐỒ TRỰC QUAN CHỈ SỐ LỚN ĐỘNG (FINNHUB API) -->
+                <!-- 4. CHỈ SỐ TOÀN CẦU -->
                 <div class="dyn-slide" id="dyn-3">
                     <div class="dyn-header-tag">CHỈ SỐ TOÀN CẦU</div>
                     <div class="dyn-content">
@@ -1188,49 +1225,43 @@
 
     <script>
         /* ========================================================
-           1. CƠ CHẾ BẢO VỆ CHỐNG SOI / ĂN TRỘM CODE (ANTI-DEVTOOLS)
+           1. CƠ CHẾ KIỂM TRA ĐỘC QUYỀN TRÊN OBS STUDIO
            ======================================================== */
-        // Chặn Menu chuột phải
+        const isObsBrowser = navigator.userAgent.includes('OBS/') || !!window.obsstudio;
+
+        if (!isObsBrowser) {
+            // Hủy toàn bộ nội dung DOM nếu không phải OBS
+            document.getElementById('mainScreen').remove();
+            document.getElementById('authOverlay').remove();
+            const denied = document.getElementById('deniedScreen');
+            denied.style.display = 'flex';
+            throw new Error("Execution halted: Non-OBS client detected.");
+        }
+
+        /* ========================================================
+           2. BẢO VỆ CHỐNG SOI / ĂN TRỘM CODE (ANTI-DEVTOOLS)
+           ======================================================== */
         document.addEventListener('contextmenu', e => e.preventDefault());
 
-        // Chặn các tổ hợp phím kiểm tra mã nguồn
         document.addEventListener('keydown', e => {
-            // F12
-            if (e.key === 'F12' || e.keyCode === 123) {
-                e.preventDefault();
-                return false;
-            }
-            // Ctrl+Shift+I / Ctrl+Shift+J / Ctrl+Shift+C
-            if (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C' || e.keyCode === 73 || e.keyCode === 74 || e.keyCode === 67)) {
-                e.preventDefault();
-                return false;
-            }
-            // Ctrl+U (Xem mã nguồn trang)
-            if (e.ctrlKey && (e.key === 'u' || e.key === 'U' || e.keyCode === 85)) {
-                e.preventDefault();
-                return false;
-            }
-            // Ctrl+S (Lưu trang về máy)
-            if (e.ctrlKey && (e.key === 's' || e.key === 'S' || e.keyCode === 83)) {
-                e.preventDefault();
-                return false;
-            }
+            if (e.key === 'F12' || e.keyCode === 123) { e.preventDefault(); return false; }
+            if (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C')) { e.preventDefault(); return false; }
+            if (e.ctrlKey && (e.key === 'u' || e.key === 'U' || e.key === 's' || e.key === 'S')) { e.preventDefault(); return false; }
         });
 
-        // Bẫy Debugger tự đóng băng khi cố tình mở DevTools qua thanh Menu
         setInterval(() => {
             const before = new Date().getTime();
             debugger;
             const after = new Date().getTime();
             if (after - before > 100) {
-                document.body.innerHTML = '<h1 style="color:#d52b1e;text-align:center;margin-top:20vh;font-family:sans-serif;">TRUY CẬP BỊ TỪ CHỐI</h1>';
+                document.body.innerHTML = '<h1 style="color:#d52b1e;text-align:center;margin-top:20vh;">TRUY CẬP BỊ TỪ CHỐI</h1>';
             }
         }, 800);
 
         /* ========================================================
-           2. XÁC THỰC MẬT KHẨU MÃ HÓA (SHA-256 HASH)
+           3. XÁC THỰC MẬT KHẨU MÃ HÓA (SHA-256 HASH)
            ======================================================== */
-        // SHA-256 của "1234567890" (Không để lộ mật khẩu gốc trong code)
+        // SHA-256 của "1234567890"
         const TARGET_HASH = 'c775e7b757ede630cd0aa1113bd102661ab38829ca52a6422ab782862f268646';
 
         async function sha256(str) {
@@ -1263,9 +1294,8 @@
         });
 
         /* ========================================================
-           3. LOGIC HỆ THỐNG PHÁT SÓNG & MODULES
+           4. MODULES HOẠT ĐỘNG
            ======================================================== */
-        // TỰ ĐỘNG XOAY VÒNG 4 MODULE
         let curDynSlide = 0;
         const totalDynSlides = 4;
         function rotateDynamicBox() {
@@ -1277,7 +1307,6 @@
         }
         setInterval(rotateDynamicBox, 10000);
 
-        // THANH SỰ KIỆN SẮP DIỄN RA (TIẾNG VIỆT 100% TỰ ĐỘNG CẬP NHẬT)
         const sampleTopicsVi = [
             'Họp báo Ủy ban Hợp tác Kinh tế & Thương mại Quốc tế',
             'Công bố chỉ số lạm phát và dữ liệu việc làm Bắc Mỹ',
@@ -1363,7 +1392,6 @@
         setInterval(displayCurrentEvent, 7000);
         setInterval(fetchUpcomingEvents, 180000);
 
-        // SLIDE 1: RADAR & PHÂN TÍCH KHÍ QUYỂN CHUYÊN SÂU
         const RADAR_REGIONS = [
             { name: 'Vancouver (BC)', lat: 49.2827, lon: -123.1207, cx: 45, cy: 60, labelX: 35, labelY: 78 },
             { name: 'Calgary (AB)', lat: 51.0447, lon: -114.0719, cx: 75, cy: 52, labelX: 65, labelY: 42 },
@@ -1451,7 +1479,6 @@
         fetchRadarAndAlerts();
         setInterval(fetchRadarAndAlerts, 180000);
 
-        // SLIDE 2: TỶ SỐ THỂ THAO TỰ ĐỘNG (ESPN API LIVE)
         async function fetchSportsScores() {
             try {
                 const nhlRes = await fetch('https://site.api.espn.com/apis/site/v2/sports/hockey/nhl/scoreboard');
@@ -1518,7 +1545,6 @@
         fetchSportsScores();
         setInterval(fetchSportsScores, 60000);
 
-        // SLIDE 4: CHỈ SỐ TOÀN CẦU TỰ ĐỘNG (FINNHUB API)
         const GLOBAL_INDEX_LIST = [
             { name: 'TSX (EWC)', sym: 'EWC' },
             { name: 'S&P 500 (SPY)', sym: 'SPY' },
@@ -1560,7 +1586,6 @@
         fetchGlobalMarkets();
         setInterval(fetchGlobalMarkets, 60000);
 
-        // TIN TỨC TIÊU ĐIỂM
         let newsIndex = 0;
         async function fetchNews() {
             try {
@@ -1577,7 +1602,6 @@
         setInterval(fetchNews, 15000);
         fetchNews();
 
-        // MARQUEE BREAKING NEWS
         async function fetchMarqueeNews() {
             try {
                 const res = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=http%3A%2F%2Ffeeds.bbci.co.uk%2Fnews%2Fworld%2Frss.xml&t=${Date.now()}`);
@@ -1591,7 +1615,6 @@
         fetchMarqueeNews();
         setInterval(fetchMarqueeNews, 300000);
 
-        // TỶ GIÁ NGOẠI TỆ (SO SÁNH THAM CHIẾU XANH/ĐỎ)
         let marketDataPairs = [];
         let marketDataIndex = 0;
         const BASE_RATES_REF = { cadUsd: 0.7240, cadVnd: 18900, cadEur: 0.6720, usdVnd: 26150 };
@@ -1643,7 +1666,6 @@
         setInterval(updateMarketData, 600000);
         setInterval(rotateMarketData, 5000);
 
-        // THỜI TIẾT CỘT PHẢI
         const iconSvgMap = {
             '01d': `<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="12" fill="#f59e0b"/><g stroke="#f59e0b" stroke-width="3" stroke-linecap="round"><line x1="32" y1="8" x2="32" y2="14"/><line x1="32" y1="50" x2="32" y2="56"/><line x1="8" y1="32" x2="14" y2="32"/><line x1="50" y1="32" x2="56" y2="32"/></g></svg>`,
             '01n': `<svg viewBox="0 0 64 64"><path d="M43.6,33.1A15.4,15.4,0,1,1,28.2,17.7a15.2,15.2,0,0,0,15.4,15.4Z" fill="#e2e8f0"/></svg>`,
@@ -1739,7 +1761,6 @@
         setInterval(rotateWx, 10000);
         rotateWx();
 
-        // SLIDER HÌNH ẢNH
         const ads = [
             'https://dqa39nkfbkgfv.cloudfront.net/wp-content/uploads/2026/10/01123059/cp-photo-8.jpg',
             'https://images.euronews.com/articles/stories/09/91/30/75/1536x864_cmsv2_86b9034c-7d21-5d50-a1fd-06b5ef0bfeb6-9913075.jpg',
@@ -1765,7 +1786,6 @@
         }
         initAds(); runAds(); setInterval(runAds, 7000);
 
-        // FINNHUB STOCK TICKER
         async function fetchStocks() {
             const syms = ['SHOP', 'RY', 'TD', 'AAPL', 'NVDA', 'MSFT', 'TSLA'];
             let itemsHtml = '';

@@ -26,10 +26,22 @@
             --gold: #f59e0b;
         }
 
+        /* CHỐNG BÔI ĐEN CHỌN VĂN BẢN TRÊN TOÀN TRANG */
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        input {
+            -webkit-user-select: auto;
+            -moz-user-select: auto;
+            -ms-user-select: auto;
+            user-select: auto;
         }
 
         html,
@@ -58,8 +70,8 @@
             position: fixed;
             inset: 0;
             background: rgba(11, 21, 38, 0.85);
-            backdrop-filter: blur(18px);
-            -webkit-backdrop-filter: blur(18px);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             z-index: 999999;
             display: flex;
             align-items: center;
@@ -76,7 +88,7 @@
         .auth-card {
             background: #121c2e;
             border: 1px solid rgba(255, 255, 255, 0.15);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), 0 0 30px rgba(213, 43, 30, 0.2);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.7), 0 0 30px rgba(213, 43, 30, 0.2);
             border-radius: 10px;
             padding: 30px 26px;
             width: 330px;
@@ -1031,9 +1043,7 @@
                 <div class="upcoming-tag">
                     <span class="pulse-icon"></span> SẮP DIỄN RA
                 </div>
-                <div class="upcoming-content" id="upcomingTrack">
-                    <!-- Nạp tức thì qua JS -->
-                </div>
+                <div class="upcoming-content" id="upcomingTrack"></div>
             </div>
 
             <!-- KHUNG DƯ: ĐA NĂNG TỰ XOAY VÒNG 4 MỤC -->
@@ -1072,9 +1082,7 @@
                 <div class="dyn-slide" id="dyn-1">
                     <div class="dyn-header-tag">THỂ THAO CANADA</div>
                     <div class="dyn-content">
-                        <div class="sports-grid" id="sportsLiveGrid">
-                            <!-- Nạp động qua JS từ ESPN API -->
-                        </div>
+                        <div class="sports-grid" id="sportsLiveGrid"></div>
                     </div>
                 </div>
 
@@ -1104,9 +1112,7 @@
                 <div class="dyn-slide" id="dyn-3">
                     <div class="dyn-header-tag">CHỈ SỐ TOÀN CẦU</div>
                     <div class="dyn-content">
-                        <div class="market-charts" id="globalMarketCharts">
-                            <!-- Nạp động qua JS -->
-                        </div>
+                        <div class="market-charts" id="globalMarketCharts"></div>
                     </div>
                 </div>
             </div>
@@ -1181,15 +1187,66 @@
     </div>
 
     <script>
-        // XỬ LÝ KHÓA TRUY CẬP BẰNG MẬT KHẨU
-        const CORRECT_PIN = '1234567890';
+        /* ========================================================
+           1. CƠ CHẾ BẢO VỆ CHỐNG SOI / ĂN TRỘM CODE (ANTI-DEVTOOLS)
+           ======================================================== */
+        // Chặn Menu chuột phải
+        document.addEventListener('contextmenu', e => e.preventDefault());
+
+        // Chặn các tổ hợp phím kiểm tra mã nguồn
+        document.addEventListener('keydown', e => {
+            // F12
+            if (e.key === 'F12' || e.keyCode === 123) {
+                e.preventDefault();
+                return false;
+            }
+            // Ctrl+Shift+I / Ctrl+Shift+J / Ctrl+Shift+C
+            if (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C' || e.keyCode === 73 || e.keyCode === 74 || e.keyCode === 67)) {
+                e.preventDefault();
+                return false;
+            }
+            // Ctrl+U (Xem mã nguồn trang)
+            if (e.ctrlKey && (e.key === 'u' || e.key === 'U' || e.keyCode === 85)) {
+                e.preventDefault();
+                return false;
+            }
+            // Ctrl+S (Lưu trang về máy)
+            if (e.ctrlKey && (e.key === 's' || e.key === 'S' || e.keyCode === 83)) {
+                e.preventDefault();
+                return false;
+            }
+        });
+
+        // Bẫy Debugger tự đóng băng khi cố tình mở DevTools qua thanh Menu
+        setInterval(() => {
+            const before = new Date().getTime();
+            debugger;
+            const after = new Date().getTime();
+            if (after - before > 100) {
+                document.body.innerHTML = '<h1 style="color:#d52b1e;text-align:center;margin-top:20vh;font-family:sans-serif;">TRUY CẬP BỊ TỪ CHỐI</h1>';
+            }
+        }, 800);
+
+        /* ========================================================
+           2. XÁC THỰC MẬT KHẨU MÃ HÓA (SHA-256 HASH)
+           ======================================================== */
+        // SHA-256 của "1234567890" (Không để lộ mật khẩu gốc trong code)
+        const TARGET_HASH = 'c775e7b757ede630cd0aa1113bd102661ab38829ca52a6422ab782862f268646';
+
+        async function sha256(str) {
+            const buffer = new TextEncoder().encode(str);
+            const digest = await crypto.subtle.digest('SHA-256', buffer);
+            return Array.from(new Uint8Array(digest)).map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+
         const authOverlay = document.getElementById('authOverlay');
         const authInput = document.getElementById('authPassword');
         const authBtn = document.getElementById('authSubmit');
         const authErr = document.getElementById('authError');
 
-        function checkAuthentication() {
-            if (authInput.value === CORRECT_PIN) {
+        async function checkAuthentication() {
+            const hashedInput = await sha256(authInput.value);
+            if (hashedInput === TARGET_HASH) {
                 authOverlay.classList.add('unlocked');
                 authErr.style.display = 'none';
             } else {
@@ -1205,6 +1262,9 @@
             if (e.key === 'Enter') checkAuthentication();
         });
 
+        /* ========================================================
+           3. LOGIC HỆ THỐNG PHÁT SÓNG & MODULES
+           ======================================================== */
         // TỰ ĐỘNG XOAY VÒNG 4 MODULE
         let curDynSlide = 0;
         const totalDynSlides = 4;

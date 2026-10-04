@@ -1,302 +1,1816 @@
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>VietCan Broadcast Screen</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Oswald:wght@600;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800;900&family=Oswald:wght@500;600;700&display=swap"
+        rel="stylesheet">
+
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
-        html, body {
-            height: 100vh; width: 100vw; overflow: hidden;
-            background: #0b1526; color: #fff; font-family: 'Montserrat', system-ui, sans-serif;
-            display: flex; align-items: center; justify-content: center;
+        :root {
+            --can-red: #d52b1e;
+            --can-navy: #0b1526;
+            --panel-bg: #121c2e;
+            --panel-card: #18243b;
+            --border-color: rgba(255, 255, 255, 0.12);
+            --border-highlight: rgba(56, 189, 248, 0.35);
+            --text-main: #ffffff;
+            --text-muted: #94a3b8;
+            --ok: #22c55e;
+            --danger: #ef4444;
+            --gold: #f59e0b;
         }
-        #authBox {
-            background: #121c2e; border: 1px solid rgba(255, 255, 255, 0.15);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.8), 0 0 25px rgba(213, 43, 30, 0.25);
-            border-radius: 10px; padding: 32px 28px; width: 330px; text-align: center;
-            display: flex; flex-direction: column; gap: 16px; z-index: 99999;
+
+        /* CHỐNG CHỌN VĂN BẢN TRÊN TOÀN TRANG */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
         }
-        .badge { font-family: 'Oswald', sans-serif; font-size: 13px; letter-spacing: 1.5px; color: #d52b1e; font-weight: 700; }
-        .title { font-size: 17px; font-weight: 800; }
-        .inp {
-            width: 100%; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.2);
-            padding: 10px 14px; border-radius: 6px; color: #fff; font-size: 16px;
-            letter-spacing: 3px; text-align: center; outline: none;
+
+        input {
+            -webkit-user-select: auto;
+            -moz-user-select: auto;
+            -ms-user-select: auto;
+            user-select: auto;
         }
-        .inp:focus { border-color: #38bdf8; }
-        .btn {
-            background: #d52b1e; color: #fff; border: none; padding: 11px;
-            font-size: 13px; font-weight: 800; border-radius: 6px; cursor: pointer;
-            letter-spacing: 1px; text-transform: uppercase; transition: background .2s;
+
+        html,
+        body {
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
         }
-        .btn:hover { background: #b91c1c; }
-        .err { font-size: 11px; color: #ef4444; font-weight: 700; display: none; }
+
+        body {
+            background-color: var(--can-navy);
+            background-image:
+                radial-gradient(circle at 100% 0%, rgba(213, 43, 30, 0.15) 0%, transparent 45%),
+                radial-gradient(circle at 0% 100%, rgba(18, 28, 46, 0.9) 0%, transparent 55%),
+                linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+            background-size: 100% 100%, 100% 100%, 35px 35px, 35px 35px;
+            color: var(--text-main);
+            font-family: 'Montserrat', system-ui, sans-serif;
+            zoom: 1.25;
+            position: relative;
+        }
+
+        /* KHỐI BÁO LỖI KHI MỞ SAI TRÌNH DUYỆT (NGOÀI OBS) */
+        #deniedScreen {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: #060b14;
+            z-index: 10000000;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 20px;
+        }
+
+        #deniedScreen h1 {
+            color: var(--can-red);
+            font-family: 'Oswald', sans-serif;
+            font-size: 32px;
+            letter-spacing: 2px;
+            margin-bottom: 12px;
+        }
+
+        #deniedScreen p {
+            color: #94a3b8;
+            font-size: 14px;
+            max-width: 480px;
+            line-height: 1.6;
+        }
+
+        /* LỚP PHỦ MÀN HÌNH KHÓA PASSWORD */
+        #authOverlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(11, 21, 38, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            z-index: 999999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+        }
+
+        #authOverlay.unlocked {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .auth-card {
+            background: #121c2e;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.7), 0 0 30px rgba(213, 43, 30, 0.2);
+            border-radius: 10px;
+            padding: 30px 26px;
+            width: 330px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .auth-badge {
+            font-family: 'Oswald', sans-serif;
+            font-size: 13px;
+            letter-spacing: 1.5px;
+            color: var(--can-red);
+            font-weight: 700;
+        }
+
+        .auth-title {
+            font-size: 17px;
+            font-weight: 800;
+            color: #ffffff;
+            letter-spacing: 0.5px;
+        }
+
+        .auth-input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .auth-input {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.45);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 10px 14px;
+            border-radius: 6px;
+            color: #ffffff;
+            font-size: 16px;
+            letter-spacing: 2px;
+            text-align: center;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .auth-input:focus {
+            border-color: #38bdf8;
+            box-shadow: 0 0 10px rgba(56, 189, 248, 0.3);
+        }
+
+        .auth-btn {
+            background: var(--can-red);
+            color: #ffffff;
+            border: none;
+            padding: 10px;
+            font-size: 13px;
+            font-weight: 800;
+            border-radius: 6px;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: background 0.2s, transform 0.1s;
+        }
+
+        .auth-btn:hover {
+            background: #b91c1c;
+        }
+
+        .auth-btn:active {
+            transform: scale(0.98);
+        }
+
+        .auth-error {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--danger);
+            display: none;
+        }
+
+        /* LƯỚI TỔNG THỂ */
+        .screen {
+            display: grid;
+            height: 80vh;
+            width: 80vw;
+            gap: 10px;
+            grid-template-columns: 1.65fr 0.95fr;
+            grid-template-rows: 1fr 48px 38px;
+            padding: 10px;
+        }
+
+        /* CỘT TRÁI */
+        .left-column {
+            grid-column: 1;
+            grid-row: 1;
+            display: grid;
+            grid-template-rows: 1fr 34px 140px;
+            gap: 8px;
+            height: 100%;
+            min-height: 0;
+        }
+
+        /* KHUNG VIDEO BÊN TRÁI */
+        .main-frame {
+            background: #000;
+            border-radius: 6px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            position: relative;
+            height: 100%;
+            width: 100%;
+            min-height: 0;
+        }
+
+        .main-frame iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            display: block;
+        }
+
+        /* THANH SỰ KIỆN SẮP DIỄN RA */
+        .upcoming-events-bar {
+            background: linear-gradient(90deg, #162238 0%, #0b1526 100%);
+            border: 1px solid var(--border-color);
+            border-left: 3px solid var(--gold);
+            border-radius: 4px;
+            height: 34px;
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+            padding: 0 10px;
+            gap: 12px;
+        }
+
+        .upcoming-tag {
+            background: rgba(245, 158, 11, 0.15);
+            border: 1px solid rgba(245, 158, 11, 0.4);
+            color: var(--gold);
+            font-size: 11px;
+            font-weight: 900;
+            letter-spacing: 0.8px;
+            padding: 3px 8px;
+            border-radius: 3px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-shrink: 0;
+            white-space: nowrap;
+        }
+
+        .pulse-icon {
+            width: 6px;
+            height: 6px;
+            background: var(--gold);
+            border-radius: 50%;
+            box-shadow: 0 0 6px var(--gold);
+            animation: stormPulse 1.2s infinite alternate;
+        }
+
+        .upcoming-content {
+            flex-grow: 1;
+            overflow: hidden;
+            white-space: nowrap;
+            font-size: 12px;
+            font-weight: 700;
+            color: #e2e8f0;
+            display: flex;
+            align-items: center;
+        }
+
+        .evt-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            animation: fadeInEvt 0.6s ease;
+        }
+
+        .evt-time {
+            color: #38bdf8;
+            font-family: 'Oswald', sans-serif;
+            font-size: 14px;
+            letter-spacing: 0.5px;
+        }
+
+        .evt-desc {
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        @keyframes fadeInEvt {
+            from {
+                opacity: 0;
+                transform: translateY(4px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* KHUNG WIDGET ĐA NĂNG */
+        .dynamic-box {
+            position: relative;
+            background: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            overflow: hidden;
+            height: 100%;
+        }
+
+        .dyn-slide {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease-in-out;
+            display: flex;
+            background: var(--panel-bg);
+        }
+
+        .dyn-slide.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .dyn-header-tag {
+            background: var(--can-red);
+            color: #fff;
+            font-size: 10px;
+            font-weight: 900;
+            padding: 0 6px;
+            letter-spacing: 0.8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            writing-mode: vertical-rl;
+            transform: rotate(180deg);
+            text-transform: uppercase;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .dyn-content {
+            flex-grow: 1;
+            padding: 8px 12px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            height: 100%;
+        }
+
+        /* SLIDE 1: RADAR THỜI TIẾT ĐỘNG */
+        .radar-hitech-container {
+            display: grid;
+            grid-template-columns: 240px 1fr;
+            gap: 12px;
+            align-items: center;
+            height: 100%;
+        }
+
+        .radar-canvas-box {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, #0e1e38 0%, #060b14 100%);
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            border-radius: 4px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .radar-sweep {
+            position: absolute;
+            inset: 0;
+            background: conic-gradient(from 0deg at 50% 50%, rgba(56, 189, 248, 0) 0deg, rgba(56, 189, 248, 0.4) 60deg, transparent 65deg);
+            animation: radarRotate 4s linear infinite;
+            pointer-events: none;
+        }
+
+        .radar-grid-lines {
+            position: absolute;
+            inset: 0;
+            background-image:
+                radial-gradient(circle at center, transparent 30%, rgba(56, 189, 248, 0.15) 31%, transparent 32%),
+                radial-gradient(circle at center, transparent 60%, rgba(56, 189, 248, 0.15) 61%, transparent 62%),
+                linear-gradient(rgba(56, 189, 248, 0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(56, 189, 248, 0.1) 1px, transparent 1px);
+            background-size: 100% 100%, 100% 100%, 20px 20px, 20px 20px;
+        }
+
+        .radar-badge {
+            position: absolute;
+            top: 5px;
+            left: 6px;
+            font-size: 9px;
+            font-weight: 900;
+            color: #38bdf8;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            z-index: 2;
+        }
+
+        .radar-badge::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            background: #22c55e;
+            border-radius: 50%;
+            box-shadow: 0 0 6px #22c55e;
+        }
+
+        .map-svg {
+            width: 90%;
+            height: 85%;
+            z-index: 1;
+        }
+
+        .storm-cloud {
+            animation: stormPulse 2s ease-in-out infinite alternate;
+        }
+
+        .alert-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            justify-content: center;
+        }
+
+        .alert-badge {
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-left: 4px solid var(--danger);
+            padding: 8px 12px;
+            font-size: 12px;
+            font-weight: 700;
+            color: #fecaca;
+            border-radius: 4px;
+            line-height: 1.4;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .alert-badge.info {
+            background: rgba(245, 158, 11, 0.15);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            border-left: 4px solid var(--gold);
+            color: #fef08a;
+        }
+
+        @keyframes radarRotate {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes stormPulse {
+            0% {
+                opacity: 0.4;
+                filter: drop-shadow(0 0 2px #ef4444);
+            }
+
+            100% {
+                opacity: 0.9;
+                filter: drop-shadow(0 0 8px #ef4444);
+            }
+        }
+
+        /* SLIDE 2: THỂ THAO CANADA ĐỘNG */
+        .sports-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            height: 100%;
+            align-items: center;
+        }
+
+        .match-card {
+            background: rgba(0, 0, 0, 0.35);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 4px;
+            padding: 6px 10px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 100%;
+        }
+
+        .match-league {
+            font-size: 10px;
+            font-weight: 800;
+            color: var(--gold);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .match-teams {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 4px 0;
+            font-size: 13px;
+            font-weight: 800;
+        }
+
+        .match-score {
+            font-family: 'Oswald', sans-serif;
+            font-size: 16px;
+            color: #38bdf8;
+            padding: 0 4px;
+        }
+
+        /* SLIDE 3: ĐỒNG HÀNH */
+        .sponsor-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1.2fr;
+            gap: 10px;
+            align-items: center;
+            height: 100%;
+        }
+
+        .sponsor-card {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px dashed var(--border-color);
+            border-radius: 4px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 6px;
+        }
+
+        .sponsor-card h4 {
+            font-size: 12px;
+            font-weight: 800;
+            color: #ffffff;
+        }
+
+        .sponsor-card p {
+            font-size: 10px;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        /* SLIDE 4: BIỂU ĐỒ CHỈ SỐ MINI ĐỘNG */
+        .market-charts {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 6px;
+            align-items: center;
+            height: 100%;
+        }
+
+        .chart-box {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 4px;
+            padding: 6px 6px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 100%;
+        }
+
+        .chart-name {
+            font-size: 10px;
+            font-weight: 800;
+            color: #94a3b8;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .chart-price {
+            font-family: 'Oswald', sans-serif;
+            font-size: 14px;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        .chart-change {
+            font-size: 9px;
+            font-weight: 700;
+        }
+
+        .sparkline {
+            width: 100%;
+            height: 22px;
+            margin-top: 2px;
+        }
+
+        /* CỘT PHẢI */
+        .sidebar {
+            grid-column: 2;
+            grid-row: 1;
+            display: grid;
+            grid-template-rows: auto 1fr 125px;
+            gap: 8px;
+            height: 100%;
+            min-height: 0;
+        }
+
+        .can-card {
+            background: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+        }
+
+        .can-header {
+            background: linear-gradient(90deg, #1e293b 0%, #0f172a 100%);
+            border-bottom: 2px solid var(--can-red);
+            padding: 6px 12px;
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #cbd5e1;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-shrink: 0;
+        }
+
+        .can-header.red {
+            background: var(--can-red);
+            border-bottom: none;
+            color: #ffffff;
+        }
+
+        /* KHỐI THỜI TIẾT */
+        .weather-body {
+            padding: 10px 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .weather-hero {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 6px;
+            padding: 8px 14px;
+            border-left: 4px solid var(--can-red);
+        }
+
+        .city-name {
+            font-size: 20px;
+            font-weight: 900;
+            letter-spacing: -0.3px;
+            line-height: 1.1;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 200px;
+            text-transform: uppercase;
+        }
+
+        .weather-status {
+            font-size: 12px;
+            color: var(--gold);
+            font-weight: 800;
+            text-transform: uppercase;
+            margin-top: 2px;
+            letter-spacing: 0.5px;
+        }
+
+        .hero-temp-box {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .hero-temp-box .icon svg {
+            width: 42px;
+            height: 42px;
+            filter: drop-shadow(0 0 8px rgba(245, 158, 11, 0.45));
+        }
+
+        .hero-temp-box .temp-val {
+            font-family: 'Oswald', sans-serif;
+            font-size: 46px;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        .wx-list-rows {
+            display: flex;
+            flex-direction: column;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .wx-row-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 5px 4px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .wx-row-item:last-child {
+            border-bottom: none;
+        }
+
+        .wx-row-item .label {
+            font-size: 14px;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        .wx-row-item .val-icon {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .wx-row-item .val {
+            font-size: 16px;
+            font-weight: 800;
+            color: #ffffff;
+        }
+
+        .wx-row-item .icon-svg {
+            width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+        }
+
+        .forecast-strip {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 6px;
+        }
+
+        .fc-box {
+            background: rgba(0, 0, 0, 0.25);
+            border-radius: 4px;
+            padding: 4px;
+            text-align: center;
+        }
+
+        .fc-box .d {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--text-muted);
+        }
+
+        .fc-box .icon svg {
+            width: 22px;
+            height: 22px;
+            margin: 1px auto;
+        }
+
+        .fc-box .t {
+            font-family: 'Oswald', sans-serif;
+            font-size: 17px;
+            font-weight: 600;
+        }
+
+        /* SLIDER HÌNH ẢNH */
+        .ad-container {
+            position: relative;
+            border-radius: 6px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            background: #000;
+            width: 100%;
+            height: 100%;
+            min-height: 0;
+        }
+
+        .ad-slide {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            transition: opacity 0.8s ease;
+        }
+
+        .ad-slide.active {
+            opacity: 1;
+        }
+
+        .ad-slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .ad-dots {
+            position: absolute;
+            bottom: 8px;
+            right: 10px;
+            display: flex;
+            gap: 4px;
+            z-index: 5;
+            background: rgba(0, 0, 0, 0.6);
+            padding: 3px 6px;
+            border-radius: 10px;
+        }
+
+        .ad-dot {
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.4);
+            transition: all .3s;
+        }
+
+        .ad-dot.active {
+            width: 12px;
+            border-radius: 3px;
+            background: var(--can-red);
+        }
+
+        /* TIÊU ĐIỂM & TỶ GIÁ */
+        .bottom-widgets {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            height: 100%;
+        }
+
+        .sub-card-body {
+            padding: 12px 14px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .news-headline {
+            font-size: 14px;
+            font-weight: 700;
+            line-height: 1.45;
+            color: #ffffff;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .rate-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            justify-content: center;
+            height: 100%;
+        }
+
+        .rate-item {
+            font-size: 14px;
+            font-weight: 700;
+            color: #f1f5f9;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .rate-item b {
+            color: #ffffff;
+            font-family: 'Oswald', sans-serif;
+            font-size: 19px;
+            letter-spacing: 0.5px;
+        }
+
+        /* THANH TIN TỨC BREAKING TRỰC TIẾP */
+        .news-bar {
+            grid-column: 1 / -1;
+            grid-row: 2;
+            background: #ffffff;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .news-badge {
+            background: var(--can-red);
+            color: #ffffff;
+            font-family: 'Oswald', sans-serif;
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            padding: 0 16px;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-shrink: 0;
+        }
+
+        .news-badge svg {
+            width: 16px;
+            height: 16px;
+            fill: #ffffff;
+        }
+
+        .news-track {
+            flex-grow: 1;
+            overflow: hidden;
+            white-space: nowrap;
+            padding: 0 14px;
+        }
+
+        .news-marquee-content {
+            display: inline-block;
+            animation: marquee 80s linear infinite;
+            font-size: 20px;
+            font-weight: 700;
+            color: #0b1526;
+            line-height: 48px;
+        }
+
+        .news-item {
+            margin-right: 35px;
+        }
+
+        .news-item strong {
+            color: var(--can-red);
+            margin-right: 6px;
+            font-weight: 800;
+        }
+
+        .news-item::after {
+            content: ' 🍁 ';
+            color: var(--can-red);
+            margin-left: 35px;
+        }
+
+        /* THANH CHỨNG KHOÁN TICKER */
+        .stock-bar {
+            grid-column: 1 / -1;
+            grid-row: 3;
+            background: #05080e;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .stock-tag {
+            background: #1e293b;
+            color: #ffffff;
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            padding: 0 14px;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            flex-shrink: 0;
+            border-right: 2px solid var(--can-red);
+            position: relative;
+            z-index: 10;
+        }
+
+        .ticker-track {
+            display: inline-flex;
+            white-space: nowrap;
+            animation: ticker 40s linear infinite;
+            font-family: 'Oswald', sans-serif;
+            font-size: 17px;
+            letter-spacing: 0.5px;
+            width: max-content;
+        }
+
+        .ticker-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin: 0 16px;
+        }
+
+        .trend-up {
+            color: #4ade80;
+            font-weight: 700;
+        }
+
+        .trend-down {
+            color: #f87171;
+            font-weight: 700;
+        }
+
+        @keyframes marquee {
+            0% {
+                transform: translateX(0);
+            }
+
+            100% {
+                transform: translateX(-50%);
+            }
+        }
+
+        @keyframes ticker {
+            0% {
+                transform: translateX(0);
+            }
+
+            100% {
+                transform: translateX(-50%);
+            }
+        }
     </style>
 </head>
+
 <body>
-    <div id="authBox">
-        <div class="badge">🍁 VIETCAN BROADCAST</div>
-        <div class="title">HỆ THỐNG ĐƯỢC BẢO VỆ</div>
-        <input type="password" id="pwd" class="inp" placeholder="Nhập mật khẩu..." autofocus autocomplete="off" />
-        <div class="err" id="errMsg">Mật khẩu không chính xác!</div>
-        <button class="btn" id="btnUnlock">MỞ KHÓA TRUY CẬP</button>
+    <!-- KHỐI CHẶN TRUY CẬP NGOÀI OBS -->
+    <div id="deniedScreen">
+        <h1>🍁 TRUY CẬP BỊ TỪ CHỐI</h1>
+        <p>Bảng điều khiển này được thiết kế độc quyền cho hệ thống <strong>OBS Studio Browser Source</strong>. Vui lòng mở qua phần mềm phát sóng chuyên dụng.</p>
     </div>
 
-    <!-- KHỐI DỮ LIỆU ĐÃ ĐƯỢC MÃ HÓA AES-256 (NGƯỜI XEM CTRL+U CHỈ THẤY CHUỖI RÁC NÀY) -->
-    <script id="encryptedPayload" type="text/plain">
-U2FsdGVkX1+vGfK9wJ1b8FqW2P1lQ9d8K7A2z5y3x4w5v6u7t8s9r0q1p2o3n4m5l6k7j8i9h0g1f2e3d4c5b6a7/1234567890/SECURED_BLOB
-    </script>
+    <!-- MÀN HÌNH KHÓA MẬT KHẨU -->
+    <div id="authOverlay">
+        <div class="auth-card">
+            <div class="auth-badge">🍁 VIETCAN BROADCAST</div>
+            <div class="auth-title">HỆ THỐNG ĐƯỢC BẢO VỆ</div>
+            <div class="auth-input-group">
+                <input type="password" id="authPassword" class="auth-input" placeholder="Nhập mật khẩu..." autofocus autocomplete="off" />
+                <div class="auth-error" id="authError">Mật khẩu không chính xác!</div>
+            </div>
+            <button class="auth-btn" id="authSubmit">MỞ KHÓA TRUY CẬP</button>
+        </div>
+    </div>
 
-    <script>
-        // Chặn phím tắt mở công cụ kiểm tra
-        document.addEventListener('contextmenu', e => e.preventDefault());
-        document.addEventListener('keydown', e => {
-            if (e.key === 'F12' || (e.ctrlKey && (e.key === 'u' || e.key === 'U' || e.key === 's' || e.key === 'S'))) {
-                e.preventDefault();
-            }
-        });
+    <div class="screen" id="mainScreen">
+        <!-- KHUNG CỘT TRÁI -->
+        <div class="left-column">
+            <!-- VÙNG VIDEO CHÍNH -->
+            <section class="main-frame">
+                <iframe src="" title="Live Canada Stream" allow="autoplay; fullscreen"></iframe>
+            </section>
 
-        // Bảng mã nguồn đầy đủ đã được nén Base64
-        const ENCODED_APP_DATA = "PCFET0NUWVBFIGh0bWw+PGh0bWwgbGFuZz0idmkiPjxoZWFkPjxtZXRhIGNoYXJzZXQ9InV0Zi04IiAvPjxtZXRhIG5hbWU9InZpZXdwb3J0IiBjb250ZW50PSJ3aWR0aD1kZXZpY2Utd2lkdGgsIGluaXRpYWwtc2NhbGU9MSIgLz48dGl0bGU+VmlldENhbiBCcm9hZGNhc3QgU2NyZWVuPC90aXRsZT48bGluayByZWw9InByZWNvbm5lY3QiIGhyZWY9Imh0dHBzOi8vZm9udHMuZ29vZ2xlYXBpcy5jb20iPjxsaW5rIHJlbD0icHJlY29ubmVjdCIgaHJlZj0iaHR0cHM6Ly9mb250cy5nc3RhdGljLmNvbSIgY3Jvc3NvcmlnaW4+PGxpbmsgaHJlZj0iaHR0cHM6Ly9mb250cy5nb29nbGVhcGlzLmNvbS9jc3MyP2ZhbWlseT1Nb250c2VycmF0OndnaHRANTAwOzYwMDs3MDA7ODAwOzkwMCZmYW1pbHk9T3N3YWxkOndnaHRANTAwOzYwMDs3MDAmZGlzcGxheT1zd2FwIiByZWw9InN0eWxlc2hlZXQiPjxzdHlsZT46cm9vdHstLWNhbi1yZWQ6I2Q1MmIxZTstLWNhbi1uYXZ5OiMwYjE1MjY7LS1wYW5lbC1iZzojMTIxYzJlOy0tcGFuZWwtY2FyZDojMTgyNDNiOy0tYm9yZGVyLWNvbG9yOnJnYmEoMjU1LDI1NSwyNTUsMC4xMik7LS1ib3JkZXItaGlnaGxpZ2h0OnJnYmEoNTYsMTg5LDI0OCwwLjM1KTstLXRleHQtbWFpbjojZmZmZmZmOy0tdGV4dC1tdXRlZDojOTRhM2I4Oy0tb2s6IzIyYzVlZTstLWRhbmdlcjojZWY0NDQ0Oy0tZ29sZDojZjU5ZTBiO30qe2JveC1zaXppbmc6Ym9yZGVyLWJveDttYXJnaW46MDtwYWRkaW5nOjB9aHRtbCxib2R5e2hlaWdodDoxMDB2aDt3aWR0aDoxMDB2dztvdmVyZmxvdzpoaWRkZW59Ym9keXtiYWNrZ3JvdW5kLWNvbG9yOnZhcigtLWNhbi1uYXZ5KTtiYWNrZ3JvdW5kLWltYWdlOnJhZGlhbC1ncmFkaWVudChjaXJjbGUgYXQgMTAwJSAwJSxyZ2JhKDIxMyw0MywzMCwwLjE1KSAwJSx0cmFuc3BhcmVudCA0NSUpLHJhZGlhbC1ncmFkaWVudChjaXJjbGUgYXQgMCUgMTAwJSxyZ2JhKDE4LDI4LDQ2LDAuOSkgMCUsdHJhbnNwYXJlbnQgNTUlKSxsaW5lYXItZ3JhZGllbnQocmdiYSgyNTUsMjU1LDI1NSwwLjAyKSAxcHgsdHJhbnNwYXJlbnQgMXB4KSxsaW5lYXItZ3JhZGllbnQoOTBkZWcscmdiYSgyNTUsMjU1LDI1NSwwLjAyKSAxcHgsdHJhbnNwYXJlbnQgMXB4KTtiYWNrZ3JvdW5kLXNpemU6MTAwJSAxMDAlLDEwMCUgMTAwJSwzNXB4IDM1cHgsMzVweCAzNXB4O2NvbG9yOnZhcigtLXRleHQtbWFpbik7Zm9udC1mYW1pbHk6J01vbnRzZXJyYXQnLHN5c3RlbS11aSxzYW5zLXNlcmlmO3pvb206MS4yNX0uc2NyZWVue2Rpc3BsYXk6Z3JpZDtoZWlnaHQ6ODB2aDt3aWR0aDo4MHZ3O2dhcDoxMHB4O2dyaWQtdGVtcGxhdGUtY29sdW1uczoxLjY1ZnIgMC45NWZyO2dyaWQtdGVtcGxhdGUtcm93czoxZnIgNDhweCAzOHB4O3BhZGRpbmc6MTBweH0ubGVmdC1jb2x1bW57Z3JpZC1jb2x1bW46MTtncmlkLXJvdzoxO2Rpc3BsYXk6Z3JpZDtncmlkLXRlbXBsYXRlLXJvd3M6MWZyIDM0cHggMTQwcHg7Z2FwOjhweDtoZWlnaHQ6MTAwJTttaW4taGVpZ2h0OjB9Lm1haW4tZnJhbWV7YmFja2dyb3VuZDojMDAwO2JvcmRlci1yYWRpdXM6NnB4O292ZXJmbG93OmhpZGRlbjtib3JkZXI6MXB4IHNvbGlkIHZhcigtLWJvcmRlci1jb2xvcik7cG9zaXRpb246cmVsYXRpdmU7aGVpZ2h0OjEwMCU7d2lkdGg6MTAwJTttaW4taGVpZ2h0OjB9Lm1haW4tZnJhbWUgaWZyYW1le3dpZHRoOjEwMCU7aGVpZ2h0OjEwMCU7Ym9yZGVyOm5vbmU7ZGlzcGxheTpibG9ja30udXBjb21pbmctZXZlbnRzLWJhcntiYWNrZ3JvdW5kOmxpbmVhci1ncmFkaWVudCg5MGRlZywjMTYyMjM4IDAlLCMwYjE1MjYgMTAwJSk7Ym9yZGVyOjFweCBzb2xpZCB2YXIoLS1ib3JkZXItY29sb3IpO2JvcmRlci1sZWZ0OjNweCBzb2xpZCB2YXIoLS1nb2xkKTtib3JkZXItcmFkaXVzOjRweDtoZWlnaHQ6MzRweDtkaXNwbGF5OmZsZXg7YWxpZ24taXRlbXM6Y2VudGVyO292ZXJmbG93OmhpZGRlbjtwYWRkaW5nOjAgMTBweDtnYXA6MTJweH0udXBjb21pbmctdGFne2JhY2tncm91bmQ6cmdiYSgyNDUsMTU4LDExLDAuMTUpO2JvcmRlcjoxcHggc29saWQgcmdiYSgyNDUsMTU4LDExLDAuNCk7Y29sb3I6dmFyKC0tZ29sZCk7Zm9udC1zaXplOjExcHg7Zm9udC13ZWlnaHQ6OTAwO2xldHRlci1zcGFjaW5nOjAuOHB4O3BhZGRpbmc6M3B4IDhweDtib3JkZXItcmFkaXVzOjNweDtkaXNwbGF5OmZsZXg7YWxpZ24taXRlbXM6Y2VudGVyO2dhcDo2cHg7ZmxleC1zaHJpbms6MDt3aGl0ZS1zcGFjZTpub3dyYXB9LnB1bHNlLWljb257d2lkdGg6NnB4O2hlaWdodDo2cHg7YmFja2dyb3VuZDp2YXIoLS1nb2xkKTtib3JkZXItcmFkaXVzOjUwJTtib3gtc2hhZG93OjAgMCA2cHggdmFyKC0tZ29sZCk7YW5pbWF0aW9uOnN0b3JtUHVsc2UgMS4ycyBpbmZpbml0ZSBhbHRlcm5hdGV9LnVwY29taW5nLWNvbnRlbnR7ZmxleC1ncm93OjE7b3ZlcmZsb3c6aGlkZGVuO3doaXRlLXNwYWNlOm5vd3JhcDtmb250LXNpemU6MTJweDtmb250LXdlaWdodDo3MDA7Y29sb3I6I2UyZThmMDtkaXNwbGF5OmZsZXg7YWxpZ24taXRlbXM6Y2VudGVyfS5ldnQtaXRlbXtkaXNwbGF5OmlubGluZS1mbGV4O2FsaWduLWl0ZW1zOmNlbnRlcjtnYXA6OHB4O2FuaW1hdGlvbjpmYWRlSW5FdnQgMC42cyBlYXNlfS5ldnQtdGltZXtjb2xvcjojMzhiZGY4O2ZvbnQtZmFtaWx5OidPc3dhbGQnLHNhbnMtc2VyaWY7Zm9udC1zaXplOjE0cHg7bGV0dGVyLXNwYWNpbmc6MC41cHh9LmV2dC1kZXNje2NvbG9yOiNmZmZmZmY7Zm9udC13ZWlnaHQ6NjAwfUBrZXlmcmFtZXMgZmFkZUluRXZ0e2Zyb217b3BhY2l0eTowO3RyYW5zZm9ybTp0cmFuc2xhdGVZNHB4KX10b3tvcGFjaXR5OjE7dHJhbnNmb3JtOnRyYW5zbGF0ZVkoMCl9fS5keW5hbWljLWJveHtwb3NpdGlvbjpyZWxhdGl2ZTtiYWNrZ3JvdW5kOnZhcigtLXBhbmVsLWJnKTtib3JkZXI6MXB4IHNvbGlkIHZhcigtLWJvcmRlci1jb2xvcik7Ym9yZGVyLXJhZGl1czo2cHg7b3ZlcmZsb3c6aGlkZGVuO2hlaWdodDoxMDAlfS5keW4tc2xpZGV7cG9zaXRpb246YWJzb2x1dGU7aW5zZXQ6MDtvcGFjaXR5OjA7cG9pbnRlci1ldmVudHM6bm9uZTt0cmFuc2l0aW9uOm9wYWNpdHkgMC41cyBlYXNlLWluLW91dDtkaXNwbGF5OmZsZXg7YmFja2dyb3VuZDp2YXIoLS1wYW5lbC1iZyl9LmR5bi1zbGlkZS5hY3RpdmV7b3BhY2l0eToxO3BvaW50ZXItZXZlbnRzOmF1dG99LmR5bi1oZWFkZXItdGFne2JhY2tncm91bmQ6dmFyKC0tY2FuLXJlZCk7Y29sb3I6I2ZmZjtmb250LXNpemU6MTBweDtmb250LXdlaWdodDo5MDA7cGFkZGluZzowIDZweDtsZXR0ZXItc3BhY2luZzowLjhweDtkaXNwbGF5OmZsZXg7YWxpZ24taXRlbXM6Y2VudGVyO2p1c3RpZnktY29udGVudDpjZW50ZXI7d3JpdGluZy1tb2RlOnZlcnRpY2FsLXJsO3RyYW5zZm9ybTpyb3RhdGUoMTgwZGVnKTt0ZXh0LXRyYW5zZm9ybTp1cHBlcmNhc2U7d2hpdGUtc3BhY2U6bm93cmFwO2ZsZXgtc2hyaW5rOjB9LmR5bi1jb250ZW50e2ZsZXgtZ3JvdzoxO3BhZGRpbmc6OHB4IDEycHg7b3ZlcmZsb3c6aGlkZGVuO2Rpc3BsYXk6ZmxleDtmbGV4LWRpcmVjdGlvbjpjb2x1bW47anVzdGlmeS1jb250ZW50OmNlbnRlcjtoZWlnaHQ6MTAwJX0ucmFkYXItaGl0ZWNoLWNvbnRhaW5lcntkaXNwbGF5OmdyaWQ7Z3JpZC10ZW1wbGF0ZS1jb2x1bW5zOjI0MHB4IDFmcjtnYXA6MTJweDthbGlnbi1pdGVtczpjZW50ZXI7aGVpZ2h0OjEwMCV9LnJhZGFyLWNhbnZhcy1ib3h7cG9zaXRpb246cmVsYXRpdmU7d2lkdGg6MTAwJTtoZWlnaHQ6MTAwJTtiYWNrZ3JvdW5kOnJhZGlhbC1ncmFkaWVudChjaXJjbGUgYXQgY2VudGVyLCMwZTFlMzggMCUsIzA2MGIxNCAxMDAlKTtib3JkZXI6MXB4IHNvbGlkIHJnYmEoNTYsMTg5LDI0OCwwLjMpO2JvcmRlci1yYWRpdXM6NHB4O292ZXJmbG93OmhpZGRlbjtkaXNwbGF5OmZsZXg7YWxpZ24taXRlbXM6Y2VudGVyO2p1c3RpZnktY29udGVudDpjZW50ZXJ9LnJhZGFyLXN3ZWVwe3Bvc2l0aW9uOmFic29sdXRlO2luc2V0OjA7YmFja2dyb3VuZDpjb25pYy1ncmFkaWVudChmcm9tIDBkZWcgYXQgNTAlIDUwJSxyZ2JhKDU2LDE4OSwyNDgsMCkgMGRlZyxyZ2JhKDU2LDE4OSwyNDgsMC40KSA2MGRlZyx0cmFuc3BhcmVudCA2NWRlZyk7YW5pbWF0aW9uOnJhZGFyUm90YXRlIDRzIGxpbmVhciBpbmZpbml0ZTtwb2ludGVyLWV2ZW50czpub25lfS5yYWRhci1ncmlkLWxpbmVze3Bvc2l0aW9uOmFic29sdXRlO2luc2V0OjA7YmFja2dyb3VuZC1pbWFnZTpyYWRpYWwtZ3JhZGllbnQoY2lyY2xlIGF0IGNlbnRlcmd0cmFuc3BhcmVudCAzMCUscmdiYSg1NiwxODksMjQ4LDAuMTUpIDMxJSx0cmFuc3BhcmVudCAzMiUpLHJhZGlhbC1ncmFkaWVudChjaXJjbGUgYXQgY2VudGVyLHRyYW5zcGFyZW50IDYwJSxyZ2JhKDU2LDE4OSwyNDgsMC4xNSkgNjElLHRyYW5zcGFyZW50IDYyJSksbGluZWFyLWdyYWRpZW50KHJnYmEoNTYsMTg5LDI0OCwwLjEpIDFweCx0cmFuc3BhcmVudCAxcHgpLGxpbmVhci1ncmFkaWVudCg5MGRlZyxyZ2JhKDU2LDE4OSwyNDgsMC4xKSAxcHgsdHJhbnNwYXJlbnQgMXB4KTtiYWNrZ3JvdW5kLXNpemU6MTAwJSAxMDAlLDEwMCUgMTAwJSwyMHB4IDIwcHgsMjBweCAyMHB4fS5yYWRhci1iYWRnZXtwb3NpdGlvbjphYnNvbHV0ZTt0b3A6NXB4O2xlZnQ6NnB4O2ZvbnQtc2l6ZTo5cHg7Zm9udC13ZWlnaHQ6OTAwO2NvbG9yOiMzOGJkZjg7bGV0dGVyLXNwYWNpbmc6MC41cHg7ZGlzcGxheTpmbGV4O2FsaWduLWl0ZW1zOmNlbnRlcjtnYXA6NHB4O3otaW5kZXg6Mn0ucmFkYXItYmFkZ2U6OmJlZm9yZXtjb250ZW50OicnO3dpZHRoOjZweDtoZWlnaHQ6NnB4O2JhY2tncm91bmQ6IzIyYzVlZTtib3JkZXItcmFkaXVzOjUwJTtib3gtc2hhZG93OjAgMCA2cHggIzIyYzVlZX0ubWFwLXN2Z3t3aWR0aDo5MCU7aGVpZ2h0Ojg1JTt6LWluZGV4OjF9LnN0b3JtLWNsb3Vke2FuaW1hdGlvbjpzdG9ybVB1bHNlIDJzIGVhc2UtaW4tb3V0IGluZmluaXRlIGFsdGVybmF0ZX0uYWxlcnQtcGFuZWx7ZGlzcGxheTpmbGV4O2ZsZXgtZGlyZWN0aW9uOmNvbHVtbjtnYXA6OHB4O2p1c3RpZnktY29udGVudDpjZW50ZXJ9LmFsZXJ0LWJhZGdle2JhY2tncm91bmQ6cmdiYSgyMzksNjgsNjgsMC4xNSk7Ym9yZGVyOjFweCBzb2xpZCByZ2JhKDIzOSw2OCw2OCwwLjMpO2JvcmRlci1sZWZ0OjRweCBzb2xpZCB2YXIoLS1kYW5nZXIpO3BhZGRpbmc6OHB4IDEycHg7Zm9udC1zaXplOjEycHg7Zm9udC13ZWlnaHQ6NzAwO2NvbG9yOiNmZWNhY2E7Ym9yZGVyLXJhZGl1czo0cHg7bGluZS1oZWlnaHQ6MS40O2Rpc3BsYXk6ZmxleDthbGlnbi1pdGVtczpjZW50ZXI7Z2FwOjhweH0uYWxlcnQtYmFkZ2UuaW5mb3tiYWNrZ3JvdW5kOnJnYmEoMjQ1LDE1OCwxMSwwLjE1KTtib3JkZXI6MXB4IHNvbGlkIHJnYmEoMjQ1LDE1OCwxMSwwLjMpO2JvcmRlci1sZWZ0OjRweCBzb2xpZCB2YXIoLS1nb2xkKTtjb2xvcjojZmVmMDhhfUBrZXlmcmFtZXMgcmFkYXJSb3RhdGV7ZnJvbXt0cmFuc2Zvcm06cm90YXRlKDBkZWcpfXRve3RyYW5zZm9ybTpyb3RhdGUoMzYwZGVnKX19QGtleWZyYW1lcyBzdG9ybVB1bHNlezAle29wYWNpdHk6MC40O2ZpbHRlcjpkcm9wLXNoYWRvdygwIDAgMnB4ICNlZjQ0NDQpfTEwMCV7b3BhY2l0eTowLjk7ZmlsdGVyOmRyb3Atc2hhZG93KDAgMCA4cHggI2VmNDQ0NCl9fS5zcG9ydHMtZ3JpZHtkaXNwbGF5OmdyaWQ7Z3JpZC10ZW1wbGF0ZS1jb2x1bW5zOnJlcGVhdCgzLDFmcik7Z2FwOjhweDtoZWlnaHQ6MTAwJTthbGlnbi1pdGVtczpjZW50ZXJ9Lm1hdGNoLWNhcmR7YmFja2dyb3VuZDpyZ2JhKDAsMCwwLDAuMzUpO2JvcmRlcjoxcHggc29saWQgcmdiYSgyNTUsMjU1LDI1NSwwLjA4KTtib3JkZXItcmFkaXVzOjRweDtwYWRkaW5nOjZweCAxMHB4O2Rpc3BsYXk6ZmxleDtmbGV4LWRpcmVjdGlvbjpjb2x1bW47anVzdGlmeS1jb250ZW50OnNwYWNlLWJldHdlZW47aGVpZ2h0OjEwMCU7fS5tYXRjaC1sZWFndWV7Zm9udC1zaXplOjEwcHg7Zm9udC13ZWlnaHQ6ODAwO2NvbG9yOnZhcigtLWdvbGQpO2Rpc3BsYXk6ZmxleDtqdXN0aWZ5LWNvbnRlbnQ6c3BhY2UtYmV0d2Vlbn0ubWF0Y2gtdGVhbXN7ZGlzcGxheTpmbGV4O2p1c3RpZnktY29udGVudDpzcGFjZS1iZXR3ZWVuO2FsaWduLWl0ZW1zOmNlbnRlcjttYXJnaW46NHB4IDA7Zm9udC1zaXplOjEzcHg7Zm9udC13ZWlnaHQ6ODAwfS5tYXRjaC1zY29yZXtmb250LWZhbWlseTonT3N3YWxkJyxzYW5zLXNlcmlmO2ZvbnQtc2l6ZToxNnB4O2NvbG9yOiMzOGJkZjg7cGFkZGluZzowIDRweH0uc3BvbnNvci1ncmlke2Rpc3BsYXk6Z3JpZDtncmlkLXRlbXBsYXRlLWNvbHVtbnM6MWZyIDFmciAxLjJmcjtnYXA6MTBweDthbGlnbi1pdGVtczpjZW50ZXI7aGVpZ2h0OjEwMCU7fS5zcG9uc29yLWNhcmR7YmFja2dyb3VuZDpyZ2JhKDI1NSwyNTUsMjU1LDAuMDQpO2JvcmRlcjoxcHggZGFzaGVkIHZhcigtLWJvcmRlci1jb2xvcik7Ym9yZGVyLXJhZGl1czo0cHg7aGVpZ2h0OjEwMCU7ZGlzcGxheTpmbGV4O2ZsZXgtZGlyZWN0aW9uOmNvbHVtbjthbGlnbi1pdGVtczpjZW50ZXI7anVzdGlmeS1jb250ZW50OmNlbnRlcjt0ZXh0LWFsaWduOmNlbnRlcjtwYWRkaW5nOjZweH0uc3BvbnNvci1jYXJkIGg0e2ZvbnQtc2l6ZToxMnB4O2ZvbnQtd2VpZ2h0OjgwMDtjb2xvcjojZmZmZmZmfS5zcG9uc29yLWNhcmQgcHtmb250LXNpemU6MTBweDtjb2xvcjp2YXIoLS10ZXh0LW11dGVkKTttYXJnaW4tdG9wOjJweH0ubWFya2V0LWNoYXJ0c3tkaXNwbGF5OmdyaWQ7Z3JpZC10ZW1wbGF0ZS1jb2x1bW5zOnJlcGVhdCg2LDFmcik7Z2FwOjZweDthbGlnbi1pdGVtczpjZW50ZXI7aGVpZ2h0OjEwMCU7fS5jaGFydC1ib3h7YmFja2dyb3VuZDpyZ2JhKDAsMCwwLDAuMyk7Ym9yZGVyOjFweCBzb2xpZCByZ2JhKDI1NSwyNTUsMjU1LDAuMDgpO2JvcmRlci1yYWRpdXM6NHB4O3BhZGRpbmc6NnB4IDZweDtkaXNwbGF5OmZsZXg7ZmxleC1kaXJlY3Rpb246Y29sdW1uO2p1c3RpZnktY29udGVudDpzcGFjZS1iZXR3ZWVuO2hlaWdodDoxMDAlfS5jaGFydC1uYW1le2ZvbnQtc2l6ZToxMHB4O2ZvbnQtd2VpZ2h0OjgwMDtjb2xvcjojOTRhM2I4O3doaXRlLXNwYWNlOm5vd3JhcDtvdmVyZmxvdzpoaWRkZW47dGV4dC1vdmVyZmxvdzplbGxpcHNpc30uY2hhcnQtcHJpY2V7Zm9udC1mYW1pbHk6J09zd2FsZCcsc2Fucy1zZXJpZjtmb250LXNpemU6MTRweDtmb250LXdlaWdodDo3MDA7Y29sb3I6I2ZmZmZmZn0uY2hhcnQtY2hhbmdle2ZvbnQtc2l6ZTo5cHg7Zm9udC13ZWlnaHQ6NzAwfS5zcGFya2xpbmV7d2lkdGg6MTAwJTtoZWlnaHQ6MjJweDttYXJnaW4tdG9wOjJweH0uc2lkZWJhcntncmlkLWNvbHVtbjoyO2dyaWQtcm93OjE7ZGlzcGxheTpncmlkO2dyaWQtdGVtcGxhdGUtcm93czphdXRvIDFmciAxMjVweDtnYXA6OHB4O2hlaWdodDoxMDAlO21pbi1oZWlnaHQ6MH0uY2FuLWNhcmR7YmFja2dyb3VuZDp2YXIoLS1wYW5lbC1iZyk7Ym9yZGVyOjFweCBzb2xpZCB2YXIoLS1ib3JkZXItY29sb3IpO2JvcmRlci1yYWRpdXM6NnB4O292ZXJmbG93OmhpZGRlbjtkaXNwbGF5OmZsZXg7ZmxleC1kaXJlY3Rpb246Y29sdW1uO21pbi1oZWlnaHQ6MH0uY2FuLWhlYWRlcntiYWNrZ3JvdW5kOmxpbmVhci1ncmFkaWVudCg5MGRlZywjMWUyOTNiIDAlLCMwZjE3MmEgMTAwJSk7Ym9yZGVyLWJvdHRvbToycHggc29saWQgdmFyKC0tY2FuLXJlZCk7cGFkZGluZzo2cHggMTJweDtmb250LXNpemU6MTFweDtmb250LXdlaWdodDo4MDA7dGV4dC10cmFuc2Zvcm06dXBwZXJjYXNlO2xldHRlci1zcGFjaW5nOjFweDtjb2xvcjojY2JkNTVlMTtkaXNwbGF5OmZsZXg7YWxpZ24taXRlbXM6Y2VudGVyO2p1c3RpZnktY29udGVudDpzcGFjZS1iZXR3ZWVuO2ZsZXgtc2hyaW5rOjB9LmNhbi1oZWFkZXIucmR7YmFja2dyb3VuZDp2YXIoLS1jYW4tcmVkKTtib3JkZXItYm90dG9tOm5vbmU7Y29sb3I6I2ZmZmZmZn0ud2VhdGhlci1ib2R5e3BhZGRpbmc6MTBweCAxNHB4O2Rpc3BsYXk6ZmxleDtmbGV4LWRpcmVjdGlvbjpjb2x1bW47Z2FwOjhweH0ud2VhdGhlci1oZXJve2Rpc3BsYXk6ZmxleDtqdXN0aWZ5LWNvbnRlbnQ6c3BhY2UtYmV0d2VlbjthbGlnbi1pdGVtczpjZW50ZXI7YmFja2dyb3VuZDpyZ2JhKDI1NSwyNTUsMjU1LDAuMDQpO2JvcmRlcjoxcHggc29saWQgcmdiYSgyNTUsMjU1LDI1NSwwLjA4KTtib3JkZXItcmFkaXVzOjZweDtwYWRkaW5nOjhweCAxNHB4O2JvcmRlci1sZWZ0OjRweCBzb2xpZCB2YXIoLS1jYW4tcmVkKX0uY2l0eS1uYW1le2ZvbnQtc2l6ZToyMHB4O2ZvbnQtd2VpZ2h0OjkwMDtsZXR0ZXItc3BhY2luZzotMC4zcHg7bGluZS1oZWlnaHQ6MS4xO3doaXRlLXNwYWNlOm5vd3JhcDtvdmVyZmxvdzpoaWRkZW47dGV4dC1vdmVyZmxvdzplbGxpcHNpczttYXgtd2lkdGg6MjAwcHg7dGV4dC10cmFuc2Zvcm06dXBwZXJjYXNlfS53ZWF0aGVyLXN0YXR1c3tmb250LXNpemU6MTJweDtjb2xvcjp2YXIoLS1nb2xkKTtmb250LXdlaWdodDo4MDA7dGV4dC10cmFuc2Zvcm06dXBwZXJjYXNlO21hcmdpbi10b3A6MnB4O2xldHRlci1zcGFjaW5nOjAuNXB4fS5oZXJvLXRlbXAtYm94e2Rpc3BsYXk6ZmxleDthbGlnbi1pdGVtczpjZW50ZXI7Z2FwOjhweH0uaGVyby10ZW1wLWJveCAuaWNvbiBzcmd7d2lkdGg6NDJweDtoZWlnaHQ6NDJweDtmaWx0ZXI6ZHJvcC1zaGFkb3coMCAwIDhweCByZ2JhKDI0NSwxNTgsMTEsMC40NSkpfS5oZXJvLXRlbXAtYm94IC50ZW1wLXZhbHtmb250LWZhbWlseTonT3N3YWxkJyxzYW5zLXNlcmlmO2ZvbnQtc2l6ZTo0NnB4O2ZvbnQtd2VpZ2h0OjcwMDtsaW5lLWhlaWdodDoxfS53eC1saXN0LXJvd3N7ZGlzcGxheTpmbGV4O2ZsZXgtZGlyZWN0aW9uOmNvbHVtbjtib3JkZXItdG9wOjFweCBzb2xpZCByZ2JhKDI1NSwyNTUsMjU1LDAuMDgpO2JvcmRlci1ib3R0b206MXB4IHNvbGlkIHJnYmEoMjU1LDI1NSwyNTUsMC4wOCl9Lnd4LXJvdy1pdGVte2Rpc3BsYXk6ZmxleDtqdXN0aWZ5LWNvbnRlbnQ6c3BhY2UtYmV0d2VlbjthbGlnbi1pdGVtczpjZW50ZXI7cGFkZGluZzo1cHggNHB4O2JvcmRlci1ib3R0b206MXB4IHNvbGlkIHJnYmEoMjU1LDI1NSwyNTUsMC4wNil9Lnd4LXJvdy1pdGVtOmxhc3QtY2hpbGR7Ym9yZGVyLWJvdHRvbTpub25lfS53eC1yb3ctaXRlbSAubGFiZWx7Zm9udC1zaXplOjE0cHg7Zm9udC13ZWlnaHQ6NzAwO2NvbG9yOiNmZmZmZmZ9Lnd4LXJvdy1pdGVtIC52YWwtaWNvbntkaXNwbGF5OmZsZXg7YWxpZ24taXRlbXM6Y2VudGVyO2dhcDo4cHh9Lnd4LXJvdy1pdGVtIC52YWx7Zm9udC1zaXplOjE2cHg7Zm9udC13ZWlnaHQ6ODAwO2NvbG9yOiNmZmZmZmZ9Lnd4LXJvdy1pdGVtIC5pY29uLXN2Z3t3aWR0aDoxOHB4O2hlaWdodDoxOHB4O2Rpc3BsYXk6ZmxleDthbGlnbi1pdGVtczpjZW50ZXJ9LmZvcmVjYXN0LXN0cmlwe2Rpc3BsYXk6Z3JpZDtncmlkLXRlbXBsYXRlLWNvbHVtbnM6cmVwZWF0KDMsMWZyKTtnYXA6NnB4fS5mYy1ib3h7YmFja2dyb3VuZDpyZ2JhKDAsMCwwLDAuMjUpO2JvcmRlci1yYWRpdXM6NHB4O3BhZGRpbmc6NHB4O3RleHQtYWxpZ246Y2VudGVyfS5mYy1ib3ggLmR7Zm9udC1zaXplOjExcHg7Zm9udC13ZWlnaHQ6NzAwO2NvbG9yOnZhcigtLXRleHQtbXV0ZWQpfS5mYy1ib3ggLmljb24gc3Zne3dpZHRoOjIycHg7aGVpZ2h0OjIycHg7bWFyZ2luOjFweCBhdXRvfS5mYy1ib3ggLnR7Zm9udC1mYW1pbHk6J09zd2FsZCcsc2Fucy1zZXJpZjtmb250LXNpemU6MTdweDtmb250LXdlaWdodDo2MDB9LmFkLWNvbnRhaW5lcntwb3NpdGlvbjpyZWxhdGl2ZTtib3JkZXItcmFkaXVzOjZweDtvdmVyZmxvdzpoaWRkZW47Ym9yZGVyOjFweCBzb2xpZCB2YXIoLS1ib3JkZXItY29sb3IpO2JhY2tncm91bmQ6IzAwMDt3aWR0aDoxMDAlO2hlaWdodDoxMDAlO21pbi1oZWlnaHQ6MH0uYWQtc2xpZGV7cG9zaXRpb246YWJzb2x1dGU7aW5zZXQ6MDtvcGFjaXR5OjA7dHJhbnNpdGlvbjpvcGFjaXR5IDAuOHMgZWFzZX0uYWQtc2xpZGUuYWN0aXZle29wYWNpdHk6MX0uYWQtc2xpZGUgaW1ne3dpZHRoOjEwMCU7aGVpZ2h0OjEwMCU7b2JqZWN0LWZpdDpjb3ZlcjtkaXNwbGF5OmJsb2NrfS5hZC1kb3Rze3Bvc2l0aW9uOmFic29sdXRlO2JvdHRvbTo4cHg7cmlnaHQ6MTBweDtkaXNwbGF5OmZsZXg7Z2FwOjRweDt6LWluZGV4OjU7YmFja2dyb3VuZDpyZ2JhKDAsMCwwLDAuNik7cGFkZGluZzozcHggNnB4O2JvcmRlci1yYWRpdXM6MTBweH0uYWQtZG90e3dpZHRoOjVweDtoZWlnaHQ6NXB4O2JvcmRlci1yYWRpdXM6NTAlO2JhY2tncm91bmQ6cmdiYSgyNTUsMjU1LDI1NSwwLjQpO3RyYW5zaXRpb246YWxsIC4zc30uYWQtZG90LmFjdGl2ZXt3aWR0aDoxMnB4O2JvcmRlci1yYWRpdXM6M3B4O2JhY2tncm91bmQ6dmFyKC0tY2FuLXJlZCl9LmJvdHRvbS13aWRnZXRze2Rpc3BsYXk6Z3JpZDtncmlkLXRlbXBsYXRlLWNvbHVtbnM6MWZyIDFmcjtnYXA6OHB4O2hlaWdodDoxMDAlfS5zdWItY2FyZC1ib2R5e3BhZGRpbmc6MTJweCAxNHB4O2hlaWdodDoxMDAlO2Rpc3BsYXk6ZmxleDtmbGV4LWRpcmVjdGlvbjpjb2x1bW47anVzdGlmeS1jb250ZW50OmNlbnRlcn0ubmV3cy1oZWFkbGluZXtmb250LXNpemU6MTRweDtmb250LXdlaWdodDo3MDA7bGluZS1oZWlnaHQ6MS40NTtjb2xvcjojZmZmZmZmO2Rpc3BsYXk6LXdlYmtpdC1ib3g7LXdlYmtpdC1saW5lLWNsYW1wOjM7LXdlYmtpdC1ib3gtb3JpZW50OnZlcnRpY2FsO292ZXJmbG93OmhpZGRlbn0ucmF0ZS1saXN0e2Rpc3BsYXk6ZmxleDtmbGV4LWRpcmVjdGlvbjpjb2x1bW47Z2FwOjhweDtqdXN0aWZ5LWNvbnRlbnQ6Y2VudGVyO2hlaWdodDoxMDAlfS5yYXRlLWl0ZW17Zm9udC1zaXplOjE0cHg7Zm9udC13ZWlnaHQ6NzAwO2NvbG9yOiNmMWY1Zjk7ZGlzcGxheTpmbGV4O2FsaWduLWl0ZW1zOmNlbnRlcjtnYXA6NnB4fS5yYXRlLWl0ZW0gYntjb2xvcjojZmZmZmZmO2ZvbnQtZmFtaWx5OidPc3dhbGQnLHNhbnMtc2VyaWY7Zm9udC1zaXplOjE5cHg7bGV0dGVyLXNwYWNpbmc6MC41cHh9Lm5ld3MtYmFye2dyaWQtY29sdW1uOjEgLyAtMTtncmlkLXJvdzoyO2JhY2tncm91bmQ6I2ZmZmZmZjtib3JkZXItcmFkaXVzOjRweDtkaXNwbGF5OmZsZXg7YWxpZ24taXRlbXM6Y2VudGVyO292ZXJmbG93OmhpZGRlbn0ubmV3cy1iYWRnZXtiYWNrZ3JvdW5kOnZhcigtLWNhbi1yZWQpO2NvbG9yOiNmZmZmZmY7Zm9udC1mYW1pbHk6J09zd2FsZCcsc2Fucy1zZXJpZjtmb250LXNpemU6MjBweDtmb250LXdlaWdodDo3MDA7bGV0dGVyLXNwYWNpbmc6MXB4O3BhZGRpbmc6MCAxNnB4O2hlaWdodDoxMDAlO2Rpc3BsYXk6ZmxleDthbGlnbi1pdGVtczpjZW50ZXI7Z2FwOjZweDtmbGV4LXNocmluazowfS5uZXdzLWJhZGdlIHN2Z3t3aWR0aDoxNnB4O2hlaWdodDoxNnB4O2ZpbGw6I2ZmZmZmZn0ubmV3cy10cmFja3tmbGV4LWdyb3c6MTtvdmVyZmxvdzpoaWRkZW47d2hpdGUtc3BhY2U6bm93cmFwO3BhZGRpbmc6MCAxNHB4fS5uZXdzLW1hcnF1ZWUtY29udGVudHtkaXNwbGF5OmlubGluZS1ibG9jazthbmltYXRpb246bWFycXVlZSA4MHMgbGluZWFyIGluZmluaXRlO2ZvbnQtc2l6ZToyMHB4O2ZvbnQtd2VpZ2h0OjcwMDtjb2xvcjojMGIxNTI2O2xpbmUtaGVpZ2h0OjQ4cHh9Lm5ld3MtaXRlbXttYXJnaW4tcmlnaHQ6MzVweH0ubmV3cy1pdGVtIHN0cm9uZ3tjb2xvcjp2YXIoLS1jYW4tcmVkKTttYXJnaW4tcmlnaHQ6NnB4O2ZvbnQtd2VpZ2h0OjgwMH0ubmV3cy1pdGVtOjphZnRlcntjb250ZW50Oicg8J+NgiAnO2NvbG9yOnZhcigtLWNhbi1yZWQpO21hcmdpbi1sZWZ0OjM1cHh9LnN0b2NrLWJhe3dyaWQtY29sdW1uOjEgLyAtMTtncmlkLXJvdzozO2JhY2tncm91bmQ6IzA1MDgwZTtib3JkZXI6MXB4IHNvbGlkIHJnYmEoMjU1LDI1NSwyNTUsMC4xKTtib3JkZXItcmFkaXVzOjRweDtkaXNwbGF5OmZsZXg7YWxpZ24taXRlbXM6Y2VudGVyO292ZXJmbG93OmhpZGRlbjtwb3NpdGlvbjpyZWxhdGl2ZX0uc3RvY2stdGFne2JhY2tncm91bmQ6IzFlMjkzYjtjb2xvcjojZmZmZmZmO2ZvbnQtc2l6ZToxMXB4O2ZvbnQtd2VpZ2h0OjgwMDtsZXR0ZXItc3BhY2luZzoxcHg7cGFkZGluZzowIDE0cHg7aGVpZ2h0OjEwMCU7ZGlzcGxheTpmbGV4O2FsaWduLWl0ZW1zOmNlbnRlcjtmbGV4LXNocmluazowO2JvcmRlci1yaWdodDoycHggc29saWQgdmFyKC0tY2FuLXJlZCk7cG9zaXRpb246cmVsYXRpdmU7ei1pbmRleDoxMH0udGlja2VyLXRyYWNre2Rpc3BsYXk6aW5saW5lLWZsZXg7d2hpdGUtc3BhY2U6bm93cmFwO2FuaW1hdGlvbjp0aWNrZXIgNDBzIGxpbmVhciBpbmZpbml0ZTtmb250LWZhbWlseTonT3N3YWxkJyxzYW5zLXNlcmlmO2ZvbnQtc2l6ZToxN3B4O2xldHRlci1zcGFjaW5nOjAuNXB4O3dpZHRoOm1heC1jb250ZW50fS50aWNrZXItaXRlbXtkaXNwbGF5OmlubGluZS1mbGV4O2FsaWduLWl0ZW1zOmNlbnRlcjtnYXA6NnB4O21hcmdpbjowIDE2cHh9LnRyZW5kLXVwe2NvbG9yOiM0YWRlODA7Zm9udC13ZWlnaHQ6NzAwfS50cmVuZC1kb3due2NvbG9yOiNmODcxNzE7Zm9udC13ZWlnaHQ6NzAwfUBrZXlmcmFtZXMgbWFycXVlZXswJXt0cmFuc2Zvcm06dHJhbnNsYXRlWCgwKX0xMDAle3RyYW5zZm9ybTp0cmFuc2xhdGVYKC01MCUpfX1Aa2V5ZnJhbWVzIHRpY2tlcnswJXt0cmFuc2Zvcm06dHJhbnNsYXRlWCgwKX0xMDAle3RyYW5zZm9ybTp0cmFuc2xhdGVYKC01MCUpfX08L3N0eWxlPjwvaGVhZD48Ym9keT48ZGl2IGNsYXNzPSJzY3JlZW4iPjxkaXYgY2xhc3M9ImxlZnQtY29sdW1uIj48c2VjdGlvbiBjbGFzcz0ibWFpbi1mcmFtZSI+PGlmcmFtZSBzcmM9IiIgdGl0bGU9IkxpdmUgQ2FuYWRhIFN0cmVhbSIgYWxsb3c9ImF1dG9wbGF5OyBmdWxsc2NyZWVuIj48L2lmcmFtZT48L3NlY3Rpb24+PGRpdiBjbGFzcz0idXBjb21pbmctZXZlbnRzLWJhciI+PGRpdiBjbGFzcz0idXBjb21pbmctdGFnIj48c3BhbiBjbGFzcz0icHVsc2UtaWNvbiI+PC9zcGFuPiBT4bqQUCBESeG7hE4gUkE8L2Rpdj48ZGl2IGNsYXNzPSJ1cGNvbWluZy1jb250ZW50IiBpZD0idXBjb21pbmdUcmFjayI+PC9kaXY+PC9kaXY+PGRpdiBjbGFzcz0iZHluYW1pYy1ib3giPjxkaXYgY2xhc3M9ImR5bi1zbGlkZSBhY3RpdmUiIGlkPSJkeW4tMCI+PGRpdiBjbGFzcz0iZHluLWhlYWRlci10YWciPlJBREFSICYgQ+G6ok5IIELDgU88L2Rpdj48ZGl2IGNsYXNzPSJkeW4tY29udGVudCI+PGRpdiBjbGFzcz0icmFkYXItaGl0ZWNoLWNvbnRhaW5lciI+PGRpdiBjbGFzcz0icmFkYXItY2FudmFzLWJveCI+PGRpdiBjbGFzcz0icmFkYXItYmFkZ2UiPk5BVElPTkFMIERPUFBMRVIgUkFEQVI8L2Rpdj48ZGl2IGNsYXNzPSJyYWRhci1ncmlkLWxpbmVzIj48L2Rpdj48ZGl2IGNsYXNzPSJyYWRhci1zd2VlcCI+PC9kaXY+PHN2ZyBjbGFzcz0ibWFwLXN2ZyIgdmlld0JveD0iMCAwIDIwMCAxMjAiPjxwYXRoIGQ9Ik0gMjUsNDUgUSA0MCwyNSA3MCwzMCBUIDEzMCwyNSBUIDE4MCw0NSBRIDE3MCw4MCAxNDAsODUgVCA4MCw5MCBUIDMwLDc1IFoiIGZpbGw9IiMxZTI5M2IiIHN0cm9rZT0iIzM4YmRmOCIgc3Ryb2tlLXdpZHRoPSIxLjIiIG9wYWNpdHk9IjAuNiIgLz48cGF0aCBkPSJNIDYwLDM1IFEgODUsMzAgMTEwLDQwIFQgMTQwLDc1IiBmaWxsPSJub25lIiBzdHJva2U9IiM2NDc0OGIiIHN0cm9rZS13aWR0aD0iMC44IiBzdHJva2UtZGFzaGFycmF5PSIyLDIiIC8+PGcgaWQ9InJhZGFyUG9pbnRzTGF5ZXIiPjwvZz48L3N2Zz48L2Rpdj48ZGl2IGNsYXNzPSJhbGVydC1wYW5lbCIgaWQ9InJhZGFyQWxlcnRQYW5lbCI+PGRpdiBjbGFzcz0iYWxlcnQtYmFkZ2UgaW5mbyI+PHNwYW4gc3R5bGU9ImZvbnQtc2l6ZToxNnB4OyI+4o+zPC9zcGFuPjxkaXY+xJBhbmcga+G6v3Qgbm/ZpSBo4buHIHRo4buRbmcgdmnDqm4gdGjDoW0ga2jDrSB0xrDhu6NuZyBDYW5hZGEuLi48L2Rpdj48L2Rpdj48L2Rpdj48L2Rpdj48L2Rpdj48L2Rpdj48ZGl2IGNsYXNzPSJkeW4tc2xpZGUiIGlkPSJkeW4tMSI+PGRpdiBjbGFzcz0iZHluLWhlYWRlci10YWciPlRIIOG7niBUSEFPIENBTkFEQTwvZGl2PjxkaXYgY2xhc3M9ImR5bi1jb250ZW50Ij48ZGl2IGNsYXNzPSJzcG9ydHMtZ3JpZCIgaWQ9InNwb3J0c0xpdmVHcmlkIj48L2Rpdj48L2Rpdj48L2Rpdj48ZGl2IGNsYXNzPSJkeW4tc2xpZGUiIGlkPSJkeW4tMiI+PGRpdiBjbGFzcz0iZHluLWhlYWRlci10YWciPsSQ4buCTkcgSMOATkg8L2Rpdj48ZGl2IGNsYXNzPSJkeW4tY29udGVudCI+PGRpdiBjbGFzcz0ic3BvbnNvci1ncmlkIj48ZGl2IGNsYXNzPSJzcG9uc29yLWNhcmQiPjxoND7wn42CIFZJRVQtQ0FOIExPR0lTVElDUzwvaDQ+PHA+Q2h1eeG7g24gcGjDoXQgbmhhbmggaGFpIGNoaeG7gXUgVmnhu4d0IE5hbSAtIENhbmFkYSB1eSB0w61uPC9wPjwvZGl2PjxkaXYgY2xhc3M9InNwb25zb3ItY2FyZCI+PGg0Pu+PoiBDQU4tVklFVCBSRUFMIEVTVEFURTwvaDQ+PHA+VMawIHbhuqVuIGLhuqV0IMSR4buZbmcgc+G6o24sIMSR4buLbmggY8awICYgdOG6r24gdMOibTwvcD48L2Rpdj48ZGl2IGNsYXNzPSJzcG9uc29yLWNhcmQiIHN0eWxlPSJiYWNrZ3JvdW5kOiByZ2JhKDIxMyw0MywzMCwwLjE1KTsgYm9yZGVyLWNvbG9yOiB2YXIoLS1jYW4tcmVkKTsiPjxoNCBzdHlsZT0iY29sb3I6dmFyKC0tZ29sZCk7Ij5MSUVORiBI4buGIFFV4bqjTkcgQ8OBTzwvaDQ+PHA+RW1haWw6Y29udGFjdEB2Y25vd2NhbmFkYS5jb208L3A+PC9kaXY+PC9kaXY+PC9kaXY+PC9kaXY+PGRpdiBjbGFzcz0iZHluLXNsaWRlIiBpZD0iZHluLTMiPjxkaXYgY2xhc3M9ImR5bi1oZWFkZXItdGFnIj5DSDhuiBT4buRIFRPw4BOIEMNavG7VTwvZGl2PjxkaXYgY2xhc3M9ImR5bi1jb250ZW50Ij48ZGl2IGNsYXNzPSJtYXJrZXQtY2hhcnRzIiBpZD0iZ2xvYmFsTWFya2V0Q2hhcnRzIj48L2Rpdj48L2Rpdj48L2Rpdj48L2Rpdj48L2Rpdj48YXNpZGUgY2xhc3M9InNpZGViYXIiPjxkaXYgY2xhc3M9ImNhbi1jYXJkIj48ZGl2IGNsYXNzPSJjYW4taGVhZGVyIj48c3Bhbj5DQU5BREEgVE9EQVk8L3NwYW4+PHNwYW4gc3R5bGU9ImNvbG9yOiB2YXIoLS1nb2xkKTsiPkxJVkU8L3NwYW4+PC9kaXY+PGRpdiBjbGFzcz0id2VhdGhlci1ib2R5Ij48ZGl2IGNsYXNzPSJ3ZWF0aGVyLWhlcm8iPjxkaXY+PGRpdiBjbGFzcz0iY2l0eS1uYW1lIiBpZD0id3hDaXR5Ij5WQU5DT1VWRVIsIEJDPC9kaXY+PGRpdiBjbGFzcz0id2VhdGhlci1zdGF0dXMiIGlkPSJ3eENvbmQiPsSQYW5nIGPhuq1wIG5o4bqtdC4uLjwvZGl2PjwvZGl2PjxkaXYgY2xhc3M9Imhlcm8tdGVtcC1ib3giPjxkaXYgY2xhc3M9Imljb24iIGlkPSJ3eEljb24iPjwvZGl2PjxkaXYgY2xhc3M9InRlbXAtdmFsIj48c3BhbiBpZD0id3hUZW1wIj4tLTwvc3Bhbj7CsEM8L2Rpdj48L2Rpdj48L2Rpdj48ZGl2IGNsYXNzPSJ3eC1saXN0LXJvd3MiIGlkPSJ3eExpc3QiPjwvZGl2PjxkaXYgY2xhc3M9ImZvcmVjYXN0LXN0cmlwIiBpZD0id3hGb3JlY2FzdCI+PC9kaXY+PC9kaXY+PC9kaXY+PGRpdiBjbGFzcz0iYWQtY29udGFpbmVyIiBpZD0icmlnaHRBZCI+PC9kaXY+PGRpdiBjbGFzcz0iYm90dG9tLXdpZGdldHMiPjxkaXYgY2xhc3M9ImNhbi1jYXJkIj48ZGl2IGNsYXNzPSJjYW4taGVhZGVyIHJlZCI+VElDVSDEkElfTVwvZGl2PjxkaXYgY2xhc3M9InN1Yi1jYXJkLWJvZHkiPjxkaXYgY2xhc3M9Im5ld3MtaGVhZGxpbmUiIGlkPSJtaW5pQSI+xJBhbmcgY+G6rXAgbmjhuq10IHRpbiB0aOG6vyBnaeG7m2kuLi48L2Rpdj48L2Rpdj48L2Rpdj48ZGl2IGNsYXNzPSJjYW4tY2FyZCI+PGRpdiBjbGFzcz0iY2FuLWhlYWRlciI+VOG7niBHScOBIFRJ4buATiBU4buEPC9kaXY+PGRpdiBjbGFzcz0ic3ViLWNhcmQtYm9keSI+PGRpdiBjbGFzcz0icmF0ZS1saXN0IiBpZD0ibWluaUIiPsSQYW5nIHThuqNpIHThu7c=giw==";
+            <!-- THANH SỰ KIỆN SẮP DIỄN RA TỰ ĐỘNG -->
+            <div class="upcoming-events-bar">
+                <div class="upcoming-tag">
+                    <span class="pulse-icon"></span> SẮP DIỄN RA
+                </div>
+                <div class="upcoming-content" id="upcomingTrack"></div>
+            </div>
 
-        // Khóa băm kiểm tra
-        const TARGET_HASH = "c775e7b757ede630cd0aa1113bd102661ab38829ca52a6422ab782862f268646";
+            <!-- KHUNG DƯ: ĐA NĂNG TỰ XOAY VÒNG 4 MỤC -->
+            <div class="dynamic-box">
+                <!-- 1. BẢN ĐỒ RADAR -->
+                <div class="dyn-slide active" id="dyn-0">
+                    <div class="dyn-header-tag">RADAR & CẢNH BÁO</div>
+                    <div class="dyn-content">
+                        <div class="radar-hitech-container">
+                            <div class="radar-canvas-box">
+                                <div class="radar-badge">NATIONAL DOPPLER RADAR</div>
+                                <div class="radar-grid-lines"></div>
+                                <div class="radar-sweep"></div>
 
-        async function unlockSystem() {
-            const pwdInput = document.getElementById('pwd');
-            const err = document.getElementById('errMsg');
-            
-            // Băm mật khẩu nhập vào bằng SHA-256
-            const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(pwdInput.value));
-            const hash = Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, '0')).join('');
+                                <svg class="map-svg" viewBox="0 0 200 120">
+                                    <path d="M 25,45 Q 40,25 70,30 T 130,25 T 180,45 Q 170,80 140,85 T 80,90 T 30,75 Z"
+                                        fill="#1e293b" stroke="#38bdf8" stroke-width="1.2" opacity="0.6" />
+                                    <path d="M 60,35 Q 85,30 110,40 T 140,75" fill="none" stroke="#64748b"
+                                        stroke-width="0.8" stroke-dasharray="2,2" />
 
-            if (hash !== TARGET_HASH) {
-                err.style.display = 'block';
-                pwdInput.value = '';
-                pwdInput.focus();
-                return;
-            }
+                                    <g id="radarPointsLayer"></g>
+                                </svg>
+                            </div>
 
-            // Giải mã và chèn giao diện đầy đủ vào trang
-            try {
-                // Tải script chạy đầy đủ
-                const scriptRes = await fetch("https://cdn.jsdelivr.net/gh/lehoangkhoi/vc-engine@latest/bundle.js").catch(() => null);
-                
-                document.open();
-                document.write(`
-                    <!DOCTYPE html>
-                    <html>
-                    <head>
-                        <meta charset="utf-8" />
-                        <meta name="viewport" content="width=device-width, initial-scale=1" />
-                        <title>VietCan Broadcast Screen</title>
-                        <link rel="preconnect" href="https://fonts.googleapis.com">
-                        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-                        <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800;900&family=Oswald:wght@500;600;700&display=swap" rel="stylesheet">
-                        <style>
-                            :root { --can-red: #d52b1e; --can-navy: #0b1526; --panel-bg: #121c2e; --panel-card: #18243b; --border-color: rgba(255,255,255,0.12); --border-highlight: rgba(56,189,248,0.35); --text-main: #ffffff; --text-muted: #94a3b8; --ok: #22c55e; --danger: #ef4444; --gold: #f59e0b; }
-                            * { box-sizing: border-box; margin: 0; padding: 0; }
-                            html, body { height: 100vh; width: 100vw; overflow: hidden; }
-                            body { background-color: var(--can-navy); background-image: radial-gradient(circle at 100% 0%, rgba(213,43,30,0.15) 0%, transparent 45%), radial-gradient(circle at 0% 100%, rgba(18,28,46,0.9) 0%, transparent 55%), linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px); background-size: 100% 100%, 100% 100%, 35px 35px, 35px 35px; color: var(--text-main); font-family: 'Montserrat', system-ui, sans-serif; zoom: 1.25; }
-                            .screen { display: grid; height: 80vh; width: 80vw; gap: 10px; grid-template-columns: 1.65fr 0.95fr; grid-template-rows: 1fr 48px 38px; padding: 10px; }
-                            .left-column { grid-column: 1; grid-row: 1; display: grid; grid-template-rows: 1fr 34px 140px; gap: 8px; height: 100%; min-height: 0; }
-                            .main-frame { background: #000; border-radius: 6px; overflow: hidden; border: 1px solid var(--border-color); position: relative; height: 100%; width: 100%; min-height: 0; }
-                            .main-frame iframe { width: 100%; height: 100%; border: none; display: block; }
-                            .upcoming-events-bar { background: linear-gradient(90deg, #162238 0%, #0b1526 100%); border: 1px solid var(--border-color); border-left: 3px solid var(--gold); border-radius: 4px; height: 34px; display: flex; align-items: center; overflow: hidden; padding: 0 10px; gap: 12px; }
-                            .upcoming-tag { background: rgba(245,158,11,0.15); border: 1px solid rgba(245,158,11,0.4); color: var(--gold); font-size: 11px; font-weight: 900; letter-spacing: 0.8px; padding: 3px 8px; border-radius: 3px; display: flex; align-items: center; gap: 6px; flex-shrink: 0; white-space: nowrap; }
-                            .pulse-icon { width: 6px; height: 6px; background: var(--gold); border-radius: 50%; box-shadow: 0 0 6px var(--gold); animation: stormPulse 1.2s infinite alternate; }
-                            .upcoming-content { flex-grow: 1; overflow: hidden; white-space: nowrap; font-size: 12px; font-weight: 700; color: #e2e8f0; display: flex; align-items: center; }
-                            .evt-item { display: inline-flex; align-items: center; gap: 8px; animation: fadeInEvt 0.6s ease; }
-                            .evt-time { color: #38bdf8; font-family: 'Oswald', sans-serif; font-size: 14px; letter-spacing: 0.5px; }
-                            .evt-desc { color: #ffffff; font-weight: 600; }
-                            @keyframes fadeInEvt { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
-                            .dynamic-box { position: relative; background: var(--panel-bg); border: 1px solid var(--border-color); border-radius: 6px; overflow: hidden; height: 100%; }
-                            .dyn-slide { position: absolute; inset: 0; opacity: 0; pointer-events: none; transition: opacity 0.5s ease-in-out; display: flex; background: var(--panel-bg); }
-                            .dyn-slide.active { opacity: 1; pointer-events: auto; }
-                            .dyn-header-tag { background: var(--can-red); color: #fff; font-size: 10px; font-weight: 900; padding: 0 6px; letter-spacing: 0.8px; display: flex; align-items: center; justify-content: center; writing-mode: vertical-rl; transform: rotate(180deg); text-transform: uppercase; white-space: nowrap; flex-shrink: 0; }
-                            .dyn-content { flex-grow: 1; padding: 8px 12px; overflow: hidden; display: flex; flex-direction: column; justify-content: center; height: 100%; }
-                            .radar-hitech-container { display: grid; grid-template-columns: 240px 1fr; gap: 12px; align-items: center; height: 100%; }
-                            .radar-canvas-box { position: relative; width: 100%; height: 100%; background: radial-gradient(circle at center, #0e1e38 0%, #060b14 100%); border: 1px solid rgba(56,189,248,0.3); border-radius: 4px; overflow: hidden; display: flex; align-items: center; justify-content: center; }
-                            .radar-sweep { position: absolute; inset: 0; background: conic-gradient(from 0deg at 50% 50%, rgba(56,189,248,0) 0deg, rgba(56,189,248,0.4) 60deg, transparent 65deg); animation: radarRotate 4s linear infinite; pointer-events: none; }
-                            .radar-grid-lines { position: absolute; inset: 0; background-image: radial-gradient(circle at center, transparent 30%, rgba(56,189,248,0.15) 31%, transparent 32%), radial-gradient(circle at center, transparent 60%, rgba(56,189,248,0.15) 61%, transparent 62%), linear-gradient(rgba(56,189,248,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(56,189,248,0.1) 1px, transparent 1px); background-size: 100% 100%, 100% 100%, 20px 20px, 20px 20px; }
-                            .radar-badge { position: absolute; top: 5px; left: 6px; font-size: 9px; font-weight: 900; color: #38bdf8; letter-spacing: 0.5px; display: flex; align-items: center; gap: 4px; z-index: 2; }
-                            .radar-badge::before { content: ''; width: 6px; height: 6px; background: #22c55e; border-radius: 50%; box-shadow: 0 0 6px #22c55e; }
-                            .map-svg { width: 90%; height: 85%; z-index: 1; }
-                            .storm-cloud { animation: stormPulse 2s ease-in-out infinite alternate; }
-                            .alert-panel { display: flex; flex-direction: column; gap: 8px; justify-content: center; }
-                            .alert-badge { background: rgba(239,68,68,0.15); border: 1px solid rgba(239,68,68,0.3); border-left: 4px solid var(--danger); padding: 8px 12px; font-size: 12px; font-weight: 700; color: #fecaca; border-radius: 4px; line-height: 1.4; display: flex; align-items: center; gap: 8px; }
-                            .alert-badge.info { background: rgba(245,158,11,0.15); border: 1px solid rgba(245,158,11,0.3); border-left: 4px solid var(--gold); color: #fef08a; }
-                            @keyframes radarRotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-                            @keyframes stormPulse { 0% { opacity: 0.4; filter: drop-shadow(0 0 2px #ef4444); } 100% { opacity: 0.9; filter: drop-shadow(0 0 8px #ef4444); } }
-                            .sports-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; height: 100%; align-items: center; }
-                            .match-card { background: rgba(0,0,0,0.35); border: 1px solid rgba(255,255,255,0.08); border-radius: 4px; padding: 6px 10px; display: flex; flex-direction: column; justify-content: space-between; height: 100%; }
-                            .match-league { font-size: 10px; font-weight: 800; color: var(--gold); display: flex; justify-content: space-between; }
-                            .match-teams { display: flex; justify-content: space-between; align-items: center; margin: 4px 0; font-size: 13px; font-weight: 800; }
-                            .match-score { font-family: 'Oswald', sans-serif; font-size: 16px; color: #38bdf8; padding: 0 4px; }
-                            .sponsor-grid { display: grid; grid-template-columns: 1fr 1fr 1.2fr; gap: 10px; align-items: center; height: 100%; }
-                            .sponsor-card { background: rgba(255,255,255,0.04); border: 1px dashed var(--border-color); border-radius: 4px; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 6px; }
-                            .sponsor-card h4 { font-size: 12px; font-weight: 800; color: #ffffff; }
-                            .sponsor-card p { font-size: 10px; color: var(--text-muted); margin-top: 2px; }
-                            .market-charts { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; align-items: center; height: 100%; }
-                            .chart-box { background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.08); border-radius: 4px; padding: 6px 6px; display: flex; flex-direction: column; justify-content: space-between; height: 100%; }
-                            .chart-name { font-size: 10px; font-weight: 800; color: #94a3b8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-                            .chart-price { font-family: 'Oswald', sans-serif; font-size: 14px; font-weight: 700; color: #ffffff; }
-                            .chart-change { font-size: 9px; font-weight: 700; }
-                            .sparkline { width: 100%; height: 22px; margin-top: 2px; }
-                            .sidebar { grid-column: 2; grid-row: 1; display: grid; grid-template-rows: auto 1fr 125px; gap: 8px; height: 100%; min-height: 0; }
-                            .can-card { background: var(--panel-bg); border: 1px solid var(--border-color); border-radius: 6px; overflow: hidden; display: flex; flex-direction: column; min-height: 0; }
-                            .can-header { background: linear-gradient(90deg, #1e293b 0%, #0f172a 100%); border-bottom: 2px solid var(--can-red); padding: 6px 12px; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: #cbd5e1; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
-                            .can-header.red { background: var(--can-red); border-bottom: none; color: #ffffff; }
-                            .weather-body { padding: 10px 14px; display: flex; flex-direction: column; gap: 8px; }
-                            .weather-hero { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 6px; padding: 8px 14px; border-left: 4px solid var(--can-red); }
-                            .city-name { font-size: 20px; font-weight: 900; letter-spacing: -0.3px; line-height: 1.1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px; text-transform: uppercase; }
-                            .weather-status { font-size: 12px; color: var(--gold); font-weight: 800; text-transform: uppercase; margin-top: 2px; letter-spacing: 0.5px; }
-                            .hero-temp-box { display: flex; align-items: center; gap: 8px; }
-                            .hero-temp-box .icon svg { width: 42px; height: 42px; filter: drop-shadow(0 0 8px rgba(245,158,11,0.45)); }
-                            .hero-temp-box .temp-val { font-family: 'Oswald', sans-serif; font-size: 46px; font-weight: 700; line-height: 1; }
-                            .wx-list-rows { display: flex; flex-direction: column; border-top: 1px solid rgba(255,255,255,0.08); border-bottom: 1px solid rgba(255,255,255,0.08); }
-                            .wx-row-item { display: flex; justify-content: space-between; align-items: center; padding: 5px 4px; border-bottom: 1px solid rgba(255,255,255,0.06); }
-                            .wx-row-item:last-child { border-bottom: none; }
-                            .wx-row-item .label { font-size: 14px; font-weight: 700; color: #ffffff; }
-                            .wx-row-item .val-icon { display: flex; align-items: center; gap: 8px; }
-                            .wx-row-item .val { font-size: 16px; font-weight: 800; color: #ffffff; }
-                            .wx-row-item .icon-svg { width: 18px; height: 18px; display: flex; align-items: center; }
-                            .forecast-strip { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
-                            .fc-box { background: rgba(0,0,0,0.25); border-radius: 4px; padding: 4px; text-align: center; }
-                            .fc-box .d { font-size: 11px; font-weight: 700; color: var(--text-muted); }
-                            .fc-box .icon svg { width: 22px; height: 22px; margin: 1px auto; }
-                            .fc-box .t { font-family: 'Oswald', sans-serif; font-size: 17px; font-weight: 600; }
-                            .ad-container { position: relative; border-radius: 6px; overflow: hidden; border: 1px solid var(--border-color); background: #000; width: 100%; height: 100%; min-height: 0; }
-                            .ad-slide { position: absolute; inset: 0; opacity: 0; transition: opacity 0.8s ease; }
-                            .ad-slide.active { opacity: 1; }
-                            .ad-slide img { width: 100%; height: 100%; object-fit: cover; display: block; }
-                            .ad-dots { position: absolute; bottom: 8px; right: 10px; display: flex; gap: 4px; z-index: 5; background: rgba(0,0,0,0.6); padding: 3px 6px; border-radius: 10px; }
-                            .ad-dot { width: 5px; height: 5px; border-radius: 50%; background: rgba(255,255,255,0.4); transition: all .3s; }
-                            .ad-dot.active { width: 12px; border-radius: 3px; background: var(--can-red); }
-                            .bottom-widgets { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; height: 100%; }
-                            .sub-card-body { padding: 12px 14px; height: 100%; display: flex; flex-direction: column; justify-content: center; }
-                            .news-headline { font-size: 14px; font-weight: 700; line-height: 1.45; color: #ffffff; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
-                            .rate-list { display: flex; flex-direction: column; gap: 8px; justify-content: center; height: 100%; }
-                            .rate-item { font-size: 14px; font-weight: 700; color: #f1f5f9; display: flex; align-items: center; gap: 6px; }
-                            .rate-item b { color: #ffffff; font-family: 'Oswald', sans-serif; font-size: 19px; letter-spacing: 0.5px; }
-                            .news-bar { grid-column: 1 / -1; grid-row: 2; background: #ffffff; border-radius: 4px; display: flex; align-items: center; overflow: hidden; }
-                            .news-badge { background: var(--can-red); color: #ffffff; font-family: 'Oswald', sans-serif; font-size: 20px; font-weight: 700; letter-spacing: 1px; padding: 0 16px; height: 100%; display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
-                            .news-badge svg { width: 16px; height: 16px; fill: #ffffff; }
-                            .news-track { flex-grow: 1; overflow: hidden; white-space: nowrap; padding: 0 14px; }
-                            .news-marquee-content { display: inline-block; animation: marquee 80s linear infinite; font-size: 20px; font-weight: 700; color: #0b1526; line-height: 48px; }
-                            .news-item { margin-right: 35px; }
-                            .news-item strong { color: var(--can-red); margin-right: 6px; font-weight: 800; }
-                            .news-item::after { content: ' 🍁 '; color: var(--can-red); margin-left: 35px; }
-                            .stock-bar { grid-column: 1 / -1; grid-row: 3; background: #05080e; border: 1px solid rgba(255,255,255,0.1); border-radius: 4px; display: flex; align-items: center; overflow: hidden; position: relative; }
-                            .stock-tag { background: #1e293b; color: #ffffff; font-size: 11px; font-weight: 800; letter-spacing: 1px; padding: 0 14px; height: 100%; display: flex; align-items: center; flex-shrink: 0; border-right: 2px solid var(--can-red); position: relative; z-index: 10; }
-                            .ticker-track { display: inline-flex; white-space: nowrap; animation: ticker 40s linear infinite; font-family: 'Oswald', sans-serif; font-size: 17px; letter-spacing: 0.5px; width: max-content; }
-                            .ticker-item { display: inline-flex; align-items: center; gap: 6px; margin: 0 16px; }
-                            .trend-up { color: #4ade80; font-weight: 700; }
-                            .trend-down { color: #f87171; font-weight: 700; }
-                            @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
-                            @keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
-                        </style>
-                    </head>
-                    <body>
-                        <div class="screen">
-                            <div class="left-column">
-                                <section class="main-frame"><iframe src="" title="Live Canada Stream" allow="autoplay; fullscreen"></iframe></section>
-                                <div class="upcoming-events-bar">
-                                    <div class="upcoming-tag"><span class="pulse-icon"></span> SẮP DIỄN RA</div>
-                                    <div class="upcoming-content" id="upcomingTrack"></div>
-                                </div>
-                                <div class="dynamic-box">
-                                    <div class="dyn-slide active" id="dyn-0">
-                                        <div class="dyn-header-tag">RADAR & CẢNH BÁO</div>
-                                        <div class="dyn-content">
-                                            <div class="radar-hitech-container">
-                                                <div class="radar-canvas-box">
-                                                    <div class="radar-badge">NATIONAL DOPPLER RADAR</div>
-                                                    <div class="radar-grid-lines"></div>
-                                                    <div class="radar-sweep"></div>
-                                                    <svg class="map-svg" viewBox="0 0 200 120">
-                                                        <path d="M 25,45 Q 40,25 70,30 T 130,25 T 180,45 Q 170,80 140,85 T 80,90 T 30,75 Z" fill="#1e293b" stroke="#38bdf8" stroke-width="1.2" opacity="0.6" />
-                                                        <path d="M 60,35 Q 85,30 110,40 T 140,75" fill="none" stroke="#64748b" stroke-width="0.8" stroke-dasharray="2,2" />
-                                                        <g id="radarPointsLayer"></g>
-                                                    </svg>
-                                                </div>
-                                                <div class="alert-panel" id="radarAlertPanel"><div class="alert-badge info"><span>⏳</span><div>Đang kết nối viễn thám Canada...</div></div></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="dyn-slide" id="dyn-1">
-                                        <div class="dyn-header-tag">THỂ THAO CANADA</div>
-                                        <div class="dyn-content"><div class="sports-grid" id="sportsLiveGrid"></div></div>
-                                    </div>
-                                    <div class="dyn-slide" id="dyn-2">
-                                        <div class="dyn-header-tag">ĐỒNG HÀNH</div>
-                                        <div class="dyn-content">
-                                            <div class="sponsor-grid">
-                                                <div class="sponsor-card"><h4>🍁 VIET-CAN LOGISTICS</h4><p>Chuyển phát nhanh hai chiều VN - Canada</p></div>
-                                                <div class="sponsor-card"><h4>🏢 CAN-VIET REAL ESTATE</h4><p>Tư vấn bất động sản, định cư tận tâm</p></div>
-                                                <div class="sponsor-card" style="background:rgba(213,43,30,0.15);border-color:var(--can-red);"><h4 style="color:var(--gold);">LIÊN HỆ QUẢNG CÁO</h4><p>Email:contact@vcnowcanada.com</p></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="dyn-slide" id="dyn-3">
-                                        <div class="dyn-header-tag">CHỈ SỐ TOÀN CẦU</div>
-                                        <div class="dyn-content"><div class="market-charts" id="globalMarketCharts"></div></div>
-                                    </div>
+                            <div class="alert-panel" id="radarAlertPanel">
+                                <div class="alert-badge info">
+                                    <span style="font-size:16px;">⏳</span>
+                                    <div>Đang kết nối hệ thống viễn thám khí tượng Canada...</div>
                                 </div>
                             </div>
-                            <aside class="sidebar">
-                                <div class="can-card">
-                                    <div class="can-header"><span>CANADA TODAY</span><span style="color:var(--gold);">LIVE</span></div>
-                                    <div class="weather-body">
-                                        <div class="weather-hero">
-                                            <div><div class="city-name" id="wxCity">VANCOUVER, BC</div><div class="weather-status" id="wxCond">Đang nạp...</div></div>
-                                            <div class="hero-temp-box"><div class="icon" id="wxIcon"></div><div class="temp-val"><span id="wxTemp">--</span>°C</div></div>
-                                        </div>
-                                        <div class="wx-list-rows" id="wxList"></div>
-                                        <div class="forecast-strip" id="wxForecast"></div>
-                                    </div>
-                                </div>
-                                <div class="ad-container" id="rightAd"></div>
-                                <div class="bottom-widgets">
-                                    <div class="can-card"><div class="can-header red">TIÊU ĐIỂM</div><div class="sub-card-body"><div class="news-headline" id="miniA">Đang cập nhật...</div></div></div>
-                                    <div class="can-card"><div class="can-header">TỶ GIÁ TIỀN TỆ</div><div class="sub-card-body"><div class="rate-list" id="miniB">Đang tải...</div></div></div>
-                                </div>
-                            </aside>
-                            <section class="news-bar">
-                                <div class="news-badge"><svg viewBox="0 0 24 24"><path d="M12 2L13.5 6.5L17.5 5.5L16.5 9.5L21 11L18 14L20 17.5L15.5 17L14 21L12 18L10 21L8.5 17L4 17.5L6 14L3 11L7.5 9.5L6.5 5.5L10.5 6.5L12 2Z" /></svg>BREAKING NEWS</div>
-                                <div class="news-track"><div id="news-marquee-content" class="news-marquee-content">Đang đồng bộ mạng tin tức...</div></div>
-                            </section>
-                            <section class="stock-bar">
-                                <div class="stock-tag">TSX / MARKETS</div>
-                                <div class="ticker-track" id="tickerTrack"><div class="ticker-item">Đang cập nhật...</div></div>
-                            </section>
                         </div>
-                    </body>
-                    </html>
-                `);
-                document.close();
+                    </div>
+                </div>
 
-                // Nạp script xử lý động vào trang sau khi mở
-                const s = document.createElement('script');
-                s.textContent = `
-                    let curDynSlide = 0; setInterval(() => { for(let i=0; i<4; i++) document.getElementById('dyn-'+i)?.classList.remove('active'); curDynSlide = (curDynSlide+1)%4; document.getElementById('dyn-'+curDynSlide)?.classList.add('active'); }, 10000);
-                    const sampleTopicsVi = ['Họp báo Ủy ban Hợp tác Kinh tế & Thương mại Quốc tế','Công bố chỉ số lạm phát Bắc Mỹ','Bản tin dự báo thời tiết chuyên sâu Doppler Radar','Phân tích xu hướng tỷ giá và dòng vốn quốc tế'];
-                    let uIdx = 0; setInterval(() => { const el = document.getElementById('upcomingTrack'); if(el) el.innerHTML = '<div class="evt-item"><span class="evt-time">[TIN TỨC]</span><span class="evt-desc">'+sampleTopicsVi[uIdx%sampleTopicsVi.length]+'</span></div>'; uIdx++; }, 7000);
-                    const ads = ['https://dqa39nkfbkgfv.cloudfront.net/wp-content/uploads/2026/10/01123059/cp-photo-8.jpg','https://images.euronews.com/articles/stories/09/91/30/75/1536x864_cmsv2_86b9034c-7d21-5d50-a1fd-06b5ef0bfeb6-9913075.jpg'];
-                    let aIdx = 0; const rAd = document.getElementById('rightAd'); if(rAd) { rAd.innerHTML = ads.map((u,i) => '<div class="ad-slide '+(i===0?'active':'')+'" id="ad-'+i+'"><img src="'+u+'"/></div>').join(''); setInterval(() => { document.querySelectorAll('.ad-slide').forEach(e=>e.classList.remove('active')); aIdx = (aIdx+1)%ads.length; document.getElementById('ad-'+aIdx)?.classList.add('active'); }, 7000); }
-                `;
-                document.body.appendChild(s);
-            } catch(e) {
-                err.style.display = 'block';
+                <!-- 2. BẢNG XẾP HẠNG THỂ THAO -->
+                <div class="dyn-slide" id="dyn-1">
+                    <div class="dyn-header-tag">THỂ THAO CANADA</div>
+                    <div class="dyn-content">
+                        <div class="sports-grid" id="sportsLiveGrid"></div>
+                    </div>
+                </div>
+
+                <!-- 3. BANNER TÀI TRỢ -->
+                <div class="dyn-slide" id="dyn-2">
+                    <div class="dyn-header-tag">ĐỒNG HÀNH</div>
+                    <div class="dyn-content">
+                        <div class="sponsor-grid">
+                            <div class="sponsor-card">
+                                <h4>🍁 VIET-CAN LOGISTICS</h4>
+                                <p>Chuyển phát nhanh hai chiều Việt Nam - Canada uy tín</p>
+                            </div>
+                            <div class="sponsor-card">
+                                <h4>🏢 CAN-VIET REAL ESTATE</h4>
+                                <p>Tư vấn bất động sản, định cư & tận tâm</p>
+                            </div>
+                            <div class="sponsor-card"
+                                style="background: rgba(213,43,30,0.15); border-color: var(--can-red);">
+                                <h4 style="color:var(--gold);">LIÊN HỆ QUẢNG CÁO</h4>
+                                <p>Email:contact@vcnowcanada.com</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4. CHỈ SỐ TOÀN CẦU -->
+                <div class="dyn-slide" id="dyn-3">
+                    <div class="dyn-header-tag">CHỈ SỐ TOÀN CẦU</div>
+                    <div class="dyn-content">
+                        <div class="market-charts" id="globalMarketCharts"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SIDEBAR PHẢI -->
+        <aside class="sidebar">
+            <!-- 1. THỜI TIẾT -->
+            <div class="can-card">
+                <div class="can-header">
+                    <span>CANADA TODAY</span>
+                    <span style="color: var(--gold);">LIVE</span>
+                </div>
+                <div class="weather-body">
+                    <div class="weather-hero">
+                        <div>
+                            <div class="city-name" id="wxCity">VANCOUVER, BC</div>
+                            <div class="weather-status" id="wxCond">Đang cập nhật...</div>
+                        </div>
+                        <div class="hero-temp-box">
+                            <div class="icon" id="wxIcon"></div>
+                            <div class="temp-val"><span id="wxTemp">--</span>°C</div>
+                        </div>
+                    </div>
+
+                    <div class="wx-list-rows" id="wxList"></div>
+                    <div class="forecast-strip" id="wxForecast"></div>
+                </div>
+            </div>
+
+            <!-- 2. SLIDER HÌNH ẢNH -->
+            <div class="ad-container" id="rightAd"></div>
+
+            <!-- 3. TIÊU ĐIỂM & TỶ GIÁ -->
+            <div class="bottom-widgets">
+                <div class="can-card">
+                    <div class="can-header red">TIÊU ĐIỂM</div>
+                    <div class="sub-card-body">
+                        <div class="news-headline" id="miniA">Đang cập nhật tin thế giới...</div>
+                    </div>
+                </div>
+                <div class="can-card">
+                    <div class="can-header">TỶ GIÁ TIỀN TỆ</div>
+                    <div class="sub-card-body">
+                        <div class="rate-list" id="miniB">Đang tải tỷ giá...</div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- THANH TIN TỨC BREAKING TRỰC TIẾP -->
+        <section class="news-bar">
+            <div class="news-badge">
+                <svg viewBox="0 0 24 24">
+                    <path
+                        d="M12 2L13.5 6.5L17.5 5.5L16.5 9.5L21 11L18 14L20 17.5L15.5 17L14 21L12 18L10 21L8.5 17L4 17.5L6 14L3 11L7.5 9.5L6.5 5.5L10.5 6.5L12 2Z" />
+                </svg>
+                BREAKING NEWS
+            </div>
+            <div class="news-track">
+                <div id="news-marquee-content" class="news-marquee-content">Đang đồng bộ mạng tin tức quốc tế...</div>
+            </div>
+        </section>
+
+        <!-- THANH CHỨNG KHOÁN TICKER -->
+        <section class="stock-bar">
+            <div class="stock-tag">TSX / MARKETS</div>
+            <div class="ticker-track" id="tickerTrack">
+                <div class="ticker-item">Đang cập nhật bảng giá chứng khoán...</div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        /* ========================================================
+           1. CƠ CHẾ KIỂM TRA ĐỘC QUYỀN TRÊN OBS STUDIO
+           ======================================================== */
+        const isObsBrowser = navigator.userAgent.includes('OBS/') || !!window.obsstudio;
+
+        if (!isObsBrowser) {
+            // Hủy toàn bộ nội dung DOM nếu không phải OBS
+            document.getElementById('mainScreen').remove();
+            document.getElementById('authOverlay').remove();
+            const denied = document.getElementById('deniedScreen');
+            denied.style.display = 'flex';
+            throw new Error("Execution halted: Non-OBS client detected.");
+        }
+
+        /* ========================================================
+           2. BẢO VỆ CHỐNG SOI / ĂN TRỘM CODE (ANTI-DEVTOOLS)
+           ======================================================== */
+        document.addEventListener('contextmenu', e => e.preventDefault());
+
+        document.addEventListener('keydown', e => {
+            if (e.key === 'F12' || e.keyCode === 123) { e.preventDefault(); return false; }
+            if (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C')) { e.preventDefault(); return false; }
+            if (e.ctrlKey && (e.key === 'u' || e.key === 'U' || e.key === 's' || e.key === 'S')) { e.preventDefault(); return false; }
+        });
+
+        setInterval(() => {
+            const before = new Date().getTime();
+            debugger;
+            const after = new Date().getTime();
+            if (after - before > 100) {
+                document.body.innerHTML = '<h1 style="color:#d52b1e;text-align:center;margin-top:20vh;">TRUY CẬP BỊ TỪ CHỐI</h1>';
+            }
+        }, 800);
+
+        /* ========================================================
+           3. XÁC THỰC MẬT KHẨU MÃ HÓA (SHA-256 HASH)
+           ======================================================== */
+        // SHA-256 của "1234567890"
+        const TARGET_HASH = 'c775e7b757ede630cd0aa1113bd102661ab38829ca52a6422ab782862f268646';
+
+        async function sha256(str) {
+            const buffer = new TextEncoder().encode(str);
+            const digest = await crypto.subtle.digest('SHA-256', buffer);
+            return Array.from(new Uint8Array(digest)).map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+
+        const authOverlay = document.getElementById('authOverlay');
+        const authInput = document.getElementById('authPassword');
+        const authBtn = document.getElementById('authSubmit');
+        const authErr = document.getElementById('authError');
+
+        async function checkAuthentication() {
+            const hashedInput = await sha256(authInput.value);
+            if (hashedInput === TARGET_HASH) {
+                authOverlay.classList.add('unlocked');
+                authErr.style.display = 'none';
+            } else {
+                authErr.style.display = 'block';
+                authInput.style.borderColor = 'var(--danger)';
+                authInput.value = '';
+                authInput.focus();
             }
         }
 
-        document.getElementById('btnUnlock').addEventListener('click', unlockSystem);
-        document.getElementById('pwd').addEventListener('keypress', e => { if (e.key === 'Enter') unlockSystem(); });
+        authBtn.addEventListener('click', checkAuthentication);
+        authInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') checkAuthentication();
+        });
+
+        /* ========================================================
+           4. MODULES HOẠT ĐỘNG
+           ======================================================== */
+        let curDynSlide = 0;
+        const totalDynSlides = 4;
+        function rotateDynamicBox() {
+            for (let i = 0; i < totalDynSlides; i++) {
+                document.getElementById(`dyn-${i}`)?.classList.remove('active');
+            }
+            curDynSlide = (curDynSlide + 1) % totalDynSlides;
+            document.getElementById(`dyn-${curDynSlide}`)?.classList.add('active');
+        }
+        setInterval(rotateDynamicBox, 10000);
+
+        const sampleTopicsVi = [
+            'Họp báo Ủy ban Hợp tác Kinh tế & Thương mại Quốc tế',
+            'Công bố chỉ số lạm phát và dữ liệu việc làm Bắc Mỹ',
+            'Bản tin dự báo thời tiết chuyên sâu và cảnh báo Doppler Radar',
+            'Phân tích xu hướng tỷ giá và dòng vốn thị trường quốc tế',
+            'Cập nhật kết quả thi đấu và bảng xếp hạng thể thao chuyên nghiệp',
+            'Diễn đàn đầu tư và chuyển đổi năng lượng sạch toàn cầu',
+            'Tổng hợp điểm tin thị trường chứng khoán Phố Wall và TSX',
+            'Hội nghị thượng đỉnh về chuỗi cung ứng và logistics thế giới'
+        ];
+
+        let upcomingEvents = sampleTopicsVi.map((title, idx) => ({
+            time: new Date(Date.now() + (idx + 1) * 25 * 60000).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }),
+            title: title
+        }));
+
+        let evtIndex = 0;
+
+        function displayCurrentEvent() {
+            if (!upcomingEvents || !upcomingEvents.length) return;
+            const cur = upcomingEvents[evtIndex % upcomingEvents.length];
+            const track = document.getElementById('upcomingTrack');
+            if (track) {
+                track.innerHTML = `
+                    <div class="evt-item">
+                        <span class="evt-time">[CẬP NHẬT ${cur.time}]</span>
+                        <span class="evt-desc">${cur.title}</span>
+                    </div>
+                `;
+            }
+            evtIndex++;
+        }
+
+        async function fetchUpcomingEvents() {
+            const feeds = [
+                'https://vnexpress.net/rss/the-gioi.rss',
+                'https://tuoitre.vn/rss/the-gioi.rss',
+                'https://thanhnien.vn/rss/the-gioi.rss'
+            ];
+
+            for (const feedUrl of feeds) {
+                try {
+                    let res = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(feedUrl)}&t=${Date.now()}`);
+                    let data = await res.json();
+
+                    if (!data || data.status !== 'ok' || !data.items || data.items.length === 0) {
+                        const proxyRes = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(feedUrl)}&t=${Date.now()}`);
+                        const proxyData = await proxyRes.json();
+                        const parser = new DOMParser();
+                        const xmlDoc = parser.parseFromString(proxyData.contents, "text/xml");
+                        const items = xmlDoc.querySelectorAll("item");
+
+                        if (items.length > 0) {
+                            data = {
+                                status: 'ok',
+                                items: Array.from(items).map(el => ({
+                                    title: el.querySelector("title")?.textContent || ''
+                                }))
+                            };
+                        }
+                    }
+
+                    if (data && data.status === 'ok' && data.items && data.items.length > 0) {
+                        upcomingEvents = data.items.slice(0, 15).map((item, idx) => {
+                            const d = new Date(Date.now() + (idx + 1) * 20 * 60 * 1000);
+                            const timeStr = d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+                            let cleanTitle = item.title.replace(/<[^>]*>/g, '').split(' - ')[0].trim();
+                            if (cleanTitle.length > 95) cleanTitle = cleanTitle.substring(0, 95) + '...';
+
+                            return {
+                                time: timeStr,
+                                title: cleanTitle
+                            };
+                        });
+                        break;
+                    }
+                } catch (err) { }
+            }
+        }
+
+        displayCurrentEvent();
+        fetchUpcomingEvents();
+        setInterval(displayCurrentEvent, 7000);
+        setInterval(fetchUpcomingEvents, 180000);
+
+        const RADAR_REGIONS = [
+            { name: 'Vancouver (BC)', lat: 49.2827, lon: -123.1207, cx: 45, cy: 60, labelX: 35, labelY: 78 },
+            { name: 'Calgary (AB)', lat: 51.0447, lon: -114.0719, cx: 75, cy: 52, labelX: 65, labelY: 42 },
+            { name: 'Toronto (ON)', lat: 43.6532, lon: -79.3832, cx: 140, cy: 75, labelX: 125, labelY: 90 },
+            { name: 'Montreal (QC)', lat: 45.5017, lon: -73.5673, cx: 160, cy: 65, labelX: 145, labelY: 55 }
+        ];
+
+        async function fetchRadarAndAlerts() {
+            try {
+                let svgPoints = '';
+                let badWeatherCities = [];
+                let maxClouds = 0;
+                let minVisibility = 10000;
+                let monitoredCount = 0;
+
+                for (const reg of RADAR_REGIONS) {
+                    const res = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${reg.lat}&lon=${reg.lon}&appid=30e599dd8c563fb351f4de68c9d99ea3&units=metric&lang=vi`);
+                    const data = await res.json();
+
+                    if (data && data.weather) {
+                        monitoredCount++;
+                        const condId = data.weather[0].id;
+                        const clouds = data.clouds ? data.clouds.all : 0;
+                        const visibility = data.visibility || 10000;
+
+                        if (clouds > maxClouds) maxClouds = clouds;
+                        if (visibility < minVisibility) minVisibility = visibility;
+
+                        let stormColor = '#38bdf8';
+                        let isSevere = false;
+                        if (condId < 600) {
+                            stormColor = '#ef4444';
+                            isSevere = true;
+                            badWeatherCities.push({ name: reg.name, status: data.weather[0].description });
+                        } else if (condId < 700) {
+                            stormColor = '#a855f7';
+                            isSevere = true;
+                            badWeatherCities.push({ name: reg.name, status: 'Có tuyết rơi' });
+                        } else if (condId < 800) {
+                            stormColor = '#f59e0b';
+                        } else if (clouds > 70) {
+                            stormColor = '#f59e0b';
+                        } else {
+                            stormColor = '#22c55e';
+                        }
+
+                        svgPoints += `
+                            <circle class="storm-cloud" cx="${reg.cx}" cy="${reg.cy}" r="${isSevere ? 16 : (clouds > 50 ? 10 : 6)}" fill="${stormColor}" opacity="0.45" />
+                            <circle class="storm-cloud" cx="${reg.cx}" cy="${reg.cy}" r="${isSevere ? 8 : 4}" fill="${stormColor}" opacity="0.8" />
+                            <circle cx="${reg.cx}" cy="${reg.cy}" r="2" fill="#fff" />
+                            <text x="${reg.labelX}" y="${reg.labelY}" fill="#cbd5e1" font-size="6.5" font-weight="700">${reg.name.split(' ')[0]}</text>
+                        `;
+                    }
+                }
+
+                if (svgPoints) document.getElementById('radarPointsLayer').innerHTML = svgPoints;
+
+                const alertPanel = document.getElementById('radarAlertPanel');
+                if (badWeatherCities.length > 0) {
+                    const affected = badWeatherCities.map(c => c.name.split(' ')[0]).join(', ');
+                    alertPanel.innerHTML = `
+                        <div class="alert-badge">
+                            <span style="font-size:16px;">⚠️</span>
+                            <div><strong>CẢNH BÁO NHIỄU ĐỘNG RADAR:</strong> Phát hiện đối lưu/mưa giông tại <strong>${affected}</strong>.</div>
+                        </div>
+                        <div class="alert-badge info">
+                            <span style="font-size:16px;">📡</span>
+                            <div><strong>MẬT ĐỘ MÂY QUỐC GIA:</strong> Mức phủ mây cao nhất ${maxClouds}% • Tầm nhìn khí quyển ${(minVisibility / 1000).toFixed(1)} km.</div>
+                        </div>
+                    `;
+                } else {
+                    alertPanel.innerHTML = `
+                        <div class="alert-badge info">
+                            <span style="font-size:16px;">🛰️</span>
+                            <div><strong>DOPPLER SATELLITE:</strong> Giám sát ${monitoredCount} trạm quan trắc Canada • Khí quyển ổn định.</div>
+                        </div>
+                        <div class="alert-badge info">
+                            <span style="font-size:16px;">🌐</span>
+                            <div><strong>ĐỘ BẢNG QUANG KHÍ TƯỢNG:</strong> Mật độ mây trung bình ${maxClouds}% • Tầm nhìn toàn lãnh thổ tốt (${(minVisibility / 1000).toFixed(1)} km).</div>
+                        </div>
+                    `;
+                }
+            } catch (e) { }
+        }
+        fetchRadarAndAlerts();
+        setInterval(fetchRadarAndAlerts, 180000);
+
+        async function fetchSportsScores() {
+            try {
+                const nhlRes = await fetch('https://site.api.espn.com/apis/site/v2/sports/hockey/nhl/scoreboard');
+                const nhlData = await nhlRes.json();
+                const nbaRes = await fetch('https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard');
+                const nbaData = await nbaRes.json();
+
+                let cardsHtml = '';
+
+                if (nhlData.events && nhlData.events.length > 0) {
+                    const nhlMatches = nhlData.events.slice(0, 2);
+                    nhlMatches.forEach(ev => {
+                        const comp = ev.competitions[0];
+                        const team1 = comp.competitors[0];
+                        const team2 = comp.competitors[1];
+                        const status = ev.status.type.shortDetail || 'LIVE';
+                        const venue = comp.venue ? comp.venue.fullName : 'Canada Arena';
+                        const isLive = ev.status.type.state === 'in';
+
+                        cardsHtml += `
+                            <div class="match-card">
+                                <div class="match-league">
+                                    <span>NHL HOCKEY</span> 
+                                    <span style="color:${isLive ? 'var(--danger)' : 'var(--ok)'}">${status}</span>
+                                </div>
+                                <div class="match-teams">
+                                    <span>${team2.team.shortDisplayName || team2.team.name}</span> 
+                                    <span class="match-score">${team2.score || '0'} - ${team1.score || '0'}</span> 
+                                    <span>${team1.team.shortDisplayName || team1.team.name}</span>
+                                </div>
+                                <div style="font-size:10px; color:var(--text-muted)">${venue}</div>
+                            </div>
+                        `;
+                    });
+                }
+
+                if (nbaData.events && nbaData.events.length > 0) {
+                    const nbaEv = nbaData.events[0];
+                    const comp = nbaEv.competitions[0];
+                    const team1 = comp.competitors[0];
+                    const team2 = comp.competitors[1];
+                    const status = nbaEv.status.type.shortDetail || 'SCHEDULED';
+                    const venue = comp.venue ? comp.venue.fullName : 'NBA Arena';
+
+                    cardsHtml += `
+                        <div class="match-card">
+                            <div class="match-league">
+                                <span>NBA BASKETBALL</span> 
+                                <span style="color:var(--gold)">${status}</span>
+                            </div>
+                            <div class="match-teams">
+                                <span>${team2.team.shortDisplayName || team2.team.name}</span> 
+                                <span class="match-score">${team2.score || 'VS'} ${team1.score ? '- ' + team1.score : ''}</span> 
+                                <span>${team1.team.shortDisplayName || team1.team.name}</span>
+                            </div>
+                            <div style="font-size:10px; color:var(--text-muted)">${venue}</div>
+                        </div>
+                    `;
+                }
+
+                if (cardsHtml) document.getElementById('sportsLiveGrid').innerHTML = cardsHtml;
+            } catch (e) { }
+        }
+        fetchSportsScores();
+        setInterval(fetchSportsScores, 60000);
+
+        const GLOBAL_INDEX_LIST = [
+            { name: 'TSX (EWC)', sym: 'EWC' },
+            { name: 'S&P 500 (SPY)', sym: 'SPY' },
+            { name: 'NASDAQ (QQQ)', sym: 'QQQ' },
+            { name: 'GOLD (GLD)', sym: 'GLD' },
+            { name: 'CRUDE OIL', sym: 'USO' },
+            { name: 'BITCOIN', sym: 'BINANCE:BTCUSDT' }
+        ];
+
+        async function fetchGlobalMarkets() {
+            const container = document.getElementById('globalMarketCharts');
+            if (!container) return;
+
+            let html = '';
+            for (const item of GLOBAL_INDEX_LIST) {
+                try {
+                    const res = await fetch(`https://finnhub.io/api/v1/quote?symbol=${item.sym}&token=d2hgrhhr01qon4ec60n0d2hgrhhr01qon4ec60ng`);
+                    const data = await res.json();
+                    if (data.c && data.c > 0) {
+                        const up = data.d >= 0;
+                        const price = item.sym.includes('BTC') ? `$${Math.round(data.c).toLocaleString('en-US')}` : `$${data.c.toFixed(2)}`;
+                        const sparkline = up
+                            ? `<path d="M0,20 Q35,18 55,8 T100,2" fill="none" stroke="#4ade80" stroke-width="2" />`
+                            : `<path d="M0,5 Q30,12 60,8 T100,22" fill="none" stroke="#f87171" stroke-width="2" />`;
+
+                        html += `
+                            <div class="chart-box">
+                                <div class="chart-name">${item.name}</div>
+                                <div class="chart-price">${price}</div>
+                                <div class="chart-change ${up ? 'trend-up' : 'trend-down'}">${up ? '▲' : '▼'} ${up ? '+' : ''}${data.dp.toFixed(2)}%</div>
+                                <svg class="sparkline" viewBox="0 0 100 25">${sparkline}</svg>
+                            </div>
+                        `;
+                    }
+                } catch (e) { }
+            }
+            if (html) container.innerHTML = html;
+        }
+        fetchGlobalMarkets();
+        setInterval(fetchGlobalMarkets, 60000);
+
+        let newsIndex = 0;
+        async function fetchNews() {
+            try {
+                const res = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Frss.nytimes.com%2Fservices%2Fxml%2Frss%2Fnyt%2FWorld.xml&t=${Date.now()}`);
+                const data = await res.json();
+                if (data.status === 'ok' && data.items.length > 0) {
+                    document.getElementById('miniA').textContent = data.items[newsIndex % data.items.length].title;
+                }
+                newsIndex++;
+            } catch (e) {
+                document.getElementById('miniA').textContent = 'Mất kết nối dòng tin.';
+            }
+        }
+        setInterval(fetchNews, 15000);
+        fetchNews();
+
+        async function fetchMarqueeNews() {
+            try {
+                const res = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=http%3A%2F%2Ffeeds.bbci.co.uk%2Fnews%2Fworld%2Frss.xml&t=${Date.now()}`);
+                const data = await res.json();
+                if (data.status === 'ok' && data.items.length > 0) {
+                    const html = data.items.map(item => `<span class="news-item"><strong>${item.title}</strong>: ${item.description.replace(/<[^>]*>/g, '')}</span>`).join('');
+                    document.getElementById('news-marquee-content').innerHTML = html.repeat(2);
+                }
+            } catch (e) { }
+        }
+        fetchMarqueeNews();
+        setInterval(fetchMarqueeNews, 300000);
+
+        let marketDataPairs = [];
+        let marketDataIndex = 0;
+        const BASE_RATES_REF = { cadUsd: 0.7240, cadVnd: 18900, cadEur: 0.6720, usdVnd: 26150 };
+
+        async function updateMarketData() {
+            try {
+                const res = await fetch('https://v6.exchangerate-api.com/v6/92c1cef533355cffa0c4f60f/latest/CAD');
+                const data = await res.json();
+                if (data.result === 'success') {
+                    const rates = data.conversion_rates;
+                    const cadUsd = rates.USD;
+                    const cadVnd = rates.VND;
+                    const cadEur = rates.EUR;
+                    const usdVnd = rates.VND / rates.USD;
+
+                    const getTrend = (val, refVal) => {
+                        return (val - refVal >= 0) ? { icon: '▲', cls: 'trend-up' } : { icon: '▼', cls: 'trend-down' };
+                    };
+
+                    const tCadUsd = getTrend(cadUsd, BASE_RATES_REF.cadUsd);
+                    const tCadVnd = getTrend(cadVnd, BASE_RATES_REF.cadVnd);
+                    const tCadEur = getTrend(cadEur, BASE_RATES_REF.cadEur);
+                    const tUsdVnd = getTrend(usdVnd, BASE_RATES_REF.usdVnd);
+
+                    marketDataPairs = [
+                        [
+                            `<div class="rate-item"><span class="${tCadUsd.cls}">${tCadUsd.icon}</span> 1 CAD = <b>${cadUsd.toFixed(4)}</b> USD</div>`,
+                            `<div class="rate-item"><span class="${tCadVnd.cls}">${tCadVnd.icon}</span> 1 CAD = <b>${cadVnd.toLocaleString('vi-VN', { maximumFractionDigits: 0 })}</b> VNĐ</div>`
+                        ],
+                        [
+                            `<div class="rate-item"><span class="${tCadEur.cls}">${tCadEur.icon}</span> 1 CAD = <b>${cadEur.toFixed(4)}</b> EUR</div>`,
+                            `<div class="rate-item"><span class="${tUsdVnd.cls}">${tUsdVnd.icon}</span> 1 USD = <b>${usdVnd.toLocaleString('vi-VN', { maximumFractionDigits: 0 })}</b> VNĐ</div>`
+                        ]
+                    ];
+                    rotateMarketData();
+                }
+            } catch (e) {
+                document.getElementById('miniB').innerHTML = 'Lỗi nạp tỷ giá.';
+            }
+        }
+
+        function rotateMarketData() {
+            if (!marketDataPairs.length) return;
+            const currentPair = marketDataPairs[marketDataIndex];
+            document.getElementById('miniB').innerHTML = currentPair.join('');
+            marketDataIndex = (marketDataIndex + 1) % marketDataPairs.length;
+        }
+        updateMarketData();
+        setInterval(updateMarketData, 600000);
+        setInterval(rotateMarketData, 5000);
+
+        const iconSvgMap = {
+            '01d': `<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="12" fill="#f59e0b"/><g stroke="#f59e0b" stroke-width="3" stroke-linecap="round"><line x1="32" y1="8" x2="32" y2="14"/><line x1="32" y1="50" x2="32" y2="56"/><line x1="8" y1="32" x2="14" y2="32"/><line x1="50" y1="32" x2="56" y2="32"/></g></svg>`,
+            '01n': `<svg viewBox="0 0 64 64"><path d="M43.6,33.1A15.4,15.4,0,1,1,28.2,17.7a15.2,15.2,0,0,0,15.4,15.4Z" fill="#e2e8f0"/></svg>`,
+            '02d': `<svg viewBox="0 0 64 64"><circle cx="24" cy="24" r="9" fill="#f59e0b"/><path d="M46.7,35H24a8,8,0,0,0,0,16H46.7a8,8,0,0,0,0-16Z" fill="#94a3b8"/></svg>`,
+            '03d': `<svg viewBox="0 0 64 64"><path d="M46.7,33.4H17.2a8.9,8.9,0,0,0,0,17.8H46.7a8.9,8.9,0,0,0,0-17.8Z" fill="#94a3b8"/></svg>`,
+            '04d': `<svg viewBox="0 0 64 64"><path d="M46.7,33.4H17.2a8.9,8.9,0,0,0,0,17.8H46.7a8.9,8.9,0,0,0,0-17.8Z" fill="#64748b"/></svg>`,
+            '09d': `<svg viewBox="0 0 64 64"><path d="M46.7,33.4H17.2a8.9,8.9,0,0,0,0,17.8H46.7a8.9,8.9,0,0,0,0-17.8Z" fill="#64748b"/><line x1="24" y1="52" x2="20" y2="58" stroke="#38bdf8" stroke-width="3"/><line x1="36" y1="52" x2="32" y2="58" stroke="#38bdf8" stroke-width="3"/></svg>`,
+            '10d': `<svg viewBox="0 0 64 64"><circle cx="24" cy="24" r="8" fill="#f59e0b"/><path d="M46.7,33.4H17.2a8.9,8.9,0,0,0,0,17.8H46.7a8.9,8.9,0,0,0,0-17.8Z" fill="#94a3b8"/><line x1="24" y1="52" x2="20" y2="58" stroke="#38bdf8" stroke-width="3"/></svg>`,
+            '11d': `<svg viewBox="0 0 64 64"><path d="M46.7,33.4H17.2a8.9,8.9,0,0,0,0,17.8H46.7a8.9,8.9,0,0,0,0-17.8Z" fill="#475569"/><polygon points="30 46 26 53 32 53 29 60 36 51 31 51 30 46" fill="#f59e0b"/></svg>`,
+            '13d': `<svg viewBox="0 0 64 64"><path d="M46.7,33.4H17.2a8.9,8.9,0,0,0,0,17.8H46.7a8.9,8.9,0,0,0,0-17.8Z" fill="#94a3b8"/><circle cx="26" cy="54" r="2" fill="#fff"/><circle cx="36" cy="54" r="2" fill="#fff"/></svg>`,
+            '50d': `<svg viewBox="0 0 64 64"><line x1="14" y1="32" x2="50" y2="32" stroke="#94a3b8" stroke-width="3"/><line x1="10" y1="40" x2="54" y2="40" stroke="#94a3b8" stroke-width="3"/></svg>`
+        };
+        iconSvgMap['02n'] = iconSvgMap['02d']; iconSvgMap['03n'] = iconSvgMap['03d']; iconSvgMap['04n'] = iconSvgMap['04d']; iconSvgMap['09n'] = iconSvgMap['09d']; iconSvgMap['10n'] = iconSvgMap['10d']; iconSvgMap['11n'] = iconSvgMap['11d']; iconSvgMap['13n'] = iconSvgMap['13d']; iconSvgMap['50n'] = iconSvgMap['50d'];
+
+        const detailIconSvgMap = {
+            'temp': `<svg viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"></path></svg>`,
+            'wind': `<svg viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9.59 4.59A2 2 0 1 1 11 8H2m10.59 11.41A2 2 0 1 0 14 16H2m15.73-8.27A2.5 2.5 0 1 1 19.5 12H2"></path></svg>`,
+            'humidity': `<svg viewBox="0 0 24 24" fill="none" stroke="#0ea5e9" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path></svg>`
+        };
+
+        const CAN_CITIES = [
+            { name: 'Vancouver', code: 'BC', lat: 49.2827, lon: -123.1207 },
+            { name: 'Toronto', code: 'ON', lat: 43.6532, lon: -79.3832 },
+            { name: 'Montreal', code: 'QC', lat: 45.5017, lon: -73.5673 },
+            { name: 'Calgary', code: 'AB', lat: 51.0447, lon: -114.0719 },
+            { name: 'Ottawa', code: 'ON', lat: 45.4215, lon: -75.6972 },
+            { name: 'Edmonton', code: 'AB', lat: 53.5461, lon: -113.4938 },
+            { name: 'Quebec City', code: 'QC', lat: 46.8139, lon: -71.2080 },
+            { name: 'Winnipeg', code: 'MB', lat: 49.8951, lon: -97.1384 },
+            { name: 'Halifax', code: 'NS', lat: 44.6488, lon: -63.5752 },
+            { name: 'Victoria', code: 'BC', lat: 48.4284, lon: -123.3656 },
+            { name: 'San Jose', code: 'CA', lat: 37.3382, lon: -121.8863 },
+            { name: 'Los Angeles', code: 'CA', lat: 34.0522, lon: -118.2437 },
+            { name: 'San Francisco', code: 'CA', lat: 37.7749, lon: -122.4194 },
+            { name: 'Seattle', code: 'WA', lat: 47.6062, lon: -122.3321 },
+            { name: 'Washington', code: 'DC', lat: 38.9072, lon: -77.0369 },
+            { name: 'New York', code: 'NY', lat: 40.7128, lon: -74.0060 },
+            { name: 'Houston', code: 'TX', lat: 29.7604, lon: -95.3698 },
+            { name: 'Dallas', code: 'TX', lat: 32.7767, lon: -96.7970 },
+            { name: 'Miami', code: 'FL', lat: 25.7617, lon: -80.1918 },
+            { name: 'Chicago', code: 'IL', lat: 41.8781, lon: -87.6298 },
+            { name: 'Sài Gòn', code: 'VN', lat: 10.8231, lon: 106.6297 }
+        ];
+        let cIdx = 0;
+
+        async function fetchWeather(city) {
+            try {
+                const res = await fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${city.lat}&lon=${city.lon}&appid=30e599dd8c563fb351f4de68c9d99ea3&units=metric&lang=vi&cnt=25`);
+                const data = await res.json();
+                const cur = data.list[0];
+
+                document.getElementById('wxCity').textContent = `${city.name}, ${city.code}`;
+                document.getElementById('wxCond').textContent = cur.weather[0].description.toUpperCase();
+                document.getElementById('wxTemp').textContent = Math.round(cur.main.temp);
+                document.getElementById('wxIcon').innerHTML = iconSvgMap[cur.weather[0].icon] || iconSvgMap['01d'];
+
+                document.getElementById('wxList').innerHTML = `
+                    <div class="wx-row-item">
+                        <span class="label">Cảm giác</span>
+                        <div class="val-icon">
+                            <span class="val">${Math.round(cur.main.feels_like)}°C</span>
+                            <span class="icon-svg">${detailIconSvgMap['temp']}</span>
+                        </div>
+                    </div>
+                    <div class="wx-row-item">
+                        <span class="label">Sức gió</span>
+                        <div class="val-icon">
+                            <span class="val">${Math.round(cur.wind.speed * 3.281)} ft/s</span>
+                            <span class="icon-svg">${detailIconSvgMap['wind']}</span>
+                        </div>
+                    </div>
+                    <div class="wx-row-item">
+                        <span class="label">Độ ẩm</span>
+                        <div class="val-icon">
+                            <span class="val">${cur.main.humidity}%</span>
+                            <span class="icon-svg">${detailIconSvgMap['humidity']}</span>
+                        </div>
+                    </div>
+                `;
+
+                const fc = data.list.filter(i => i.dt_txt.includes("12:00:00")).slice(0, 3);
+                const days = ['Hôm nay', 'Ngày mai', 'Ngày kia'];
+                document.getElementById('wxForecast').innerHTML = fc.map((item, i) => `
+                    <div class="fc-box">
+                        <div class="d">${days[i]}</div>
+                        <div class="icon">${iconSvgMap[item.weather[0].icon] || iconSvgMap['01d']}</div>
+                        <div class="t">${Math.round(item.main.temp)}°C</div>
+                    </div>
+                `).join('');
+            } catch (e) { }
+        }
+        function rotateWx() { fetchWeather(CAN_CITIES[cIdx]); cIdx = (cIdx + 1) % CAN_CITIES.length; }
+        setInterval(rotateWx, 10000);
+        rotateWx();
+
+        const ads = [
+            'https://dqa39nkfbkgfv.cloudfront.net/wp-content/uploads/2026/10/01123059/cp-photo-8.jpg',
+            'https://images.euronews.com/articles/stories/09/91/30/75/1536x864_cmsv2_86b9034c-7d21-5d50-a1fd-06b5ef0bfeb6-9913075.jpg',
+            'https://i.cbc.ca/ais/e1816b15-5d86-4dda-b170-2f7d53a56ccb,1790116113547/full/max/0/default.jpg?im=Crop%2Crect%3D%280%2C261%2C6723%2C3781%29%3B',
+            'https://bloximages.chicago2.vip.townnews.com/thestar.com/content/tncms/assets/v3/editorial/e/a0/ea0a46cf-938d-5497-ae72-984d79a55c36/6a5134c631d01.image.jpg?resize=1200%2C810',
+            'https://i.cbc.ca/ais/83980e54-605e-4c02-8645-ac27e19d9879,1781550357416/full/max/0/default.jpg?im=Crop%2Crect%3D%280%2C145%2C2788%2C1568%29%3B',
+            'https://images.theconversation.com/files/756335/original/file-20260826-50-3kemn5.JPG?ixlib=rb-4.1.1&rect=0%2C68%2C4308%2C2872&q=50&auto=format&w=768&h=512&fit=crop&dpr=2'
+        ];
+        let aIdx = 0;
+        function initAds() {
+            const el = document.getElementById('rightAd');
+            el.innerHTML = ads.map((url, i) => `<div class="ad-slide" id="sl-${i}"><img src="${url}" /></div>`).join('') +
+                `<div class="ad-dots">${ads.map((_, i) => `<div class="ad-dot" id="dt-${i}"></div>`).join('')}</div>`;
+        }
+        function runAds() {
+            ads.forEach((_, i) => {
+                document.getElementById(`sl-${i}`)?.classList.remove('active');
+                document.getElementById(`dt-${i}`)?.classList.remove('active');
+            });
+            document.getElementById(`sl-${aIdx}`)?.classList.add('active');
+            document.getElementById(`dt-${aIdx}`)?.classList.add('active');
+            aIdx = (aIdx + 1) % ads.length;
+        }
+        initAds(); runAds(); setInterval(runAds, 7000);
+
+        async function fetchStocks() {
+            const syms = ['SHOP', 'RY', 'TD', 'AAPL', 'NVDA', 'MSFT', 'TSLA'];
+            let itemsHtml = '';
+            for (const s of syms) {
+                try {
+                    const res = await fetch(`https://finnhub.io/api/v1/quote?symbol=${s}&token=d2hgrhhr01qon4ec60n0d2hgrhhr01qon4ec60ng`);
+                    const data = await res.json();
+                    if (data.c && data.c > 0) {
+                        const up = data.d >= 0;
+                        itemsHtml += `
+                            <span class="ticker-item">
+                                <b style="color:#ffffff;">${s}</b> 
+                                <span style="color:#cbd5e1;">$${data.c.toFixed(2)}</span> 
+                                <span class="${up ? 'trend-up' : 'trend-down'}">${up ? '▲' : '▼'} ${Math.abs(data.d).toFixed(2)} (${data.dp.toFixed(2)}%)</span>
+                            </span>
+                        `;
+                    }
+                } catch (e) { }
+            }
+            if (itemsHtml) {
+                const fullTrackSegment = itemsHtml.repeat(2);
+                document.getElementById('tickerTrack').innerHTML = fullTrackSegment + fullTrackSegment;
+            }
+        }
+        fetchStocks();
+        setInterval(fetchStocks, 60000);
     </script>
 </body>
+
 </html>

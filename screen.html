@@ -64,7 +64,7 @@
         #authOverlay {
             position: fixed;
             inset: 0;
-            background: rgba(11, 21, 38, 0.88);
+            background: rgba(11, 21, 38, 0.92);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             z-index: 999999;
@@ -1183,7 +1183,7 @@
 
     <script>
         /* ========================================================
-           1. BẢO VỆ CHỐNG SOI MÃ NGUỒN (AN TOÀN CHO OBS)
+           1. BẢO VỆ CHỐNG SOI MÃ NGUỒN CƠ BẢN
            ======================================================== */
         document.addEventListener('contextmenu', e => e.preventDefault());
         document.addEventListener('keydown', e => {
@@ -1193,36 +1193,29 @@
         });
 
         /* ========================================================
-           2. XÁC THỰC MẬT KHẨU (KHÔNG DÙNG DEBUGGER / KHÔNG LỖI OBS)
+           2. XÁC THỰC MẬT KHẨU TƯƠNG THÍCH TUYỆT ĐỐI VỚI OBS
            ======================================================== */
         const authOverlay = document.getElementById('authOverlay');
         const authInput = document.getElementById('authPassword');
         const authBtn = document.getElementById('authSubmit');
         const authErr = document.getElementById('authError');
 
-        // Hàm băm nội bộ chạy được cả khi mở file offline trên OBS
-        function quickHash(str) {
-            let hash = 0;
-            for (let i = 0; i < str.length; i++) {
-                hash = ((hash << 5) - hash) + str.charCodeAt(i);
-                hash |= 0;
-            }
-            return hash.toString();
-        }
+        // Mật khẩu chính thức
+        const RAW_PASS = "1234567890";
 
-        // Mã băm tương ứng của mật khẩu "1234567890"
-        const SECURE_TOKEN = "1682782848";
-
-        // Ghi nhớ trạng thái đã mở khóa để không phải nhập lại nhiều lần trong cùng phiên
-        if (sessionStorage.getItem('vcan_auth') === 'true') {
+        // Ghi nhớ phiên đã mở
+        if (sessionStorage.getItem('vcan_auth') === '1') {
             authOverlay.classList.add('unlocked');
         }
 
         function verifyAccess() {
-            if (quickHash(authInput.value) === SECURE_TOKEN) {
+            // Tự động loại bỏ khoảng trắng vô tình có ở hai đầu khi nhập trên OBS
+            const inputVal = (authInput.value || '').trim();
+
+            if (inputVal === RAW_PASS) {
                 authOverlay.classList.add('unlocked');
                 authErr.style.display = 'none';
-                sessionStorage.setItem('vcan_auth', 'true');
+                sessionStorage.setItem('vcan_auth', '1');
             } else {
                 authErr.style.display = 'block';
                 authInput.style.borderColor = 'var(--danger)';
@@ -1232,8 +1225,11 @@
         }
 
         authBtn.addEventListener('click', verifyAccess);
-        authInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') verifyAccess();
+        authInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                verifyAccess();
+            }
         });
 
         /* ========================================================

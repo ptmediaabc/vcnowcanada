@@ -2239,6 +2239,36 @@
             { name: 'BBC Tech', url: 'https://feeds.bbci.co.uk/news/technology/rss.xml', category: 'tech', priority: 2 }
         ];
 
+        // CẤU HÌNH ĐỘ TƯƠI CỦA TIN
+        const CACHE_KEY = 'vc_articles_cache_v3';            // key mới, bỏ cache cũ không hết hạn
+        const CACHE_MAX_AGE = 30 * 60 * 1000;                // cache chỉ dùng trong 30 phút
+        const MAX_ARTICLE_AGE = 3 * 24 * 60 * 60 * 1000;     // ưu tiên tin trong 3 ngày
+        const REFRESH_INTERVAL = 10 * 60 * 1000;             // tự tải lại mỗi 10 phút
+
+        // PROXY RIÊNG (Cloudflare Worker, xem file rss-worker.js). Dán link Worker vào đây sau khi tạo,
+        // ví dụ: 'https://vc-rss.ten-ban.workers.dev'. Để trống thì chỉ dùng proxy miễn phí.
+        const WORKER_PROXY = 'https://vc-rss.ptmedia.workers.dev';
+
+        try { localStorage.removeItem('vc_articles_cache_v2'); } catch (e) { }
+
+        // Đọc ngày an toàn. rss2json trả "YYYY-MM-DD HH:MM:SS" theo giờ UTC nhưng không ghi múi giờ.
+        function parseFeedDate(str) {
+            if (!str) return null;
+            const s = String(str).trim();
+            let d;
+            if (/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/.test(s)) {
+                d = new Date(s.replace(' ', 'T') + 'Z');
+            } else {
+                d = new Date(s);
+            }
+            return isNaN(d) ? null : d;
+        }
+
+        // Thêm tham số thay đổi mỗi 5 phút để proxy / rss2json không trả bản lưu sẵn cũ
+        function bust(url) {
+            return url + (url.includes('?') ? '&' : '?') + '_t=' + Math.floor(Date.now() / 300000);
+        }
+
         const CANADA_CITIES = [
             { name: 'Toronto', lat: 43.70, lon: -79.42 },
             { name: 'Vancouver', lat: 49.25, lon: -123.12 },
@@ -2618,11 +2648,11 @@
         }
 
         // HÀM FETCH KÈM TIMEOUT NGẮT NHANH NẾU MÁY CHỦ TREO
-        async function fetchWithTimeout(url, timeoutMs = 3500) {
+        async function fetchWithTimeout(url, timeoutMs = 8000) {
             const controller = new AbortController();
             const timer = setTimeout(() => controller.abort(), timeoutMs);
             try {
-                const res = await fetch(url, { signal: controller.signal });
+                const res = await fetch(url, { signal: controller.signal, cache: 'no-store' });
                 clearTimeout(timer);
                 return res;
             } catch (err) {
@@ -2643,7 +2673,8 @@
                 const link = el.querySelector("link")?.textContent?.trim() || "#";
                 const desc = el.querySelector("description")?.textContent || "";
                 const contentEncoded = el.getElementsByTagNameNS("*", "encoded")[0]?.textContent || "";
-                const pubDateStr = el.querySelector("pubDate")?.textContent || "";
+                const pubDateStr = el.querySelector("pubDate")?.textContent
+                    || el.getElementsByTagNameNS("*", "date")[0]?.textContent || "";
 
                 let thumbUrl = "";
                 const mediaThumb = el.getElementsByTagNameNS("*", "thumbnail")[0];
@@ -2666,7 +2697,9 @@
                     thumbnail: thumbUrl
                 };
 
-                const parsedDate = pubDateStr && !isNaN(new Date(pubDateStr)) ? new Date(pubDateStr) : new Date();
+                // Không có ngày hợp lệ → bỏ bài (trước đây gán "bây giờ" làm bài cũ nhảy lên đầu)
+                const parsedDate = parseFeedDate(pubDateStr);
+                if (!parsedDate) return null;
                 const cacheKey = title.substring(0, 120);
 
                 return {
@@ -2680,51 +2713,69 @@
                     rawDate: parsedDate,
                     pubDate: parsedDate.toLocaleDateString('vi-VN')
                 };
-            }).filter(it => it.title.length > 0);
+            }).filter(it => it && it.title.length > 0);
         }
 
-        // LẤY TIN TỐC ĐỘ CAO: RSS2JSON (3S) -> ĐUA SONG SONG CÁC PROXY HỖ TRỢ LOCAL
+        // LẤY TIN: GỌI SONG SONG PROXY (XML GỐC) + RSS2JSON, CÁI NÀO XONG TRƯỚC DÙNG CÁI ĐÓ
         async function fetchSingleFeed(feed) {
-            try {
-                const res = await fetchWithTimeout(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(feed.url)}`, 3200);
-                if (res.ok) {
-                    const data = await res.json();
-                    if (data.status === 'ok' && data.items && data.items.length > 0) {
-                        return data.items.map(item => {
-                            const parsedDate = item.pubDate && !isNaN(new Date(item.pubDate)) ? new Date(item.pubDate) : new Date();
-                            const cacheKey = (item.title || "").substring(0, 120);
-                            return {
-                                source: feed.name,
-                                category: feed.category,
-                                title: item.title,
-                                title_vi: translationMemory[cacheKey] || null,
-                                description: cleanDescription(item),
-                                image: extractImageUrl(item),
-                                link: item.link,
-                                rawDate: parsedDate,
-                                pubDate: parsedDate.toLocaleDateString('vi-VN')
-                            };
-                        });
-                    }
+            // Proxy miễn phí: thêm tham số đổi mỗi 5 phút để tránh bản lưu sẵn
+            const encBust = encodeURIComponent(bust(feed.url));
+            // rss2json: dùng URL gốc (URL lạ liên tục bị rss2json coi là feed mới và có thể từ chối)
+            const encPlain = encodeURIComponent(feed.url);
+
+            const proxyUrls = [];
+            if (WORKER_PROXY) proxyUrls.push(`${WORKER_PROXY.replace(/\/$/, '')}/?url=${encPlain}`);
+            proxyUrls.push(
+                `https://api.allorigins.win/raw?url=${encBust}`,
+                `https://api.codetabs.com/v1/proxy?quest=${encBust}`,
+                `https://corsproxy.io/?url=${encBust}`
+            );
+
+            const viaProxy = proxyUrls.map(async (pUrl) => {
+                try {
+                    const r = await fetchWithTimeout(pUrl, 9000);
+                    if (!r.ok) throw new Error("HTTP " + r.status);
+                    const items = parseRawXmlFeed(await r.text(), feed);
+                    if (!items.length) throw new Error("không có bài");
+                    return items;
+                } catch (err) {
+                    console.warn(`[RSS] ${feed.name} lỗi qua ${new URL(pUrl).host}:`, err.message || err);
+                    throw err;
                 }
-            } catch (e) { }
+            });
 
-            // Nếu rss2json từ chối (như Global News), đua song song 3 proxy để lấy kết quả nhanh nhất
-            const encodedUrl = encodeURIComponent(feed.url);
-            const proxyUrls = [
-                `https://api.codetabs.com/v1/proxy?quest=${encodedUrl}`,
-                `https://api.allorigins.win/raw?url=${encodedUrl}`,
-                `https://corsproxy.io/?url=${encodedUrl}`
-            ];
+            const viaRss2json = (async () => {
+                const r = await fetchWithTimeout(`https://api.rss2json.com/v1/api.json?rss_url=${encPlain}`, 9000);
+                if (!r.ok) throw new Error("rss2json HTTP " + r.status);
+                const data = await r.json();
+                if (data.status !== 'ok' || !data.items || !data.items.length) throw new Error("rss2json: " + (data.message || 'empty'));
+                const items = data.items.map(item => {
+                    const parsedDate = parseFeedDate(item.pubDate);
+                    if (!parsedDate) return null;
+                    const cacheKey = (item.title || "").substring(0, 120);
+                    return {
+                        source: feed.name,
+                        category: feed.category,
+                        title: item.title,
+                        title_vi: translationMemory[cacheKey] || null,
+                        description: cleanDescription(item),
+                        image: extractImageUrl(item),
+                        link: item.link,
+                        rawDate: parsedDate,
+                        pubDate: parsedDate.toLocaleDateString('vi-VN')
+                    };
+                }).filter(Boolean);
+                if (!items.length) throw new Error("rss2json no dated items");
+                return items;
+            })().catch(err => {
+                console.warn(`[RSS] ${feed.name} lỗi qua rss2json:`, err.message || err);
+                throw err;
+            });
 
             try {
-                return await Promise.any(proxyUrls.map(async (pUrl) => {
-                    const r = await fetchWithTimeout(pUrl, 4500);
-                    if (!r.ok) throw new Error("Proxy HTTP error");
-                    const xmlText = await r.text();
-                    return parseRawXmlFeed(xmlText, feed);
-                }));
+                return await Promise.any([...viaProxy, viaRss2json]);
             } catch (e) {
+                console.warn('Không tải được feed:', feed.name);
                 return [];
             }
         }
@@ -2733,66 +2784,91 @@
         function mergeAndRenderArticles(newItems) {
             if (!newItems || newItems.length === 0) return;
 
-            const combined = [...articlesData, ...newItems];
+            // Tin mới đứng trước để khi trùng tiêu đề thì giữ bản mới
+            const combined = [...newItems, ...articlesData];
             const uniqueTitles = new Set();
             const unique = [];
+            const now = Date.now();
 
             for (let it of combined) {
                 if (!it || !it.title) continue;
+                if (!(it.rawDate instanceof Date)) {
+                    it.rawDate = new Date(it.rawDate);
+                }
+                // Bỏ bài không có ngày hợp lệ
+                if (isNaN(it.rawDate)) continue;
+
                 const cleanT = it.title.trim().toLowerCase();
                 if (!uniqueTitles.has(cleanT)) {
                     uniqueTitles.add(cleanT);
-                    if (!(it.rawDate instanceof Date)) {
-                        it.rawDate = new Date(it.rawDate);
-                    }
                     unique.push(it);
                 }
             }
 
             unique.sort((a, b) => b.rawDate - a.rawDate);
-            articlesData = unique;
+            // Ưu tiên tin trong 3 ngày; nếu nguồn chỉ trả tin cũ hơn thì vẫn hiện (kèm ngày thật) thay vì trang trống
+            const fresh = unique.filter(it => now - it.rawDate <= MAX_ARTICLE_AGE);
+            articlesData = fresh.length >= 6 ? fresh : unique;
 
             filterNews();
             translateVisibleArticles();
         }
 
+        let isFetchingNews = false;
         async function fetchNews() {
-            // 1. Nạp ngay dữ liệu từ bộ nhớ đệm (hiển thị tức thì 0 giây nếu đã từng vào trang)
+            if (isFetchingNews) return;
+            isFetchingNews = true;
+
             try {
-                const cachedArticles = localStorage.getItem('vc_articles_cache_v2');
-                if (cachedArticles) {
-                    const parsed = JSON.parse(cachedArticles);
-                    if (Array.isArray(parsed) && parsed.length > 0) {
-                        mergeAndRenderArticles(parsed);
+                // 1. Nạp cache nếu còn mới (dưới 30 phút) để hiển thị ngay
+                if (articlesData.length === 0) {
+                    try {
+                        const raw = localStorage.getItem(CACHE_KEY);
+                        if (raw) {
+                            const c = JSON.parse(raw);
+                            if (c && Array.isArray(c.items) && Date.now() - c.savedAt < CACHE_MAX_AGE) {
+                                mergeAndRenderArticles(c.items);
+                            }
+                        }
+                    } catch (e) { }
+                }
+
+                // 2. Tải ưu tiên các nguồn Tin Canada & Chánh Trị trước (Nguồn nào xong trước hiện ngay nguồn đó)
+                const priorityFeeds = RSS_FEEDS.filter(f => f.priority === 1);
+                const backgroundFeeds = RSS_FEEDS.filter(f => f.priority !== 1);
+
+                await Promise.allSettled(priorityFeeds.map(async (feed) => {
+                    const items = await fetchSingleFeed(feed);
+                    if (items.length > 0) {
+                        mergeAndRenderArticles(items);
                     }
-                }
-            } catch (e) { }
+                }));
 
-            // 2. Tải ưu tiên các nguồn Tin Canada & Chánh Trị trước (Nguồn nào xong trước hiện ngay nguồn đó)
-            const priorityFeeds = RSS_FEEDS.filter(f => f.priority === 1);
-            const backgroundFeeds = RSS_FEEDS.filter(f => f.priority !== 1);
+                // 3. Tải ngầm các chuyên mục còn lại ở nền mà không làm khựng trang
+                await Promise.allSettled(backgroundFeeds.map(async (feed) => {
+                    const items = await fetchSingleFeed(feed);
+                    if (items.length > 0) {
+                        mergeAndRenderArticles(items);
+                    }
+                }));
 
-            await Promise.allSettled(priorityFeeds.map(async (feed) => {
-                const items = await fetchSingleFeed(feed);
-                if (items.length > 0) {
-                    mergeAndRenderArticles(items);
-                }
-            }));
+                // 4. Lưu cache kèm thời điểm lưu
+                try {
+                    if (articlesData.length > 0) {
+                        localStorage.setItem(CACHE_KEY, JSON.stringify({ savedAt: Date.now(), items: articlesData.slice(0, 80) }));
+                    }
+                } catch (e) { }
 
-            // 3. Tải ngầm các chuyên mục còn lại ở nền mà không làm khựng trang
-            await Promise.allSettled(backgroundFeeds.map(async (feed) => {
-                const items = await fetchSingleFeed(feed);
-                if (items.length > 0) {
-                    mergeAndRenderArticles(items);
+                // Nếu mọi nguồn đều lỗi và không có cache: báo cho người dùng thay vì quay mãi
+                if (articlesData.length === 0) {
+                    document.getElementById('news-container').innerHTML = `
+                        <p style="grid-column:1/-1; text-align:center; padding:2rem; color:var(--text-muted);">
+                            ${currentLang === 'vi' ? 'Không tải được tin tức. Vui lòng thử lại sau ít phút.' : 'Could not load news. Please try again in a few minutes.'}
+                        </p>`;
                 }
-            }));
-
-            // 4. Lưu cache cho lần mở tiếp theo
-            try {
-                if (articlesData.length > 0) {
-                    localStorage.setItem('vc_articles_cache_v2', JSON.stringify(articlesData.slice(0, 80)));
-                }
-            } catch (e) { }
+            } finally {
+                isFetchingNews = false;
+            }
         }
 
         function renderHeroTriple(articles) {
@@ -3073,6 +3149,15 @@
         fetchCanadaWeather();
         loadYoutubePlaylistById(PLAYLIST_CANADA_ID, 'VC Now Media Stream');
         renderRandomCanadaTours();
+
+        // Tự làm mới tin định kỳ, và tải lại ngay khi người dùng quay lại tab
+        setInterval(fetchNews, REFRESH_INTERVAL);
+        document.addEventListener('visibilitychange', function () {
+            if (document.visibilityState === 'visible') {
+                updateDisplayDate();
+                fetchNews();
+            }
+        });
     </script>
 </body>
 
